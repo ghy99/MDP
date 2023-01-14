@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Now we can access arena's elements through arenaView
         ImageView obs1 = (ImageView) arenaView.findViewById(R.id.obstacle1);
-
     }
 
 

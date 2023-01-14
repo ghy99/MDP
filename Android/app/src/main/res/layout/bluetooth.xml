@@ -49,7 +49,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="4dp"
         android:fontFamily="@font/jockey_one_regular"
-        android:text="MDP Group 45"
+        android:text="MDP Group 17"
         android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"

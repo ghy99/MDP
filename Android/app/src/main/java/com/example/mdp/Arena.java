@@ -39,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 
 public class Arena extends AppCompatActivity {
 
-
     public static final String SHARED_PREFS = "sharedPrefs";
     public static Boolean firstStart = true;
 
@@ -96,7 +95,7 @@ public class Arena extends AppCompatActivity {
         editor.putFloat("obs8Y", findViewById(R.id.obstacle8).getTranslationY());
         editor.putFloat("obs8Rotation", findViewById(R.id.obstacle8).getRotation());
 
-        editor.putFloat("carX", findViewById(R.id.wcar).getTranslationX());
+        editor.putFloat("carX", findViewById(R.id.car).getTranslationX());
         editor.putFloat("carY", findViewById(R.id.car).getTranslationY());
         editor.putFloat("carRotation", findViewById(R.id.car).getRotation());
         int x = (int) (car.getX() + SNAP_GRID_INTERVAL)/SNAP_GRID_INTERVAL;

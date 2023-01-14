@@ -3,6 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/Android/app/src/main/res/font/arcade_classic.xml" value="0.1984375" />
+        <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/Android/app/src/main/res/layout/arena.xml" value="0.18193069306930693" />
+        <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/Android/app/src/main/res/layout/bluetooth.xml" value="0.18193069306930693" />
+        <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/Android/app/src/main/res/layout/communication.xml" value="0.18193069306930693" />
+        <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/Android/app/src/main/res/layout/device_adapter_view.xml" value="0.18193069306930693" />
+        <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/Android/app/src/main/res/layout/home.xml" value="0.18193069306930693" />
+        <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/Android/app/src/main/res/layout/my_row.xml" value="0.18193069306930693" />
+        <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.321" />
         <entry key="..\:/Users/Kai Seong/Desktop/School/Code/NTU/MDP/app/src/main/res/layout/activity_main.xml" value="0.14343928280358598" />
       </map>
     </option>

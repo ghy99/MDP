@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#D6F0FC">
 
-    <com.example.mdp_new.Grid
+    <com.example.mdp.Grid
         android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
