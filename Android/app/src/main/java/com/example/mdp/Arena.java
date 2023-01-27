@@ -5,14 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
@@ -21,24 +18,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.animation.ObjectAnimator;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.TypedArrayUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
 public class Arena extends AppCompatActivity {
-
     public static final String SHARED_PREFS = "sharedPrefs";
     public static Boolean firstStart = true;
 
@@ -63,7 +55,7 @@ public class Arena extends AppCompatActivity {
         editor.putFloat("obs1X", findViewById(R.id.obstacle1).getTranslationX());
         editor.putFloat("obs1Y", findViewById(R.id.obstacle1).getTranslationY());
         editor.putFloat("obs1Rotation", findViewById(R.id.obstacle1).getRotation());
-        Log.d("saveData", "obs1X: " + Float.toString(obstacle1.getTranslationX()));
+        Log.d("saveData", "obs1X: " + obstacle1.getTranslationX());
 
         editor.putFloat("obs2X", findViewById(R.id.obstacle2).getTranslationX());
         editor.putFloat("obs2Y", findViewById(R.id.obstacle2).getTranslationY());
@@ -147,7 +139,7 @@ public class Arena extends AppCompatActivity {
         car_x.setText((sharedPreferences.getString("x_tv", "")));
         car_y.setText((sharedPreferences.getString("y_tv","")));
         car_dir.setText((sharedPreferences.getString("car_dir","")));
-        Log.d("LoadData", "obs1X: " + Float.toString(sharedPreferences.getFloat("obs1X", 0.0f)));
+        Log.d("LoadData", "obs1X: " + sharedPreferences.getFloat("obs1X", 0.0f));
     }
 
     private static final int SNAP_GRID_INTERVAL = 40;
@@ -164,7 +156,7 @@ public class Arena extends AppCompatActivity {
     private int sequence = 0;
 
     Button IRButton, SPButton, resetButton, preset1Button, preset2Button, preset3Button, timerButton, save_button;
-    TextView statusWindow;  //Added statusWindow to declarations
+    TextView statusWindow;  // Added statusWindow to declarations
     ImageView obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obstacle6, obstacle7, obstacle8;
     ImageView car;
 
@@ -379,8 +371,8 @@ public class Arena extends AppCompatActivity {
     }};
 
     // RecyclerView
-    ArrayList<String> s1 = new ArrayList<String>();
-    ArrayList<Integer> images = new ArrayList<Integer>();
+    ArrayList<String> s1 = new ArrayList<>();
+    ArrayList<Integer> images = new ArrayList<>();
     RecyclerView recyclerView;
 
 //    protected void onResume(){
@@ -486,9 +478,7 @@ public class Arena extends AppCompatActivity {
 //        }
 
 
-        Log.d("OBSTACLE1", "X: " + Float.toString(obstacle1.getX()));
-
-
+        Log.d("OBSTACLE1", "X: " + obstacle1.getX());
 
         obstacles = new HashMap<Integer, ImageView>() {{
             put(1, obstacle1);
@@ -748,9 +738,9 @@ public class Arena extends AppCompatActivity {
                         obstacle1.setY(snapToY);
                         isObstacle1LongClicked = false;
                         // Bluetooth message
-//                        if (BluetoothConnectionService.BluetoothConnectionStatus) {
+//                        if (BluetoothService.BluetoothConnectionStatus) {
 //                            byte[] bytes = String.format("Obstacle 1 moved to %d, %d",snapToX/40,snapToY/40).getBytes(Charset.defaultCharset());
-//                            BluetoothConnectionService.write(bytes);
+//                            BluetoothService.write(bytes);
 //                        }
                         break;
                     default:
@@ -790,9 +780,9 @@ public class Arena extends AppCompatActivity {
                         obstacle2.setY(snapToY);
                         isObstacle2LongClicked = false;
                         // Bluetooth message
-//                        if (BluetoothConnectionService.BluetoothConnectionStatus) {
+//                        if (BluetoothService.BluetoothConnectionStatus) {
 //                            byte[] bytes = String.format("Obstacle 2 moved to %d, %d",snapToX/40,snapToY/40).getBytes(Charset.defaultCharset());
-//                            BluetoothConnectionService.write(bytes);
+//                            BluetoothService.write(bytes);
 //                        }
                         break;
                     default:
@@ -832,9 +822,9 @@ public class Arena extends AppCompatActivity {
                         obstacle3.setY(snapToY);
                         isObstacle3LongClicked = false;
                         // Bluetooth message
-//                        if (BluetoothConnectionService.BluetoothConnectionStatus) {
+//                        if (BluetoothService.BluetoothConnectionStatus) {
 //                            byte[] bytes = String.format("Obstacle 3 moved to %d, %d",snapToX/40,snapToY/40).getBytes(Charset.defaultCharset());
-//                            BluetoothConnectionService.write(bytes);
+//                            BluetoothService.write(bytes);
 //                        }
                         break;
                     default:
@@ -874,9 +864,9 @@ public class Arena extends AppCompatActivity {
                         obstacle4.setY(snapToY);
                         isObstacle4LongClicked = false;
                         // Bluetooth message
-//                        if (BluetoothConnectionService.BluetoothConnectionStatus) {
+//                        if (BluetoothService.BluetoothConnectionStatus) {
 //                            byte[] bytes = String.format("Obstacle 4 moved to %d, %d",snapToX/40,snapToY/40).getBytes(Charset.defaultCharset());
-//                            BluetoothConnectionService.write(bytes);
+//                            BluetoothService.write(bytes);
 //                        }
                         break;
                     default:
@@ -916,9 +906,9 @@ public class Arena extends AppCompatActivity {
                         obstacle5.setY(snapToY);
                         isObstacle5LongClicked = false;
                         // Bluetooth message
-//                        if (BluetoothConnectionService.BluetoothConnectionStatus) {
+//                        if (BluetoothService.BluetoothConnectionStatus) {
 //                            byte[] bytes = String.format("Obstacle 5 moved to %d, %d",snapToX/40,snapToY/40).getBytes(Charset.defaultCharset());
-//                            BluetoothConnectionService.write(bytes);
+//                            BluetoothService.write(bytes);
 //                        }
                         break;
                     default:
@@ -958,9 +948,9 @@ public class Arena extends AppCompatActivity {
                         obstacle6.setY(snapToY);
                         isObstacle5LongClicked = false;
                         // Bluetooth message
-//                        if (BluetoothConnectionService.BluetoothConnectionStatus) {
+//                        if (BluetoothService.BluetoothConnectionStatus) {
 //                            byte[] bytes = String.format("Obstacle 6 moved to %d, %d",snapToX/40,snapToY/40).getBytes(Charset.defaultCharset());
-//                            BluetoothConnectionService.write(bytes);
+//                            BluetoothService.write(bytes);
 //                        }
                         break;
                     default:
@@ -1000,9 +990,9 @@ public class Arena extends AppCompatActivity {
                         obstacle7.setY(snapToY);
                         isObstacle5LongClicked = false;
                         // Bluetooth message
-//                        if (BluetoothConnectionService.BluetoothConnectionStatus) {
+//                        if (BluetoothService.BluetoothConnectionStatus) {
 //                            byte[] bytes = String.format("Obstacle 7 moved to %d, %d",snapToX/40,snapToY/40).getBytes(Charset.defaultCharset());
-//                            BluetoothConnectionService.write(bytes);
+//                            BluetoothService.write(bytes);
 //                        }
                         break;
                     default:
@@ -1042,9 +1032,9 @@ public class Arena extends AppCompatActivity {
                         obstacle8.setY(snapToY);
                         isObstacle5LongClicked = false;
                         // Bluetooth message
-//                        if (BluetoothConnectionService.BluetoothConnectionStatus) {
+//                        if (BluetoothService.BluetoothConnectionStatus) {
 //                            byte[] bytes = String.format("Obstacle 8 moved to %d, %d",snapToX/40,snapToY/40).getBytes(Charset.defaultCharset());
-//                            BluetoothConnectionService.write(bytes);
+//                            BluetoothService.write(bytes);
 //                        }
                         break;
                     default:
@@ -1078,16 +1068,15 @@ public class Arena extends AppCompatActivity {
         timerButton.setOnClickListener(view -> stopTimerButton());
 
         // Initialize car to bottom left
-        car.setX(1 * SNAP_GRID_INTERVAL - SNAP_GRID_INTERVAL);
+        car.setX(0);
         car.setY(18 * SNAP_GRID_INTERVAL - SNAP_GRID_INTERVAL);
         updateXYDirText();
 
-        if (firstStart == false){
+        if (!firstStart){
             Log.d("firstStart", Boolean.toString(firstStart));
             // Load Data
             loadData();
-        }
-        else {
+        } else {
             Log.d("firstStart", Boolean.toString(firstStart));
             firstStart = false;
             saveData();
@@ -1095,62 +1084,54 @@ public class Arena extends AppCompatActivity {
 
 
         // Movement Buttons
-        ImageButton forwardButton = (ImageButton) findViewById(R.id.forwardButton);
-        forwardButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                Log.d("COMMS DEBUG", "forward");
+        ImageButton forwardButton = findViewById(R.id.forwardButton);
+        forwardButton.setOnClickListener(v -> {
+            Log.d("COMMS DEBUG", "forward");
 
-                // Bluetooth message
-                if (BluetoothConnectionService.BluetoothConnectionStatus) {
-                    byte[] bytes = "STM:w100n".getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
-                }
-
-                // Animation
-                forwardButtonCommand();
+            // Bluetooth message
+            if (BluetoothService.BluetoothConnectionStatus) {
+                byte[] bytes = "STM:w100n".getBytes(Charset.defaultCharset());
+                BluetoothService.write(bytes);
             }
+
+            // Animation
+            forwardButtonCommand();
         });
 
-        ImageButton reverseButton = (ImageButton) findViewById(R.id.reverseButton);
-        reverseButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                Log.d("COMMS DEBUG","reverse");
+        ImageButton reverseButton = findViewById(R.id.reverseButton);
+        reverseButton.setOnClickListener(v -> {
+            Log.d("COMMS DEBUG","reverse");
 
-                // Bluetooth message
-                if (BluetoothConnectionService.BluetoothConnectionStatus) {
-                    byte[] bytes = "STM:s100n".getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
-                }
-
-                // Animation
-                reverseButtonCommand();
+            // Bluetooth message
+            if (BluetoothService.BluetoothConnectionStatus) {
+                byte[] bytes = "STM:s100n".getBytes(Charset.defaultCharset());
+                BluetoothService.write(bytes);
             }
+
+            // Animation
+            reverseButtonCommand();
         });
 
-        ImageButton leftButton = (ImageButton) findViewById(R.id.leftButton);
-        leftButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                Log.d("COMMS DEBUG","left");
-                if (BluetoothConnectionService.BluetoothConnectionStatus) {
-                    byte[] bytes = "STM:ln".getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
-                }
-
-                leftButtonCommand();
+        ImageButton leftButton = findViewById(R.id.leftButton);
+        leftButton.setOnClickListener(v -> {
+            Log.d("COMMS DEBUG","left");
+            if (BluetoothService.BluetoothConnectionStatus) {
+                byte[] bytes = "STM:ln".getBytes(Charset.defaultCharset());
+                BluetoothService.write(bytes);
             }
+
+            leftButtonCommand();
         });
 
-        ImageButton rightButton = (ImageButton) findViewById(R.id.rightButton);
-        rightButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                Log.d("COMMS DEBUG", "right");
-                if (BluetoothConnectionService.BluetoothConnectionStatus) {
-                    byte[] bytes = "STM:rn".getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
-                }
-
-                rightButtonCommand();
+        ImageButton rightButton = findViewById(R.id.rightButton);
+        rightButton.setOnClickListener(v -> {
+            Log.d("COMMS DEBUG", "right");
+            if (BluetoothService.BluetoothConnectionStatus) {
+                byte[] bytes = "STM:rn".getBytes(Charset.defaultCharset());
+                BluetoothService.write(bytes);
             }
+
+            rightButtonCommand();
         });
 
 
@@ -1159,7 +1140,7 @@ public class Arena extends AppCompatActivity {
     }
 
     // MOVEMENT COMMANDS
-    private void sleepfor(int time){
+    private void sleepfor(int time) {
         try {
             TimeUnit.MILLISECONDS.sleep(time);
         } catch (InterruptedException e) {
@@ -1275,7 +1256,7 @@ public class Arena extends AppCompatActivity {
         }
 
         updateXYDirText();
-    };
+    }
 
     private void rightButtonCommand(){
         int orientation = (int) car.getRotation();
@@ -1319,13 +1300,13 @@ public class Arena extends AppCompatActivity {
             obstacles.get(obstacleNumber).setImageResource(resources.get(image));
             obstacles.get(obstacleNumber).setRotation(0);
         }
-        }
+    }
 
 
     TextView messageBox;
 
     private void stopTimerButton() {
-        Chronometer IRTimer = (Chronometer) findViewById(R.id.IRTimer);
+        Chronometer IRTimer = findViewById(R.id.IRTimer);
         IRTimer.stop();
         updateStatusWindow("Ready");
 //        updateStatusWindow("Image Recognition Stopped");
@@ -1345,10 +1326,10 @@ public class Arena extends AppCompatActivity {
                 .append(getObstacleString(obstacle8)+"7;");
         String IRstart = "ALG:START";
 
-        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+        if (BluetoothService.BluetoothConnectionStatus) {
             //Toast.makeText(this, stringBuilder.toString(), Toast.LENGTH_LONG).show();
             byte[] bytes = IRstart.getBytes(Charset.defaultCharset());
-            BluetoothConnectionService.write(bytes);
+            BluetoothService.write(bytes);
             Toast.makeText(Arena.this, "Obstacles sent", Toast.LENGTH_LONG).show();
             updateStatusWindow("IR started");
 
@@ -1356,30 +1337,30 @@ public class Arena extends AppCompatActivity {
             Toast.makeText(Arena.this, "Please connect to Bluetooth.", Toast.LENGTH_LONG).show();
         }
 
-        Chronometer IRTimer = (Chronometer) findViewById(R.id.IRTimer);
+        Chronometer IRTimer = findViewById(R.id.IRTimer);
         long elapsedRealtime = SystemClock.elapsedRealtime();
         IRTimer.setBase(elapsedRealtime);
         IRTimer.start();
     }
 
     private void beginSPTask() {
-        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+        if (BluetoothService.BluetoothConnectionStatus) {
             byte[] bytes = "STM:sp".getBytes(Charset.defaultCharset());
-            BluetoothConnectionService.write(bytes);
+            BluetoothService.write(bytes);
             Toast.makeText(Arena.this, "Shortest Path Started.", Toast.LENGTH_LONG).show();
             updateStatusWindow("Auto-Movement Ongoing");
 
         } else {
             Toast.makeText(Arena.this, "Please connect to Bluetooth.", Toast.LENGTH_LONG).show();
         }
-        Chronometer IRTimer = (Chronometer) findViewById(R.id.IRTimer);
+        Chronometer IRTimer = findViewById(R.id.IRTimer);
         long elapsedRealtime = SystemClock.elapsedRealtime();
         IRTimer.setBase(elapsedRealtime);
         IRTimer.start();
     }
 
     private void resetObstaclesButton() {
-        Chronometer IRTimer = (Chronometer) findViewById(R.id.IRTimer);  // Reset Timer
+        Chronometer IRTimer = findViewById(R.id.IRTimer);  // Reset Timer
         IRTimer.setBase(SystemClock.elapsedRealtime());
         IRTimer.stop();
         updateStatusWindow("Ready");
@@ -1537,7 +1518,7 @@ public class Arena extends AppCompatActivity {
                     break;
                 default:
                     break;
-        }
+            }
             String[] obstacle3data = SavedPreset[2];
             obstacle3.setX(Integer.parseInt(obstacle3data[0]));
             obstacle3.setY(Integer.parseInt(obstacle3data[1]));
@@ -1683,8 +1664,8 @@ public class Arena extends AppCompatActivity {
                     break;
             }
 
-        Toast.makeText(this, "Preset 1 Applied", Toast.LENGTH_SHORT).show();
-    }
+            Toast.makeText(this, "Preset 1 Applied", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setObstacles(String[] obstaclesPreset) {
@@ -1737,10 +1718,10 @@ public class Arena extends AppCompatActivity {
                 .append(getObstacleString(obstacle7)+"6;")
                 .append(getObstacleString(obstacle8)+"7;");
 
-        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+        if (BluetoothService.BluetoothConnectionStatus) {
             //Toast.makeText(this, stringBuilder.toString(), Toast.LENGTH_LONG).show();
             byte[] bytes = stringBuilder.toString().getBytes(Charset.defaultCharset());
-            BluetoothConnectionService.write(bytes);
+            BluetoothService.write(bytes);
             Toast.makeText(Arena.this, "Obstacles sent", Toast.LENGTH_LONG).show();}
     }
 
@@ -1757,7 +1738,7 @@ public class Arena extends AppCompatActivity {
     private String getObstacleLocation(ImageView obstacle) {
         Toast.makeText(this, "Preset saved",Toast.LENGTH_SHORT).show();
         return (int)obstacle.getX()+","+(int) obstacle.getY()+","+getImageOrientation(obstacle);
-        }
+    }
 
     private String getObstacleString(ImageView obstacle) {
         if((int) (obstacle.getX() / 40) > 19 || ((int) obstacle.getY() / 40) > 19){
@@ -1879,31 +1860,30 @@ public class Arena extends AppCompatActivity {
 
                     Log.d("ROBOT", "(x: " + x + ") (y: " + y + ") (direction: " + direction + ")");
 
-                    int direction_int=0;
+                    int direction_int = 0;
                     switch(direction){
                         case "N":
-                            direction_int=0;
                             break;
                         case "NE":
-                            direction_int=1;
+                            direction_int = 1;
                             break;
                         case "E":
-                            direction_int=2;
+                            direction_int = 2;
                             break;
                         case "SE":
-                            direction_int=3;
+                            direction_int = 3;
                             break;
                         case "S":
-                            direction_int=4;
+                            direction_int = 4;
                             break;
                         case "SW":
-                            direction_int=5;
+                            direction_int = 5;
                             break;
                         case "W":
-                            direction_int=6;
+                            direction_int = 6;
                             break;
                         case "NW":
-                            direction_int=7;
+                            direction_int = 7;
                             break;
                         default:
                             break;
@@ -1919,22 +1899,22 @@ public class Arena extends AppCompatActivity {
                         Toast.makeText(Arena.this,"Image not recognized, trying again", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                    setObstacleImage(obstacleNumber,solution);
-                    Toast.makeText(Arena.this, "Obstacle "+obstacleNumber+" changed to Target ID: "+ solution, Toast.LENGTH_LONG).show();}
+                        setObstacleImage(obstacleNumber,solution);
+                        Toast.makeText(Arena.this, "Obstacle "+obstacleNumber+" changed to Target ID: "+ solution, Toast.LENGTH_LONG).show();}
                     break;
                 case "STATUS":
-                    String msg = " ";
+                    String msg;
                     if(message.contains("\n")){
                         msg = message.substring(message.indexOf(',')+1, message.indexOf('\n'));
-                }else{
+                    }else{
                         msg=message.substring(message.indexOf(',')+1);
                     }
                     if(message.contains("STOPPED")){
-                        Chronometer IRTimer = (Chronometer) findViewById(R.id.IRTimer);
+                        Chronometer IRTimer = findViewById(R.id.IRTimer);
                         IRTimer.stop();
                         updateStatusWindow("IR Completed");
                     }else{
-                    updateStatusWindow(msg);}
+                        updateStatusWindow(msg);}
                     break;
                 case "PLOT":
                     String receivedmsg =message.substring(message.indexOf(",")+1); //string after PLOT,

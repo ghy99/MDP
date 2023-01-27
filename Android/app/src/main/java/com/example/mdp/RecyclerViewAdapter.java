@@ -13,14 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.snapshotViewHolder>{
-
-    ArrayList<String> data1;
+    ArrayList<String> data;
     ArrayList<Integer> images;
     Context context;
 
     public RecyclerViewAdapter(Context ct, ArrayList<String> s1, ArrayList<Integer> img){
         context = ct;
-        data1 = s1;
+        data = s1;
         images = img;
     }
 
@@ -34,7 +33,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull snapshotViewHolder holder, int position) {
-        holder.myText1.setText(data1.get(position));
+        holder.myText1.setText(data.get(position));
         holder.myImage.setImageResource(images.get(position));
     }
 
@@ -44,7 +43,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public class snapshotViewHolder extends RecyclerView.ViewHolder{
-
         TextView myText1;
         ImageView myImage;
 
@@ -54,4 +52,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             myImage = itemView.findViewById(R.id.imagePic);
         }
     }
-}
+};
+
+

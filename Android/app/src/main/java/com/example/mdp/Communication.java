@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ReceiverCallNotAllowedException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,11 +19,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.nio.charset.Charset;
 
 public class Communication extends AppCompatActivity {
-
-    RecyclerView recyclerView;
-
     private static final String TAG = "Communication->DEBUG";
+    RecyclerView recyclerView;
     TextView showReceived;
+    BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("receivedMessage");
+            String old = showReceived.getText().toString();
+            showReceived.setText(old + "\n[ROBOT]:  " + message);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,28 +44,22 @@ public class Communication extends AppCompatActivity {
             public void onClick(View v){
                 EditText msgToSend = (EditText) findViewById(R.id.chatbox_tv);
                 String message = msgToSend.getText().toString();
-                Log.d("COMMS DEBUG",message);
-                if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+                Log.d("COMMS DEBUG", message);
+                if (BluetoothService.BluetoothConnectionStatus == true) {
                     byte[] bytes = message.getBytes(Charset.defaultCharset());
-                    BluetoothConnectionService.write(bytes);
+                    BluetoothService.write(bytes);
                     String old = showReceived.getText().toString();
                     showReceived.setText(old + "\n[TABLET]:  " + message);
                 } else {
-                    Toast.makeText(Communication.this, "Please connect to Bluetooth.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Communication.this, "Please connect to Bluetooth!", Toast.LENGTH_LONG).show();
                 }
             }
         });
-
         showReceived = findViewById(R.id.chatlog_tv);
     }
-    BroadcastReceiver messageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("receivedMessage");
-            String old = showReceived.getText().toString();
-            showReceived.setText(old + "\n[ROBOT]:  " + message);
-        }
-    };
+
+
+
     @Override
     protected void onDestroy(){
         super.onDestroy();
@@ -83,7 +83,7 @@ public class Communication extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         try{
-            IntentFilter filter2 = new IntentFilter("ConnectionStatus");
+            IntentFilter filter = new IntentFilter("ConnectionStatus");
         } catch(IllegalArgumentException e){
             e.printStackTrace();
         }

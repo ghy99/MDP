@@ -1,5 +1,6 @@
 package com.example.mdp;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.util.Log;
@@ -9,25 +10,25 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-
 import java.util.ArrayList;
 
 public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
 
-    private LayoutInflater mLayoutInflater;
+    private LayoutInflater myLayoutInflater;
     private ArrayList<BluetoothDevice> myDevices;
-    private int mViewResourceId;
+    private int myViewResourceId;
 
     public DeviceListAdapter(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices) {
         super(context, tvResourceId, devices);
-        this.myDevices = devices;
-        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mViewResourceId = tvResourceId;
+        myDevices = devices;
+        myLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        myViewResourceId = tvResourceId;
     }
 
+    @SuppressLint("MissingPermission")
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("DeviceListAdapter", "Getting View");
-        convertView = mLayoutInflater.inflate(mViewResourceId, null);
+        Log.d("DeviceListAdapter", "Getting view...");
+        convertView = myLayoutInflater.inflate(myViewResourceId, null);
 
         BluetoothDevice device = myDevices.get(position);
 
