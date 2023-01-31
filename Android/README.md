@@ -10,14 +10,15 @@
 
 ```terminal
 .
-├── config
-├── database
-├── handlers
-├── middleware
-├── model
-├── router
-├── main.go
-├── go.mod
-├── go.sum
-└── README.md
+├── .gradle
+├── .idea
+├── app
+├── gradle
+├── .gitignore
+├── build.gradle
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── README.md
+└── settings.gradle
 ```
