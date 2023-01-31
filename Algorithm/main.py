@@ -22,13 +22,20 @@ Example obstacle input
 15 5 S
 4 17 W
 20 20 S
+
+7 3 S
+12 4 W
+10 10 E
+2 12 N
+19 19 W
+8 15 W
 '''
 
 
 
 if __name__ == "__main__":
     gridsize = 20
-    obstaclesNo = 5
+    obstaclesNo = 6
     obstacles = []
     grid = astarclass.Grid(gridsize)                                    # init grid object
     obstacles = createObstacles(gridsize, obstaclesNo, grid)            # init obstacle location in grid object
@@ -38,7 +45,7 @@ if __name__ == "__main__":
     grid.printgrid(gridsize)
     
 
-    astar = astarclass.Astar((gridsize - 1, 0, "N"), obstacles, grid)
+    astar = astarclass.Astar((gridsize - 1, 0, "N"), obstacles, grid, gridsize)
     # grid.plotgrid(gridsize, obstacles, astar.currentpos)
     astar.processNeighbours(gridsize)
     # for key, val in astar.edges.items():
@@ -52,26 +59,23 @@ if __name__ == "__main__":
         # print(f"Obstacle {astar.dest}")
         astar.algorithm()
         path = astar.constructPath()
-        print(f"Path: {path}")
+        # path.pop(-1) # remove destination
+        # print(f"Path: {path}")
         for cell in range(len(path)):
-            # print(f"cell: {cell}")
-            try:
-                path[cell + 1] = astar.changeCurrentNode(path[cell], path[cell + 1])
-            except IndexError:
-                print(f"LAST CELL? {cell} : {len(path)}")
-            if path[cell][0] == astar.dest[0] and path[cell][1] == astar.dest[1]:
-                astar.grid.grid[path[cell][0]][path[cell][1]] = -1
-                continue
+            # if path[cell][0] == astar.dest[0] and path[cell][1] == astar.dest[1]:
+            #     astar.grid.grid[path[cell][0]][path[cell][1]] = -1
+            #     continue
             astar.grid.grid[path[cell][0]][path[cell][1]] = 1
-        astar.grid.printgrid(gridsize)
-        astar.grid.plotgrid(gridsize, copyObstacles, astar.currentpos)
+        # astar.grid.printgrid(gridsize)
+        astar.grid.plotgrid(gridsize, copyObstacles, astar.currentpos, path)
         
         astar.visited.clear()
         # print("\n\n")
         # gotta update currentpos with new destination after
         astar.updateNewDest()
         astar.pq.queue.clear()
-        astar.visited.clear()
+        astar.path.clear()
         # print(f"Original obstacles: {obstacles}")
         astar.resetGrid(gridsize, copyObstacles)
         # break
+        # input("Enter to continue...")

@@ -157,7 +157,7 @@ class Grid:
 
     
 
-    def plotgrid(self, gridsize, obstacles, currentpos):
+    def plotgrid(self, gridsize, obstacles, currentpos, path):
         ggrid = np.array(self.grid)
         fig, ax = plt.subplots(figsize=(12, 12))
         plt.gca().invert_yaxis()
@@ -180,6 +180,15 @@ class Grid:
                 ax.scatter(obstacles[i][1], obstacles[i][0], marker = "v", color = "red", s = 250)
             elif obstacles[i][2] == "W":
                 ax.scatter(obstacles[i][1], obstacles[i][0], marker = "<", color = "red", s = 250)
+        for i in range(len(path)):
+            if path[i][2] == "N":
+                ax.scatter(path[i][1], path[i][0], marker = "^", color = "blue", s = 250)
+            elif path[i][2] == "E":
+                ax.scatter(path[i][1], path[i][0], marker = ">", color = "blue", s = 250)
+            elif path[i][2] == "S":
+                ax.scatter(path[i][1], path[i][0], marker = "v", color = "blue", s = 250)
+            elif path[i][2] == "W":
+                ax.scatter(path[i][1], path[i][0], marker = "<", color = "blue", s = 250)
         plt.show()
             
 
@@ -202,7 +211,7 @@ a grid displaying all obstacles, path taken to reach destination (obstacle), cur
 
 # will require 2 queues, 1 for next path to take, 1 for which obstacle to go to first
 class Astar:
-    def __init__(self, initpos, obstacles, grid):
+    def __init__(self, initpos, obstacles, grid, gridsize):
         self.path = {}
         self.pathcost = {}
         self.visited = {}
@@ -211,6 +220,7 @@ class Astar:
         self.currentpos = initpos
         self.obstacles = obstacles   # dest is currently a list of tuples of obstacle location
         self.grid = grid
+        self.gridsize = gridsize
 
     # returns all edges 
     def allEdges(self):
@@ -222,37 +232,122 @@ class Astar:
 
     # create possible paths (1 step) from each node to the next node
     def processNeighbours(self, gridsize):
+        cheapCost = 1
+        exCost = 6
+        directions = ["N", "E", "S", "W"]
         for i in range(gridsize):
             for j in range(gridsize):
+                for k in range(len(directions)):
                 # if self.grid.grid[i][j] >= 0:   # more than / equal to 0 cos starting position labeled as 1
                     neighbours = []
                     # Check border available paths
                     # cell above current cell: "N"
-                    if (i > 0): #and self.grid.grid[i - 1][j] == 0:
-                        neighbours.append(((i - 1, j), 1))
+                    if (i > 0) and (self.grid.grid[i - 1][j] != -1 and self.grid.grid[i - 1][j] != -10):
+                        neighbours.append(((i - 1, j, directions[k]), cheapCost))
                     # cell right of current cell: "E"
-                    if (j < gridsize - 1): #and self.grid.grid[i][j + 1] == 0:
-                        neighbours.append(((i, j + 1), 1))
+                    if (j < gridsize - 1) and (self.grid.grid[i][j+1] != -1 and self.grid.grid[i][j+1] != -10):
+                        neighbours.append(((i, j + 1, directions[k]), cheapCost))
                     # cell below current cell: "S"
-                    if (i < gridsize - 1): # and self.grid.grid[i + 1][j] == 0:
-                        neighbours.append(((i + 1, j), 1))
+                    if (i < gridsize - 1) and (self.grid.grid[i + 1][j] != -1 and self.grid.grid[i + 1][j] != -10):
+                        neighbours.append(((i + 1, j, directions[k]), cheapCost))
                     # cell left of current cell: "W"
-                    if (j > 0): # and self.grid.grid[i][j - 1] == 0:
-                        neighbours.append(((i, j - 1), 1))
+                    if (j > 0) and (self.grid.grid[i][j - 1] != -1 and self.grid.grid[i][j - 1] != -10):
+                        neighbours.append(((i, j - 1, directions[k]), cheapCost))
                     # cell NorthWest of current cell: "NW"
-                    if (i > 0) and (j > 0): # and self.grid.grid[i - 1][j - 1] == 0:
-                        neighbours.append(((i - 1, j - 1), 2))
+                    if (i > 0) and (j > 0) and (self.grid.grid[i - 1][j - 1] != -1 and self.grid.grid[i - 1][j - 1] != -10):
+                        if directions[k] == "N":
+                            neighbours.append(((i - 1, j - 1, "W"), exCost))
+                        elif directions[k] == "E":
+                            neighbours.append(((i - 1, j - 1, "S"), exCost))
+                        elif directions[k] == "S":
+                            neighbours.append(((i - 1, j - 1, "E"), exCost))
+                        elif directions[k] == "W":
+                            neighbours.append(((i - 1, j - 1, "N"), exCost))
                     # cell NorthEast of current cell: "NE"
-                    if (i > 0) and (j < gridsize - 1): # and self.grid.grid[i - 1][j + 1] == 0:
-                        neighbours.append(((i - 1, j + 1), 2))
+                    if (i > 0) and (j < gridsize - 1) and (self.grid.grid[i - 1][j + 1] != -1 and self.grid.grid[i - 1][j + 1] != -10):
+                        if directions[k] == "N":
+                            neighbours.append(((i - 1, j + 1, "E"), exCost))
+                        elif directions[k] == "E":
+                            neighbours.append(((i - 1, j + 1, "N"), exCost))
+                        elif directions[k] == "S":
+                            neighbours.append(((i - 1, j + 1, "W"), exCost))
+                        elif directions[k] == "W":
+                            neighbours.append(((i - 1, j + 1, "S"), exCost))
+                        # neighbours.append(((i - 1, j + 1, directions[k]), 2))
                     # cell SouthEast of current cell: "SE"
-                    if (i < gridsize - 1) and (j < gridsize - 1): # and self.grid.grid[i + 1][j + 1] == 0:
-                        neighbours.append(((i + 1, j + 1), 2))
+                    if (i < gridsize - 1) and (j < gridsize - 1) and (self.grid.grid[i + 1][j + 1] != -1 and self.grid.grid[i + 1][j + 1] != -10):
+                        if directions[k] == "N":
+                            neighbours.append(((i + 1, j + 1, "W"), exCost))
+                        elif directions[k] == "E":
+                            neighbours.append(((i + 1, j + 1, "S"), exCost))
+                        elif directions[k] == "S":
+                            neighbours.append(((i + 1, j + 1, "E"), exCost))
+                        elif directions[k] == "W":
+                            neighbours.append(((i + 1, j + 1, "N"), exCost))
+                        # neighbours.append(((i + 1, j + 1, directions[k]), 2))
                         # cell SouthWest of current cell: "SW"
-                    if (i < gridsize - 1) and (j > 0): # and self.grid.grid[i + 1][j - 1] == 0:
-                        neighbours.append(((i + 1, j - 1), 2))
+                    if (i < gridsize - 1) and (j > 0) and (self.grid.grid[i + 1][j - 1] != -1 and self.grid.grid[i + 1][j - 1] != -10):
+                        if directions[k] == "N":
+                            neighbours.append(((i + 1, j - 1, "E"), exCost))
+                        elif directions[k] == "E":
+                            neighbours.append(((i + 1, j - 1, "N"), exCost))
+                        elif directions[k] == "S":
+                            neighbours.append(((i + 1, j - 1, "W"), exCost))
+                        elif directions[k] == "W":
+                            neighbours.append(((i + 1, j - 1, "S"), exCost))
+                        # neighbours.append(((i + 1, j - 1, directions[k]), 2))
                     # insert edges into object grid
-                    self.edges[(i, j)] = neighbours
+                    self.edges[(i, j, directions[k])] = neighbours
+
+
+    def getReversePaths(self, currentNode, possibleSteps):
+        cheapCost = 4
+        exCost = 10
+        if currentNode[2] == "N":
+            # reverse SW
+            if (currentNode[0] < self.gridsize - 1) and (currentNode[1] > 0) and self.grid.grid[currentNode[0]+1][currentNode[1]-1] != 1 and self.grid.grid[currentNode[0]+1][currentNode[1]-1] != -10:
+                possibleSteps.append(((currentNode[0]+1, currentNode[1]-1, "E"), exCost))
+            # reverse S
+            if (currentNode[0] < self.gridsize - 1) and self.grid.grid[currentNode[0]+1][currentNode[1]] != 1 and self.grid.grid[currentNode[0]+1][currentNode[1]] != -10:
+                possibleSteps.append(((currentNode[0]+1, currentNode[1], "N"), cheapCost))
+            # reverse SE
+            if (currentNode[0] > self.gridsize - 1) and (currentNode[1] < self.gridsize - 1) and self.grid.grid[currentNode[0]+1][currentNode[1]+1] != 1 and self.grid.grid[currentNode[0]+1][currentNode[1]+1] != -10:
+                possibleSteps.append(((currentNode[0]+1, currentNode[1]+1, "W"), exCost))
+            # print(f"CurrentNode: {currentNode}\tpossible Steps: {possibleSteps}")
+        elif currentNode[2] == "E":
+            # reverse NW
+            if (currentNode[0] > 0) and (currentNode[1] > 0) and self.grid.grid[currentNode[0]-1][currentNode[1]-1] != 1 and self.grid.grid[currentNode[0]-1][currentNode[1]-1] != -10:
+                possibleSteps.append(((currentNode[0]-1, currentNode[1]-1, "S"), exCost))
+            # reverse W
+            if (currentNode[1] > 0) and self.grid.grid[currentNode[0]][currentNode[1]-1] != 1 and self.grid.grid[currentNode[0]][currentNode[1]-1] != -10:
+                possibleSteps.append(((currentNode[0], currentNode[1]-1, "E"), cheapCost))
+            # reverse SW
+            if (currentNode[0] < self.gridsize - 1) and (currentNode[1] > 0) and self.grid.grid[currentNode[0]+1][currentNode[1]-1] != 1 and self.grid.grid[currentNode[0]+1][currentNode[1]-1] != -10:
+                possibleSteps.append(((currentNode[0]+1, currentNode[1]-1, "N"), exCost))
+            # print(f"CurrentNode: {currentNode}\tpossible Steps: {possibleSteps}")
+        elif currentNode[2] == "S":
+            # reverse NW
+            if (currentNode[0] > 0) and (currentNode[1] > 0) and self.grid.grid[currentNode[0]-1][currentNode[1]-1] != 1 and self.grid.grid[currentNode[0]-1][currentNode[1]-1] != -10:
+                possibleSteps.append(((currentNode[0]-1, currentNode[1]-1, "E"), exCost))
+            # reverse N
+            if (currentNode[0] > 0) and self.grid.grid[currentNode[0]-1][currentNode[1]] != 1 and self.grid.grid[currentNode[0]-1][currentNode[1]] != -10:
+                possibleSteps.append(((currentNode[0]-1, currentNode[1], "S"), cheapCost))
+            # reverse NE
+            if (currentNode[0] > 0) and (currentNode[1] < self.gridsize - 1) and self.grid.grid[currentNode[0]-1][currentNode[1]+1] != 1 and self.grid.grid[currentNode[0]-1][currentNode[1]+1] != -10:
+                possibleSteps.append(((currentNode[0]-1, currentNode[1]+1, "W"), exCost))
+            # print(f"CurrentNode: {currentNode}\tpossible Steps: {possibleSteps}")
+        elif currentNode[2] == "W":
+            # reverse NE
+            if (currentNode[0] > 0) and (currentNode[1] < self.gridsize - 1) and self.grid.grid[currentNode[0]-1][currentNode[1]+1] != 1 and self.grid.grid[currentNode[0]-1][currentNode[1]+1] != -10:
+                possibleSteps.append(((currentNode[0]-1, currentNode[1]+1, "S"), exCost))
+            # reverse E
+            if (currentNode[1] < self.gridsize - 1) and self.grid.grid[currentNode[0]][currentNode[1]+1] != 1 and self.grid.grid[currentNode[0]][currentNode[1]+1] != -10:
+                possibleSteps.append(((currentNode[0], currentNode[1]+1, "W"), cheapCost))
+            # reverse SE
+            if (currentNode[0] > self.gridsize - 1) and (currentNode[1] < self.gridsize - 1) and self.grid.grid[currentNode[0]+1][currentNode[1]+1] != 1 and self.grid.grid[currentNode[0]+1][currentNode[1]+1] != -10:
+                possibleSteps.append(((currentNode[0]+1, currentNode[1]+1, "N"), exCost))
+            # print(f"CurrentNode: {currentNode}\tpossible Steps: {possibleSteps}")
+        return possibleSteps
                     
 
     def printObject(self):
@@ -306,8 +401,17 @@ class Astar:
 
     def chooseDest(self):
         self.dest = self.findDest(self.obstacles)
+        
         # print(f"Obstacle list before: {self.obstacles}")
         self.obstacles.remove(self.dest)
+        if self.dest[2] == "N":
+            self.dest = (self.dest[0]-1, self.dest[1], "S")
+        elif self.dest[2] == "E":
+            self.dest = (self.dest[0], self.dest[1]+1, "W")
+        elif self.dest[2] == "S":
+            self.dest = (self.dest[0]+1, self.dest[1], "N")
+        elif self.dest[2] == "W":
+            self.dest = (self.dest[0], self.dest[1]-1, "E")
         # print(f"Obstacle list after: {self.obstacles}")
 
 
@@ -317,12 +421,20 @@ class Astar:
 
 
     def filterNeighbours(self, currentNode):
-        nb = self.neighbours((currentNode[0], currentNode[1]))
+        # nb = self.neighbours((currentNode[0], currentNode[1]))
+        nb = self.neighbours(currentNode)
         toBeRemoved = []
-        print(f"PRE FILTER possible steps: {nb}")
+        # print(f"PRE FILTER possible steps: {nb}")
         for cell in nb:
+            # print(f"VISITED: {self.visited}")
+            # if self.visited[cell[0]] == None:
+            if cell[0] in self.visited:
+                # print(f"STARTING NODE: {cell[0]}")
+                toBeRemoved.append(cell)
+                continue
+            # print(f"Path: {self.path[cell]}")
             # print(f"Current Node: {currentNode}\tCell: {cell}")
-            if currentNode[2] == "N" or currentNode[2] == "S":
+            if currentNode[2] == "N": 
                 # if (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
                 #     print("NW")
                 # elif (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] == cell[0][1]):
@@ -330,6 +442,39 @@ class Astar:
                 # elif (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] + 1 == cell[0][1]):
                 #     print("NE")
                 if (currentNode[0] == cell[0][0]) and (currentNode[1] + 1 == cell[0][1]):
+                    print("E TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] + 1 == cell[0][0]) and (currentNode[1] + 1 == cell[0][1]):
+                    print("SE TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] + 1 == cell[0][0]) and (currentNode[1] == cell[0][1]):
+                    print("S TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] + 1 == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
+                    print("SW TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
+                    print("W TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+            elif currentNode[2] == "S":
+                if (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
+                    print("NW TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] == cell[0][1]):
+                    print("N TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] + 1 == cell[0][1]):
+                    print("NE TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] == cell[0][0]) and (currentNode[1] + 1 == cell[0][1]):
                     print("E TO BE DELETED")
                     toBeRemoved.append(cell)
                     continue
@@ -343,9 +488,11 @@ class Astar:
                     print("W TO BE DELETED")
                     toBeRemoved.append(cell)
                     continue
-            else:
-                # if (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
-                #     print("NW")
+            elif currentNode[2] == "E":
+                if (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
+                    print("NW TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
                 if (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] == cell[0][1]):
                     print("N TO BE DELETED")
                     toBeRemoved.append(cell)
@@ -360,12 +507,51 @@ class Astar:
                     print("S TO BE DELETED")
                     toBeRemoved.append(cell)
                     continue
+                elif (currentNode[0] + 1 == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
+                    print("SW TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
+                    print("W TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+            elif currentNode[2] == "W":
+                # if (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
+                #     print("NW TO BE DELETED")
+                #     toBeRemoved.append(cell)
+                #     continue
+                if (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] == cell[0][1]):
+                    print("N TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] - 1 == cell[0][0]) and (currentNode[1] + 1 == cell[0][1]):
+                    print("NE TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] == cell[0][0]) and (currentNode[1] + 1 == cell[0][1]):
+                    print("E TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] + 1 == cell[0][0]) and (currentNode[1] + 1 == cell[0][1]):
+                    print("SE TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
+                elif (currentNode[0] + 1 == cell[0][0]) and (currentNode[1] == cell[0][1]):
+                    print("S TO BE DELETED")
+                    toBeRemoved.append(cell)
+                    continue
                 # elif (currentNode[0] + 1 == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
-                #     print("SW")
+                #     print("SW TO BE DELETED")
+                #     toBeRemoved.append(cell)
+                #     continue
                 # elif (currentNode[0] == cell[0][0]) and (currentNode[1] - 1 == cell[0][1]):
-                #     print("W")
+                #     print("W TO BE DELETED")
+                #     toBeRemoved.append(cell)
+                #     continue
         for i in toBeRemoved:
             nb.remove(i)
+        if len(nb) == 0:
+            nb = self.getReversePaths(currentNode, nb)
         return nb
 
     def changeCurrentNode(self, currentNode, nextNode):
@@ -442,30 +628,48 @@ class Astar:
         self.grid.setObstacles(obstacles, gridsize)
 
 
+
     def algorithm(self):
-        self.pq.put((0, self.currentpos))
         
+        self.pq.put((0, self.currentpos))
+        semaphore = 0
         self.visited[self.currentpos] = None
         self.pathcost[self.currentpos] = 0
-        # i am hitting infinite loop here?
-        while not self.pq.empty():
-            currentNode = self.pq.get()[1]
+        # print(f"VISITED: {self.visited}")
+        # input("Enter to continue...")
+        while not self.pq.empty() or semaphore == 0:
+            if self.pq.empty() and semaphore == 0:
+                possibleSteps = self.getReversePaths(currentNode, [])
+                possibleSteps = self.filterNeighbours(currentNode)
+                # print(f"Reverse steps: {possibleSteps}")
+            else:
+                currentNode = self.pq.get()[1]
             # self.grid.grid[currentNode[0]][currentNode[1]] = 1
-            if currentNode[0] == self.dest[0] and currentNode[1] == self.dest[1]:
-                # self.path[currentNode]
-                break
-            # print(f"Current Node: {currentNode}")
-            # possibleSteps = self.filterNeighbours(currentNode)
-            # print(f"POST FILTER possible steps: {possibleSteps}\n")
-            print(f"neighbours: {self.neighbours((currentNode[0], currentNode[1]))}")
-            for nextNode, weight in self.neighbours((currentNode[0], currentNode[1])):
-            # for nextNode, weight in possibleSteps:
+            # if currentNode[0] == self.dest[0] and currentNode[1] == self.dest[1]:
+                if currentNode == self.dest:
+                    # self.path[currentNode]
+                    semaphore = 1
+                    break
+                # print(f"Current Node: {currentNode}")
+                possibleSteps = self.filterNeighbours(currentNode)
+                # print(f"POST FILTER possible steps: {possibleSteps}\n")
+            # print(f"neighbours: {self.neighbours(currentNode)}")
+            # for nextNode, weight in self.neighbours((currentNode[0], currentNode[1])):
+            # for nextNode, weight in self.neighbours(currentNode):
+            # if len(possibleSteps) == 0:
+            #     '''get backward steps'''
+            #     # input("Enter to continue...")
+            #     possibleSteps = self.getReversePaths(currentNode, possibleSteps)
+                
+            #     print(f"reverse steps: {possibleSteps}")
+                
+            for nextNode, weight in possibleSteps:
                 if self.grid.grid[nextNode[0]][nextNode[1]] == 1 or self.grid.grid[nextNode[0]][nextNode[1]] == -10:
                     # print(f"Skipping this node: {nextNode}")
                     # self.grid.printgrid(20)
                     continue
                 # print(f"\nPQ: {self.pq.queue}\n")
-                print(f"Current Node: {currentNode}\tNext Node: {nextNode}")
+                # print(f"Current Node: {currentNode}\tNext Node: {nextNode}")
                 currentCost = weight + self.pathcost[currentNode]
                 heuristic = self.heuristic(nextNode, self.dest)
                 # print(f"Current node: {currentNode}\tNext node: {nextNode}\tdestination:{self.dest}\theuristics: {heuristic}\n")
@@ -493,9 +697,11 @@ class Astar:
     def constructPath(self):
         currentNode = self.dest
         path = []
+        print(f"path: {self.path}")
         while currentNode != self.currentpos:
             path.append(currentNode)
-            currentNode = self.path[(currentNode[0], currentNode[1])]
+            currentNode = self.path[currentNode]
+            # currentNode = self.path[(currentNode[0], currentNode[1])]
         path.append(self.currentpos)
         path.reverse()
 
