@@ -13,7 +13,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
-
     private LayoutInflater myLayoutInflater;
     private ArrayList<BluetoothDevice> myDevices;
     private int myViewResourceId;

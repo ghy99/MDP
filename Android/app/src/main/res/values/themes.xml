@@ -6,12 +6,13 @@
         <item name="colorPrimary">#282A3A</item>
         <item name="colorPrimaryVariant">#282A3A</item>
         <item name="colorOnPrimary">#FFFFFF</item>
+
         <!-- Secondary brand color. -->
         <item name="colorSecondary">#664229</item>
         <item name="colorSecondaryVariant">#664229</item>
         <item name="colorOnSecondary">@color/black</item>
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">#101223</item>
-        <!-- Customize your theme here. -->
     </style>
 </resources>

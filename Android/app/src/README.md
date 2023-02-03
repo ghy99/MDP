@@ -4,9 +4,13 @@
 
 > A Fragment in Android development is a part of an activity which represents a behavior or a portion of user interface in an activity. It is used to represent part of UI of an activity which can be added or replaced dynamically. Fragments are used to build flexible and dynamic user interfaces.
 
-## Adapter
+## Adapters
 
 > In Android development, an adapter is a bridge between an app's data and the View objects that display the data. It is used to adapt data from a data source, such as an array or a database, to be displayed in a View, such as a ListView or a GridView.
+
+## Intents
+
+> In Android development, an Intent is a message object that is used to request an action from another component, such as an Activity, a Service, or a Broadcast Receiver. Intents are used to start new activities, to start a service, to deliver a broadcast, and to start other components.
 
 ## Recycler View Adapter
 

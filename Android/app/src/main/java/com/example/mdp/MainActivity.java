@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +26,6 @@ public class MainActivity extends AppCompatActivity {
         // Use LayoutInflater to get other views (arena)
         LayoutInflater myLayoutInflater = getLayoutInflater();
         View arenaView = myLayoutInflater.inflate(R.layout.arena, null);
-
-        // Now we can access arena's elements through arenaView
-//        ImageView obs1 = arenaView.findViewById(R.id.obstacle1);
     }
 
     public void openCommsView() {
