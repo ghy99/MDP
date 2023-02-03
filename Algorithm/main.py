@@ -1,4 +1,5 @@
 import astarclass
+import grid
 import copy
 from queue import PriorityQueue
 
@@ -22,6 +23,7 @@ Example obstacle input
 15 5 S
 4 17 W
 20 20 S
+1 20 N
 
 7 3 S
 12 4 W
@@ -29,6 +31,20 @@ Example obstacle input
 2 12 N
 19 19 W
 8 15 W
+
+10 1 N
+17 3 N
+13 15 E
+4 18 S
+20 20 W
+10 10 W
+
+6 1 N
+1 6 E
+8 8 W
+14 2 E
+10 20 W
+18 13 S
 '''
 
 
@@ -67,14 +83,17 @@ if __name__ == "__main__":
             #     continue
             astar.grid.grid[path[cell][0]][path[cell][1]] = 1
         # astar.grid.printgrid(gridsize)
+        # print(f"QUEUE: {astar.pq.queue}")
         astar.grid.plotgrid(gridsize, copyObstacles, astar.currentpos, path)
         
         astar.visited.clear()
         # print("\n\n")
         # gotta update currentpos with new destination after
+        
         astar.updateNewDest()
         astar.pq.queue.clear()
         astar.path.clear()
+        astar.pathcost.clear()
         # print(f"Original obstacles: {obstacles}")
         astar.resetGrid(gridsize, copyObstacles)
         # break
