@@ -30,7 +30,7 @@ class Astar:
         self.edges = {}
         self.pq = PriorityQueue()
         self.currentpos = initpos
-        self.obstacles = obstacles   # dest is currently a list of tuples of obstacle location
+        self.obstacles = obstacles   # list of current obstacles still in play
         self.grid = grid
         self.gridsize = gridsize
 
@@ -111,7 +111,19 @@ class Astar:
                             neighbours.append(((i + 1, j - 1, "S"), exCost))
                     # insert edges into object grid
                     self.edges[(i, j, directions[k])] = neighbours
+    
+    
+    def resetGrid(self, gridsize, obstacles):
+        for i in range(gridsize):
+            for j in range(gridsize):
+                if self.currentpos[0] == i and self.currentpos[1] == j:
+                    self.grid.grid[i][j] = 1
+                if i < 4 and j < 4:
+                    self.grid.grid[i][j] = -5
+                self.grid.grid[i][j] = 0
+        self.grid.setObstacles(obstacles, gridsize)
 
+    
     def getReversePaths(self, currentNode, possibleSteps):
         cheapCost = 4
         exCost = 6
@@ -189,13 +201,11 @@ class Astar:
         print(f"Next Destination: \t{self.dest}")
         print(f"Leftover Obstacles: \t{self.obstacles}\n")
 
-    # basically greedy find shortest distance but not accounting for 1 cell per move
+    ''' basically greedy find shortest distance but not accounting for 1 cell per move '''
     def heuristic(self, a, b):  # a = current position, b = destination position
-        # return np.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
-        # print(f"b[0] - a[0]: {b[0] - a[0]}\tb[1] - a[1]: {b[1] - a[1]}")
         return np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
 
-    # This function finds nearest obstacle and do a* to find shortest path
+    ''' This function finds nearest obstacle to do a* (Can be changed to hamiltonian?) '''
     def findDest(self, obstacles):
         # dest = (9999, 9999, "N")
         if obstacles:
@@ -209,6 +219,8 @@ class Astar:
                 dest = i
         return dest
 
+    ''' Finds the cell in front of obstacle's image to "flip direction" 
+        so that robot faces obstacle instead of reversing into obstacle '''
     def chooseDest(self):
         self.dest = self.findDest(self.obstacles)
         # print(f"Obstacle list before: {self.obstacles}")
@@ -223,10 +235,13 @@ class Astar:
             self.dest = (self.dest[0], self.dest[1]-1, "E")
         # print(f"Obstacle list after: {self.obstacles}")
 
+    ''' Update current location with location of last obstacle visited 
+        (HAVE TO CHANGE THIS IN THE EVENT WHERE ROBOT RECOGNIZES IMAGE BEFORE STOPPING?
+        Can be changed to path list's last cell visited? not sure about this)'''
     def updateNewDest(self):
         self.currentpos = self.dest
-        # self.chooseDest()
 
+    ''' Filter out illegal / unnecessary moves '''
     def filterNeighbours(self, currentNode):
         nb = self.neighbours(currentNode)
         toBeRemoved = []
@@ -388,95 +403,42 @@ class Astar:
     #             f"NONE ENCOUNTERED!!!!!!!\nCurrent Node: {currentNode}\tNext Node: {nextNode}\tdirection: {direction}\n")
     #     return (nextNode[0], nextNode[1], direction)
 
-    def resetGrid(self, gridsize, obstacles):
-        for i in range(gridsize):
-            for j in range(gridsize):
-                if self.currentpos[0] == i and self.currentpos[1] == j:
-                    self.grid.grid[i][j] = 1
-                if i < 4 and j < 4:
-                    self.grid.grid[i][j] = -5
-                self.grid.grid[i][j] = 0
-        self.grid.setObstacles(obstacles, gridsize)
-
     def algorithm(self):
         self.pq.put((0, self.currentpos))
         semaphore = 0
         self.visited[self.currentpos] = None
         self.pathcost[self.currentpos] = 0
-        # print(f"VISITED: {self.visited}")
-        # input("Enter to continue...")
         while not self.pq.empty() or semaphore == 0:
             if self.pq.empty() and semaphore == 0:
                 possibleSteps = self.getReversePaths(currentNode, [])
                 possibleSteps = self.filterNeighbours(currentNode)
-                # print(f"Reverse steps: {possibleSteps}")
             else:
                 currentNode = self.pq.get()[1]
-            # self.grid.grid[currentNode[0]][currentNode[1]] = 1
-            # if currentNode[0] == self.dest[0] and currentNode[1] == self.dest[1]:
                 if currentNode == self.dest:
-                    # self.path[currentNode]
                     semaphore = 1
                     break
-                # print(f"Current Node: {currentNode}")
                 possibleSteps = self.filterNeighbours(currentNode)
-                # print(f"POST FILTER possible steps: {possibleSteps}\n")
-            # print(f"neighbours: {self.neighbours(currentNode)}")
-            # for nextNode, weight in self.neighbours((currentNode[0], currentNode[1])):
-            # for nextNode, weight in self.neighbours(currentNode):
-            # if len(possibleSteps) == 0:
-            #     '''get backward steps'''
-            #     # input("Enter to continue...")
-            #     possibleSteps = self.getReversePaths(currentNode, possibleSteps)
-
-            #     print(f"reverse steps: {possibleSteps}")
 
             for nextNode, weight in possibleSteps:
                 if self.grid.grid[nextNode[0]][nextNode[1]] == 1 or self.grid.grid[nextNode[0]][nextNode[1]] == -10:
-                    # print(f"Skipping this node: {nextNode}")
-                    # self.grid.printgrid(20)
                     continue
-                # print(f"\nPQ: {self.pq.queue}\n")
-                # print(f"Current Node: {currentNode}\tNext Node: {nextNode}")
                 currentCost = weight + self.pathcost[currentNode]
                 heuristic = self.heuristic(nextNode, self.dest)
-                # print(f"Current node: {currentNode}\tNext node: {nextNode}\tdestination:{self.dest}\theuristics: {heuristic}\n")
                 newCost = currentCost * heuristic
-                # print(f" newcost: {newCost}\tcurrentCost: {currentCost}")
                 if (nextNode not in self.visited) or (currentCost < self.pathcost[nextNode]):
                     priority = newCost
-                    # print(f"nextnode: {nextNode}\tweight: {weight}\n")
-                    # this part got problem?
-                    # print(f"current: {currentNode}\tOld next node: {nextNode}")
-
-                    # nextNode = self.changeCurrentNode(currentNode, nextNode)
-
-                    # node = self.changeCurrentNode(currentNode, nextNode)
-                    # print(f"current: {currentNode}\tNew next node: {nextNode}")
                     self.visited[nextNode] = self.currentpos
                     self.pq.put((priority, nextNode))
                     self.path[nextNode] = currentNode
                     self.pathcost[nextNode] = currentCost
-
-            # print(f"PRIORITY QUEUE: {self.pq.queue}")
-            # print(f"VISITED: {self.visited}\n")
         return
 
     def constructPath(self):
         currentNode = self.dest
         path = []
-        # print(f"path: {self.path}")
         while currentNode != self.currentpos:
             path.append(currentNode)
             currentNode = self.path[currentNode]
-            # currentNode = self.path[(currentNode[0], currentNode[1])]
         path.append(self.currentpos)
         path.reverse()
-
-        # avail = self.availableMoves()
-        # print(f"Available path: {avail}")
-        # self.expandPossiblePath(avail)
-        # print(f"Visited:")
-        # for key, val in self.visited.items():
-        #     print(f"\t\t{key} : {val}\n")
         return path

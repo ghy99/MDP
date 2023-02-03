@@ -1,12 +1,35 @@
 import astarclass
-import grid
+from grid import Grid
+from simulation import Simulation
+
+import settings
 import copy
-from queue import PriorityQueue
+import pygame
+import sys
 
+''' Call simulation.py to init pygame simulation HAVENT DO YET '''
+def simAlgo():
+    pygame.init()
+    clock = pygame.time.Clock()
+    # screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+    screen = pygame.display.set_mode((600, 600), pygame.HWSURFACE | pygame.DOUBLEBUF)
+    bg = pygame.image.load(os.path.join("./images/", "white.png"))
+    pygame.mouse.set_visible(0)
+    pygame.display.set_caption("Vroom Vroom Simulation")
+    while True:
+        clock.tick(60)
+        screen.blit(bg, (0, 0)) # copy background image onto canvas in display
+        x, y = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+        pygame.display.update()
 
-def createObstacles(gridsize, obstaclesNo, grid):
+''' Get Obstacle coordinate & direction through input '''
+def createObstacles(gridsize):
     obstacles = []
-    grid.printgrid(gridsize)
+    # grid.printgrid(gridsize)
+    obstaclesNo = int(input("Enter number of obstacles: "))
     print("x = row number (1-20), y = column number (1-20), D = Direction (N S E W)")                          # this part is for selecting obstacles. change to passing in obstacles as a parameter
     print(f"Select {obstaclesNo} obstacle positions, separated by space(x y D):")
     for i in range(obstaclesNo):
@@ -16,8 +39,42 @@ def createObstacles(gridsize, obstaclesNo, grid):
     
     return obstacles
 
+''' create grid object and list of obstacles '''
+def initGrid():
+    gridsize = settings.GRID_LENGTH // settings.GRID_CELL_LENGTH
+    obstacles = createObstacles(gridsize)           # init obstacle location in grid object
+    grid = Grid(gridsize, obstacles)                           # init grid object
+    
+    grid.printgrid(gridsize)                         
+    
+    grid.setObstacles(obstacles, gridsize)
+    grid.printgrid(gridsize)
+    return grid, obstacles
+
+
+''' Run A* Algo'''
+def runAlgo(grid, obstacles):
+    gridsize = settings.GRID_LENGTH // settings.GRID_CELL_LENGTH
+    copyObstacles = copy.deepcopy(obstacles)
+    astar = astarclass.Astar(settings.INITPOS, obstacles, grid, gridsize)
+    astar.processNeighbours(gridsize)
+    while(astar.obstacles):
+        astar.chooseDest()
+        astar.algorithm()
+        path = astar.constructPath()
+        for cell in range(len(path)):
+            astar.grid.grid[path[cell][0]][path[cell][1]] = 1
+        astar.grid.plotgrid(gridsize, copyObstacles, astar.currentpos, path)
+        
+        astar.visited.clear()
+        astar.updateNewDest()
+        astar.pq.queue.clear()
+        astar.path.clear()
+        astar.pathcost.clear()
+        astar.resetGrid(gridsize, copyObstacles)
 '''
 Example obstacle input
+6
 5 5 N
 7 9 E
 15 5 S
@@ -25,6 +82,7 @@ Example obstacle input
 20 20 S
 1 20 N
 
+6
 7 3 S
 12 4 W
 10 10 E
@@ -32,6 +90,7 @@ Example obstacle input
 19 19 W
 8 15 W
 
+6
 10 1 N
 17 3 N
 13 15 E
@@ -39,6 +98,7 @@ Example obstacle input
 20 20 W
 10 10 W
 
+6
 6 1 N
 1 6 E
 8 8 W
@@ -48,53 +108,11 @@ Example obstacle input
 '''
 
 
-
 if __name__ == "__main__":
-    gridsize = 20
-    obstaclesNo = 6
-    obstacles = []
-    grid = astarclass.Grid(gridsize)                                    # init grid object
-    obstacles = createObstacles(gridsize, obstaclesNo, grid)            # init obstacle location in grid object
-    # copyObstacles = obstacles.copy()
-    copyObstacles = copy.deepcopy(obstacles)
-    grid.setObstacles(obstacles, gridsize)
-    grid.printgrid(gridsize)
+    # grid, obstacles = initGrid()
+    # runAlgo(grid, obstacles)
+    sim = Simulation()
+    # sim.drawGrid()
+    sim.runSimulation()
+    ''' idk why the simulation not running LOL '''
     
-
-    astar = astarclass.Astar((gridsize - 1, 0, "N"), obstacles, grid, gridsize)
-    # grid.plotgrid(gridsize, obstacles, astar.currentpos)
-    astar.processNeighbours(gridsize)
-    # for key, val in astar.edges.items():
-    #     print(f"\t\t{key} : {val}\n")
-    # astar.filterNeighbours(astar.currentpos)
-    
-
-    while(astar.obstacles):
-        astar.chooseDest()
-        # astar.printObject()
-        # print(f"Obstacle {astar.dest}")
-        astar.algorithm()
-        path = astar.constructPath()
-        # path.pop(-1) # remove destination
-        # print(f"Path: {path}")
-        for cell in range(len(path)):
-            # if path[cell][0] == astar.dest[0] and path[cell][1] == astar.dest[1]:
-            #     astar.grid.grid[path[cell][0]][path[cell][1]] = -1
-            #     continue
-            astar.grid.grid[path[cell][0]][path[cell][1]] = 1
-        # astar.grid.printgrid(gridsize)
-        # print(f"QUEUE: {astar.pq.queue}")
-        astar.grid.plotgrid(gridsize, copyObstacles, astar.currentpos, path)
-        
-        astar.visited.clear()
-        # print("\n\n")
-        # gotta update currentpos with new destination after
-        
-        astar.updateNewDest()
-        astar.pq.queue.clear()
-        astar.path.clear()
-        astar.pathcost.clear()
-        # print(f"Original obstacles: {obstacles}")
-        astar.resetGrid(gridsize, copyObstacles)
-        # break
-        # input("Enter to continue...")
