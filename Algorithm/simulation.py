@@ -21,15 +21,18 @@ class Simulation():
                 rect = pygame.Rect(x, y, settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR, settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR)
                 pygame.draw.rect(cls.screen, settings.WHITE, rect, 2)
     
+    ''' How to add texts?? '''
     def drawButtons(cls, xpos, ypos, color):
         startButton = pygame.Rect(xpos, ypos, settings.BUTTON_LENGTH, settings.BUTTON_WIDTH)
+
         pygame.draw.rect(cls.screen, color, startButton)
+
 
     def runSimulation(self):
         # bg = pygame.image.load(os.path.join("./images/", "white.png"))
         self.clock = pygame.time.Clock()
         self.drawGrid()
-        self.drawButtons(50, 500, settings.PINK)
+        self.drawButtons(50, 500, settings.GREEN)
         while True:
             
             self.clock.tick(10)     # 10 frames per second apparently
@@ -39,5 +42,8 @@ class Simulation():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if (50 < x < x + settings.BUTTON_LENGTH) and (500 < y < y + settings.BUTTON_WIDTH):
+                        print("START BUTTON IS CLICKED!!! I REPEAT, START BUTTON IS CLICKED!!!")
             pygame.display.update()
 
