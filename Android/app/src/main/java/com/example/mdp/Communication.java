@@ -43,6 +43,7 @@ public class Communication extends AppCompatActivity {
                 EditText msgToSend = (EditText) findViewById(R.id.chatbox_tv);
                 String message = msgToSend.getText().toString();
                 Log.d(TAG, message);
+
                 if (BluetoothService.BluetoothConnectionStatus) {
                     byte[] bytes = message.getBytes(Charset.defaultCharset());
                     BluetoothService.write(bytes);

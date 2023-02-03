@@ -1507,12 +1507,13 @@ public class Arena extends AppCompatActivity {
                     startingIndex = message.indexOf("<", endingIndex + 1);
                     endingIndex = message.indexOf(">", endingIndex + 1);
                     String y = message.substring(startingIndex + 1, endingIndex);
+                    int adjusted_y = 19 - Integer.parseInt(y);
 
                     startingIndex = message.indexOf("<", endingIndex + 1);
                     endingIndex = message.indexOf(">", endingIndex + 1);
                     String direction = message.substring(startingIndex + 1, endingIndex);
 
-                    Log.d("ROBOT", "(x: " + x + ") (y: " + y + ") (direction: " + direction + ")");
+                    Log.d("ROBOT", "(x: " + x + ") (y: " + adjusted_y + ") (direction: " + direction + ")");
 
                     int direction_int = 0;
                     switch (direction) {
@@ -1544,7 +1545,8 @@ public class Arena extends AppCompatActivity {
                             break;
                     }
 
-                    updateRobotPosition(Integer.parseInt(x), Integer.parseInt(y), direction_int);
+                    // updateRobotPosition(Integer.parseInt(x), Integer.parseInt(y), direction_int);
+                    updateRobotPosition(Integer.parseInt(x), adjusted_y, direction_int);
                     break;
                 // update obstacle ID
                 case Helper.TARGET:
