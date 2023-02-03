@@ -1044,35 +1044,45 @@ public class Arena extends AppCompatActivity {
     private void setPreset1Button() {
         updateStatusWindow("Ready");
 
-        obstacle1.setX(40);
-        obstacle1.setY(80);
+        obstacle1.setX(350);
+        obstacle1.setY(70);
         obstacle1.setRotation(180);
         obstacle1.setImageResource(Helper.resources.get("o1s"));
 
-        obstacle2.setX(240);
-        obstacle2.setY(320);
+        obstacle2.setX(595);
+        obstacle2.setY(70);
         obstacle2.setRotation(270);
         obstacle2.setImageResource(Helper.resources.get("o2w"));
 
-        obstacle3.setX(360);
-        obstacle3.setY(720);
-        obstacle3.setRotation(0);
-        obstacle3.setImageResource(Helper.resources.get("o3n"));
+        obstacle3.setX(70);
+        obstacle3.setY(105);
+        obstacle3.setRotation(180);
+        obstacle3.setImageResource(Helper.resources.get("o3s"));
 
-        obstacle4.setX(640);
-        obstacle4.setY(600);
-        obstacle4.setRotation(270);
-        obstacle4.setImageResource(Helper.resources.get("o4w"));
+        obstacle4.setX(560);
+        obstacle4.setY(525);
+        obstacle4.setRotation(180);
+        obstacle4.setImageResource(Helper.resources.get("o4s"));
 
-        obstacle5.setX(440);
-        obstacle5.setY(400);
-        obstacle5.setRotation(90);
-        obstacle5.setImageResource(Helper.resources.get("o5e"));
+        obstacle5.setX(455);
+        obstacle5.setY(630);
+        obstacle5.setRotation(270);
+        obstacle5.setImageResource(Helper.resources.get("o5w"));
 
-        obstacle6.setX(600);
-        obstacle6.setY(160);
-        obstacle6.setRotation(180);
-        obstacle6.setImageResource(Helper.resources.get("o6s"));
+        obstacle6.setX(210);
+        obstacle6.setY(455);
+        obstacle6.setRotation(0);
+        obstacle6.setImageResource(Helper.resources.get("o6n"));
+
+        obstacle7.setX(315);
+        obstacle7.setY(280);
+        obstacle7.setRotation(270);
+        obstacle7.setImageResource(Helper.resources.get("o7w"));
+
+        obstacle8.setX(105);
+        obstacle8.setY(560);
+        obstacle8.setRotation(90);
+        obstacle8.setImageResource(Helper.resources.get("o8e"));
 
         Toast.makeText(Arena.this, "Preset 1 Applied", Toast.LENGTH_SHORT).show();
     }
