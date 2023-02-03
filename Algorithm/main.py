@@ -112,7 +112,6 @@ if __name__ == "__main__":
     # grid, obstacles = initGrid()
     # runAlgo(grid, obstacles)
     sim = Simulation()
-    # sim.drawGrid()
     sim.runSimulation()
     ''' idk why the simulation not running LOL '''
     
