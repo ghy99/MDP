@@ -125,8 +125,8 @@ class Astar:
 
     
     def getReversePaths(self, currentNode, possibleSteps):
-        cheapCost = 4
-        exCost = 6
+        cheapCost = 2
+        exCost = 4
         if currentNode[2] == "N":
             # reverse SW
             if (currentNode[0] < self.gridsize - 1) and (currentNode[1] > 0) and self.grid.grid[currentNode[0] + 1][currentNode[1] - 1] != 1 and self.grid.grid[currentNode[0] + 1][currentNode[1] - 1] != -10:
