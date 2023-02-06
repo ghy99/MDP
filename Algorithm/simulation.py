@@ -24,22 +24,64 @@ class Simulation():
                 pygame.draw.rect(cls.screen, settings.WHITE, rect, 2)
     
     ''' How to add texts?? '''
-    def drawButtons(cls, xpos, ypos, color, text):
-        startButton = pygame.Rect(xpos, ypos, settings.BUTTON_LENGTH, settings.BUTTON_WIDTH)
-        pygame.draw.rect(cls.screen, color, startButton)
-        text = cls.font.render(text, True, (settings.BLACK))
-        cls.screen.blit(text, text.get_rect(center=(startButton.x + (settings.BUTTON_LENGTH//2), startButton.y + (settings.BUTTON_WIDTH//2))))
+    def drawButtons(cls, xpos, ypos, bgcolor, text, textColor, length, width):
+        startButton = pygame.Rect(xpos, ypos, length, width)
+        pygame.draw.rect(cls.screen, bgcolor, startButton)
+        text = cls.font.render(text, True, textColor)
+        cls.screen.blit(text, text.get_rect(center=(startButton.x + (length//2), startButton.y + (width//2))))
+
+    def selectObstacles(cls, x, y, cellSize, color):
+        newRect = pygame.Rect(x * cellSize, y * cellSize, cellSize, cellSize)
+        cls.screen.fill(color, newRect)
+        pygame.draw.rect(cls.screen, color, newRect, 2)
+
+    def drawObstaclesButton(cls, obstacles, color):
+        size = settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR
+        #     self.selectObstacles(x // (10 * 3), y // ( 10 * 3), 
+        #     settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR, 
+        #     settings.GREY)
+        for i in obstacles:
+            print(i)
+            if i[2] == 'N':
+                newRect = pygame.Rect((i[0]) * size, (i[1] - 2) * size, size, 2)
+                cls.screen.fill(color, newRect)
+                pygame.draw.rect(cls.screen, color, newRect, 2)
+            elif i[2] == 'E':
+                newRect = pygame.Rect((i[0]) * size, (i[1] - 2) * size, size, 2)
+                cls.screen.fill(color, newRect)
+                pygame.draw.rect(cls.screen, color, newRect, 2)
+            elif i[2] == 'S':
+                pass
+            elif i[2] == 'W':
+                pass
+        # cls.drawButtons(685, 120, settings.GREY, 'N', settings.BLACK, size, size)    # N
+        # cls.drawButtons(655, 150, settings.GREY, 'E', settings.BLACK, size, size)    # E
+        # cls.drawButtons(685, 180, settings.GREY, 'S', settings.BLACK, size, size)    # S
+        # cls.drawButtons(715, 150, settings.GREY, 'W', settings.BLACK, size, size)    # W
+
+    def draw(cls, x, y):
+        # start button
+        cls.drawButtons(650, 500, settings.GREEN, 'START!', settings.BLACK, settings.BUTTON_LENGTH, settings.BUTTON_WIDTH)    
+        # current cursor coordinates, change to robot
+        cls.drawButtons(0, 600, settings.BLACK, f"({x}, {y})", settings.WHITE, settings.BUTTON_LENGTH, settings.BUTTON_WIDTH)
+        # supposedly current direction object is facing
+        cls.drawButtons(150, 600, settings.BLACK, f"Direction: North", settings.WHITE, settings.BUTTON_LENGTH * 2, settings.BUTTON_WIDTH)
+        # set obstacles, asking for input from cmd prompt
+        cls.drawButtons(650, 400, settings.GREEN, 'SET', settings.BLACK, settings.BUTTON_LENGTH, settings.BUTTON_WIDTH)
 
     def runSimulation(self):
         # bg = pygame.image.load(os.path.join("./images/", "white.png"))
         self.clock = pygame.time.Clock()
-        
+        startingPosX = 0
+        startingPosY = (settings.GRID_LENGTH - settings.GRID_CELL_LENGTH) * settings.SCALING_FACTOR
         while True:
             self.drawGrid()
-            self.drawButtons(650, 500, settings.GREEN, 'START!')    # start button
+            
             self.clock.tick(10)     # 10 frames per second apparently
             # self.screen.blit(bg, (0, 0))
             x, y = pygame.mouse.get_pos()
+            self.draw(x, y)
+            # self.drawObstaclesButton()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -49,14 +91,14 @@ class Simulation():
                         print("START BUTTON IS CLICKED!!! I REPEAT, START BUTTON IS CLICKED!!!")
                         grid, obstacles = app.initGrid()
                         app.runAlgo(grid, obstacles)
-                    elif (x < settings.GRID_LENGTH * settings.SCALING_FACTOR) and (y < settings.GRID_LENGTH * settings.SCALING_FACTOR):
-                        ''' Each cell is 10x10 multiplied by scaling factor of 3 = 30x30px
-                            if i want to get grid cell, take coordinate // (10 * 3) '''
-                        cellCoord = (x // (10 * 3), y // (10 * 3))
-                        print(f"Coordinates: {cellCoord}")
-                        
-                        newRect = pygame.Rect((x // (10 * 3)) * settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR, (y // (10 * 3)) * settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR, settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR, settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR)
-                        self.screen.fill(settings.GREY, newRect)
-                        pygame.draw.rect(self.screen, settings.GREY, newRect, 2)
+                    elif (650 < x < x + settings.BUTTON_LENGTH) and (400 < y < y + settings.BUTTON_WIDTH):
+                        print("*****Setting obstacles*****")
+                        obstacles = app.createObstacles(settings.GRID_LENGTH // settings.GRID_CELL_LENGTH)
+                        print("*****Drawing obstacles*****")
+                        self.drawObstaclesButton(obstacles, settings.RED)
+                    # elif (x < settings.GRID_LENGTH * settings.SCALING_FACTOR) and (y < settings.GRID_LENGTH * settings.SCALING_FACTOR):
+                    #     ''' Each cell is 10x10 multiplied by scaling factor of 3 = 30x30px
+                    #         if i want to get grid cell, take coordinate // (10 * 3) '''
+                    #     self.selectObstacles(x // (10 * 3), y // ( 10 * 3), settings.GRID_CELL_LENGTH * settings.SCALING_FACTOR, settings.GREY)
             pygame.display.update()
 
