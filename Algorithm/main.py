@@ -1,6 +1,9 @@
 import astarclass
 from grid import Grid
 from simulation import Simulation
+import app
+import settings
+
 '''
 Example obstacle input
 6
@@ -37,7 +40,12 @@ Example obstacle input
 '''
 
 if __name__ == "__main__":
-    # grid, obstacles = initGrid()
-    # runAlgo(grid, obstacles)
-    sim = Simulation()
-    sim.runSimulation()    
+    grid = Grid()
+    grid.setObstacles()
+    grid.setObstacleBoundary()
+    grid.plotgrid()
+    # grid, obstacles = app.initGrid()
+    # a = astarclass.Astar(settings.INITPOS, obstacles, grid, settings.GRID_LENGTH//settings.GRID_CELL_LENGTH)
+    # a.runAlgo(grid, obstacles)
+    # sim = Simulation()
+    # sim.runSimulation()    

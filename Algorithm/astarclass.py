@@ -1,12 +1,13 @@
 from queue import PriorityQueue
 import numpy as np
 import matplotlib.pyplot as plt
-import pygame
+import settings
 from grid import Grid
+import copy
 
 
 '''
-Astar class:
+self class:
 uses:
 Priority queue
 dictionary of path {current node : parent node}
@@ -442,3 +443,24 @@ class Astar:
         path.append(self.currentpos)
         path.reverse()
         return path
+
+    ''' Run A* Algo'''
+    def runAlgo(self, grid, obstacles):
+        gridsize = settings.GRID_LENGTH // settings.GRID_CELL_LENGTH
+        copyObstacles = copy.deepcopy(obstacles)
+        # self = self.self(settings.INITPOS, obstacles, grid, gridsize)
+        self.processNeighbours(gridsize)
+        while(self.obstacles):
+            self.chooseDest()
+            self.algorithm()
+            path = self.constructPath()
+            for cell in range(len(path)):
+                self.grid.grid[path[cell][0]][path[cell][1]] = 1
+            self.grid.plotgrid(gridsize, copyObstacles, self.currentpos, path)
+            
+            self.visited.clear()
+            self.updateNewDest()
+            self.pq.queue.clear()
+            self.path.clear()
+            self.pathcost.clear()
+            self.resetGrid(gridsize, copyObstacles)
