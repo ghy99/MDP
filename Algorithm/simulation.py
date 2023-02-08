@@ -4,7 +4,6 @@ import os
 import settings
 import app
 
-
 class Simulation():
     def __init__(self):
         pygame.init()
