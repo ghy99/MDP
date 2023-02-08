@@ -948,8 +948,7 @@ public class Arena extends AppCompatActivity {
             byte[] bytes = IRstart.getBytes(Charset.defaultCharset());
             BluetoothService.write(bytes);
             Toast.makeText(Arena.this, "Obstacles sent", Toast.LENGTH_LONG).show();
-            updateStatusWindow("IR started");
-
+            updateStatusWindow("IR Started");
         } else {
             Toast.makeText(Arena.this, "Please connect to Bluetooth.", Toast.LENGTH_LONG).show();
         }
@@ -965,7 +964,7 @@ public class Arena extends AppCompatActivity {
             byte[] bytes = "STM:sp".getBytes(Charset.defaultCharset());
             BluetoothService.write(bytes);
             Toast.makeText(Arena.this, "Shortest Path Started.", Toast.LENGTH_LONG).show();
-            updateStatusWindow("Auto-Movement Ongoing");
+            updateStatusWindow("SP Started");
         } else {
             Toast.makeText(Arena.this, "Please connect to Bluetooth.", Toast.LENGTH_LONG).show();
         }
@@ -1548,7 +1547,7 @@ public class Arena extends AppCompatActivity {
                     // updateRobotPosition(Integer.parseInt(x), Integer.parseInt(y), direction_int);
                     updateRobotPosition(Integer.parseInt(x), adjusted_y, direction_int);
                     break;
-                // update obstacle ID
+                // update obstacle ID (format - TARGET, obstacle_number, target_ID)
                 case Helper.TARGET:
                     int obstacleNumber = Character.getNumericValue(message.charAt(7));
                     String solution = message.substring(9);
@@ -1581,7 +1580,7 @@ public class Arena extends AppCompatActivity {
                 case Helper.PLOT:
                     String receivedmsg = message.substring(message.indexOf(",") + 1); // string after PLOT,
                     String[] obstaclesPreset = receivedmsg.split(";"); // create 2d array for obstacle data\
-                    Log.d("log", "obstacle data is " + Arrays.toString(obstaclesPreset));
+                    Log.d(TAG, "Obstacle data is " + Arrays.toString(obstaclesPreset));
                     setObstacles(obstaclesPreset);
                     break;
                 case Helper.MOVE:
