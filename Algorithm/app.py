@@ -61,6 +61,7 @@ def runAlgo(grid, obstacles):
         astar.chooseDest()
         astar.algorithm()
         path = astar.constructPath()
+        
         for cell in range(len(path)):
             astar.grid.grid[path[cell][0]][path[cell][1]] = 1
         astar.grid.plotgrid(gridsize, copyObstacles, astar.currentpos, path)

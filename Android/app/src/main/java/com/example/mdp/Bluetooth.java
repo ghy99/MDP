@@ -313,7 +313,6 @@ public class Bluetooth extends AppCompatActivity {
                         break;
                     case BluetoothAdapter.STATE_ON:
                         Log.d(TAG, "mBroadcastReceiver1: STATE ON");
-
                         break;
                     case BluetoothAdapter.STATE_TURNING_ON:
                         Log.d(TAG, "mBroadcastReceiver1: STATE TURNING ON");
@@ -367,7 +366,6 @@ public class Bluetooth extends AppCompatActivity {
                 myNewDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view,
                         myNewBluetoothDevices);
                 otherDevicesListView.setAdapter(myNewDeviceListAdapter);
-
             }
         }
     };
@@ -419,6 +417,7 @@ public class Bluetooth extends AppCompatActivity {
                     Context.MODE_PRIVATE);
             editor = sharedPreferences.edit();
             TextView connStatusTextView = findViewById(R.id.connStatusTextView);
+
             Log.d(TAG, "I'm working");
             Log.d(TAG, status);
             if (status.equals("connected")) {
@@ -462,6 +461,7 @@ public class Bluetooth extends AppCompatActivity {
                 reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
 
             }
+
             if (status.equals("disconnected"))
                 connStatusTextView.setText("Disconnected");
             editor.commit();
