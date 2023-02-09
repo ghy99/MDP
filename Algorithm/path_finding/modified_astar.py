@@ -17,10 +17,10 @@ class ModifiedAStar:
         # We use a copy of the grid rather than use a reference
         # to the exact grid.
         self.grid: Grid = grid.copy()
-        self.brain = brain  # the hamiltonian object
+        self.brain = brain  # the Hamiltonian object
 
-        self.start = start
-        self.end = end
+        self.start = start  # starting robot position (with direction)
+        self.end = end  # target ending position (with direction)
 
     def get_neighbours(self, pos: RobotPosition) -> List[Tuple[GridCell, RobotPosition, int, Command]]:
         """

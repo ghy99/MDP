@@ -6,7 +6,7 @@ from Algorithm.Misc.direction import Direction
 from Algorithm.commands.go_straight_command import StraightCommand
 from Algorithm.commands.command import Command
 from Algorithm.Misc.positioning import RobotPosition
-from entities.robot.Algorithm.Hamiltonian import Hamiltonian
+from Algorithm.path_finding.Hamiltonian import Hamiltonian
 
 from Algorithm.commands.turn_command import TurnCommand
 
@@ -29,25 +29,6 @@ class Robot:
                                               (constants.ROBOT_LENGTH / 2, constants.ROBOT_LENGTH))
         # (constants.ROBOT_LENGTH / 2, constants.ROBOT_LENGTH / 2))
 
-        self.path_hist = []  # Stores the history of the path taken by the robot.
-
-        self.__current_command = 0  # Index of the current command being executed.
-        self.printed = False  # Never printed total time before.
-
-    def set_robot_pos(self, x, y, direction):
-        match direction:
-            case (Direction.RIGHT):
-                angle = 0
-            case (Direction.TOP):
-                angle = 90
-            case (Direction.LEFT):
-                angle = 180
-            case (Direction.BOTTOM):
-                angle = -90
-
-        self.pos = RobotPosition(x, y, direction, angle)
-        self._start_copy = self.pos.copy()
-        self.hamiltonian = Hamiltonian(self.grid)
         self.path_hist = []  # Stores the history of the path taken by the robot.
 
         self.__current_command = 0  # Index of the current command being executed.

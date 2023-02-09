@@ -39,7 +39,7 @@ class Grid:
         col = math.floor(x / constants.GRID_CELL_LENGTH)
         row = constants.NO_OF_GRID_CELLS_PER_SIDE - math.floor(y / constants.GRID_CELL_LENGTH) - 1
         try:
-            return self.nodes[row][col]
+            return self.gridcells[row][col]
         except IndexError:
             return None
 
@@ -81,7 +81,6 @@ class Grid:
             return False
         return True
 
-
     @classmethod
     def draw_arena_borders(cls, screen):
 
@@ -104,21 +103,20 @@ class Grid:
         # Draw right border
         pygame.draw.line(screen, constants.RED, (constants.GRID_LENGTH, 0), (constants.GRID_LENGTH, constants.GRID_LENGTH))
 
-
         # Draw numbers on side of grid
         font = pygame.freetype.SysFont(None, 18)
         font.origin = True
         for i in range(constants.NO_OF_GRID_CELLS_PER_SIDE):
             font.render_to(screen, (i*constants.GRID_CELL_LENGTH+8, constants.GRID_LENGTH + 25), f"{i}", pygame.Color('DarkBlue'))
         for j in range(constants.NO_OF_GRID_CELLS_PER_SIDE):
-            font.render_to(screen, (constants.GRID_LENGTH + 10, constants.GRID_LENGTH - j* constants.GRID_CELL_LENGTH - 8), f"{j}", pygame.Color('DarkBlue'))
+            font.render_to(screen, (constants.GRID_LENGTH + 10, constants.GRID_LENGTH - j * constants.GRID_CELL_LENGTH - 8), f"{j}", pygame.Color('DarkBlue'))
 
     def draw_obstacles(self, screen):
         for ob in self.obstacles:
             ob.draw(screen)
 
     def draw_nodes(self, screen):
-        for row in self.nodes:
+        for row in self.gridcells:
             for col in row:
                 col.draw(screen)
 

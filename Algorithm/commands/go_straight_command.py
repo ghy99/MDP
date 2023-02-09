@@ -29,7 +29,7 @@ class StraightCommand(Command):
 
         self.tick()  # -1 tick from total ticks
         distance = self.dist / self.total_ticks
-        robot.straight(distance) # to move distance in one tick
+        robot.straight(distance)  # to move distance in one tick
 
     def apply_on_pos(self, curr_pos: Position):
         """
@@ -53,7 +53,7 @@ class StraightCommand(Command):
         RRXXX
         """
         # Check if forward or backward.
-        if int(self.dist)<0:
+        if int(self.dist) < 0:
             comm = f"RR{-self.dist}"
             for x in range(0, 5-len(comm)):
                 comm = comm + "_"
@@ -63,5 +63,3 @@ class StraightCommand(Command):
             for x in range(0, 5-len(comm)):
                 comm = comm + "_"
             return comm
-
-

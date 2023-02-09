@@ -29,7 +29,7 @@ class TurnCommand(Command):
         self.reverse = reverse
 
     def __str__(self):
-        return f"TurnCommand:{self.type_of_turn}, {self.total_ticks} ticks, rev={self.rev}, left={self.left}, \
+        return f"TurnCommand:{self.type_of_turn}, {self.total_ticks} ticks, rev={self.reverse}, left={self.left}, \
         right= {self.right}) "
 
     __repr__ = __str__

@@ -21,7 +21,7 @@ ROBOT_LENGTH = 20
 ROBOT_TURN_RADIUS = 30
 ROBOT_SPEED_PER_SECOND = 100  # should be 33.3
 ROBOT_S_FACTOR = ROBOT_LENGTH / ROBOT_TURN_RADIUS  # Please read briefing notes from Imperial
-ROBOT_SAFETY_DISTANCE = 15
+ROBOT_SAFETY_DISTANCE = 10
 ROBOT_SCAN_TIME = 0.25  # Time provided for scanning an obstacle image in seconds.
 
 # Grid Attributes
@@ -57,7 +57,7 @@ PLATINUM = (229, 228, 226)
 DARK_GRAY = (169, 169, 169)
 SILVER = (192, 192, 192)
 DARK_YELLOW = (236, 183, 83)
-LIGHT_YELLOW = (255,255,153)
+LIGHT_YELLOW = (255, 255, 153)
 
 PINK = (255, 51, 255)
 PURPLE = (153, 51, 255)

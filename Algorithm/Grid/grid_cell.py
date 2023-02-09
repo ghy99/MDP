@@ -77,7 +77,7 @@ class GridCell:
         return self.position.x == other.position.x and self.position.y == other.position.y
 
     def __hash__(self):
-        return hash(self.pos.xy_dir())
+        return hash(self.position.xy_dir())
 
     def copy(self):
         """
