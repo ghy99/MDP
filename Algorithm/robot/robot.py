@@ -1,14 +1,14 @@
 import pygame
 import datetime
-import Algorithm.Misc.timer as timer
-import Algorithm.constants as constants
-from Algorithm.Misc.direction import Direction
-from Algorithm.commands.go_straight_command import StraightCommand
-from Algorithm.commands.command import Command
-from Algorithm.Misc.positioning import RobotPosition
-from Algorithm.path_finding.Hamiltonian import Hamiltonian
+import Misc.timer as timer
+import constants as constants
+from Misc.direction import Direction
+from commands.go_straight_command import StraightCommand
+from commands.command import Command
+from Misc.positioning import RobotPosition
+from path_finding.Hamiltonian import Hamiltonian
 
-from Algorithm.commands.turn_command import TurnCommand
+from commands.turn_command import TurnCommand
 
 
 class Robot:
@@ -25,13 +25,15 @@ class Robot:
 
         self.hamiltonian = Hamiltonian(self, grid)
 
-        self.__image = pygame.transform.scale(pygame.image.load("entities/effects/car-top.png"),
-                                              (constants.ROBOT_LENGTH / 2, constants.ROBOT_LENGTH))
+        # self.__image = pygame.transform.scale(pygame.image.load("entities/effects/car-top.png"),
+        #                                       (constants.ROBOT_LENGTH / 2, constants.ROBOT_LENGTH))
         # (constants.ROBOT_LENGTH / 2, constants.ROBOT_LENGTH / 2))
 
-        self.path_hist = []  # Stores the history of the path taken by the robot.
+        # Stores the history of the path taken by the robot.
+        self.path_hist = []
 
-        self.__current_command = 0  # Index of the current command being executed.
+        # Index of the current command being executed.
+        self.__current_command = 0
         self.printed = False  # Never printed total time before.
 
     def get_current_pos(self):
@@ -41,9 +43,11 @@ class Robot:
         self.pos = self.get_current_pos()
         self._start_copy = self.pos.copy()
         self.hamiltonian = Hamiltonian(self, grid)
-        self.path_hist = []  # Stores the history of the path taken by the robot.
+        # Stores the history of the path taken by the robot.
+        self.path_hist = []
 
-        self.__current_command = 0  # Index of the current command being executed.
+        # Index of the current command being executed.
+        self.__current_command = 0
         self.printed = False  # Never printed total time before.
 
     def convert_all_commands(self):
@@ -51,7 +55,8 @@ class Robot:
         Convert the list of command objects to corresponding list of messages.
         """
         print("Converting commands to string...", end="")
-        string_commands = [command.convert_to_message() for command in self.hamiltonian.commands]
+        string_commands = [command.convert_to_message()
+                           for command in self.hamiltonian.commands]
         print("Done!")
         return string_commands
 
@@ -77,7 +82,8 @@ class Robot:
 
     def draw_self(self, screen):
         # The arrow to represent the direction of the robot.
-        rot_image = pygame.transform.rotate(self.__image, -(90 - self.pos.angle))
+        rot_image = pygame.transform.rotate(
+            self.__image, -(90 - self.pos.angle))
         rect = rot_image.get_rect()
         rect.center = self.pos.xy_pygame()
         screen.blit(rot_image, rect)
@@ -127,6 +133,7 @@ class Robot:
                     total_time = round(total_time)
                 # Calculate time for all commands
                 # Then print it out.
-                print(f"All commands took {datetime.timedelta(seconds=total_time)}")
+                print(
+                    f"All commands took {datetime.timedelta(seconds=total_time)}")
                 self.printed = True
                 timer.Timer.end_timer()

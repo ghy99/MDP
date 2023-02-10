@@ -3,18 +3,17 @@ import math
 from collections import deque
 from typing import Tuple
 
-import Algorithm.constants as constants
-from Algorithm.Grid.grid import Grid
-from Algorithm.commands.scan_obstacle_command import ScanCommand
-from Algorithm.commands.go_straight_command import StraightCommand
-from Algorithm.Misc.direction import Direction
-from Algorithm.Grid.obstacle import Obstacle
-from Algorithm.path_finding.modified_astar import ModifiedAStar
-from Algorithm.robot.robot import Robot
+import constants as constants
+from Grid.grid import Grid
+from commands.scan_obstacle_command import ScanCommand
+from commands.go_straight_command import StraightCommand
+from Misc.direction import Direction
+from Grid.obstacle import Obstacle
+from path_finding.modified_astar import ModifiedAStar
 
 
 class Hamiltonian:
-    def __init__(self, robot: Robot, grid: Grid):
+    def __init__(self, robot, grid: Grid):
         self.robot = robot
         self.grid = grid
 
@@ -55,15 +54,34 @@ class Hamiltonian:
             targets = [self.robot.pos.xy()]
             # Try out all the different permutations
             for obstacle in path:
-                targets.append(obstacle.target_pos.xy())
+                targets.append(obstacle.target_position.xy())
+
+            print("Targets ", targets)
+            print("Path ", path)
+            print()
 
             dist = 0
             multiplier = 1
             for i in range(len(targets)-1):
                 # Weight factor
-                multiplier = weight_factor(path[i].target_pos.get_dir(), path[i+1].target_pos.get_dir())
-                dist += multiplier * math.sqrt(((targets[i][0] - targets[i + 1][0]) ** 2) +
-                                               ((targets[i][1] - targets[i + 1][1]) ** 2))
+                # multiplier = weight_factor(
+                #     path[i].target_position.get_dir(), path[i+1].target_position.get_dir())
+                # dist += multiplier * math.sqrt(((targets[i][0] - targets[i + 1][0]) ** 2) +
+                #                                ((targets[i][1] - targets[i + 1][1]) ** 2))
+
+                # Weight factor
+                if i == 0:
+                    # From start to first obstacle
+                    multiplier = weight_factor(
+                        self.robot.pos.get_dir(), path[i].target_position.get_dir())
+                else:
+                    # From obstacle to another obstacle
+                    multiplier = weight_factor(
+                        path[i-1].target_position.get_dir(), path[i].target_position.get_dir())
+
+                # dist += abs(targets[i][0] - targets[i + 1][0]) + abs(targets[i][1] - targets[i + 1][1])
+                dist += multiplier * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                                               ((targets[i][1] - targets[i + 1][1])**2))
 
             print("Path = ", targets, "\nTotal weighted Euclidean distance = ", dist)
             return dist
@@ -73,12 +91,13 @@ class Hamiltonian:
         # simple now holds the permutation that gives the lowest distance
         simple = min(perms, key=calc_distance)
         print("\nFound a simple hamiltonian path: ")
+        # print(simple)
         # print out every obstacle in order of visitation
         for ob in simple:
             print(f"\t{ob}")
         print()
         print("Found Shortest Hamiltonian Path")
-        calc_distance(simple)
+        # calc_distance(simple)
         # returns order of visitation of obstacles (the lowest cost)
         return simple
 
@@ -112,7 +131,8 @@ class Hamiltonian:
         self.simple_hamiltonian = self.compute_simple_hamiltonian_path()
         print()
 
-        curr = self.robot.pos.copy()  # We use a copy rather than get a reference.
+        # We use a copy rather than get a reference.
+        curr = self.robot.pos.copy()
         for obstacle in self.simple_hamiltonian:
             target = obstacle.get_robot_target_pos()
             print(f"Planning {curr} to {target}")
@@ -122,7 +142,8 @@ class Hamiltonian:
             else:
                 print("\tPath found.")
                 curr = res
-                self.commands.append(ScanCommand(constants.ROBOT_SCAN_TIME, obstacle.index))
+                self.commands.append(ScanCommand(
+                    constants.ROBOT_SCAN_TIME, obstacle.index))
 
         self.compress_paths()
         print("-" * 40)

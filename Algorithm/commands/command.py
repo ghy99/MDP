@@ -1,8 +1,7 @@
 import math
 from abc import ABC, abstractmethod
 
-import Algorithm.constants as constants
-
+import constants as constants
 
 class Command(ABC):
     def __init__(self, time):

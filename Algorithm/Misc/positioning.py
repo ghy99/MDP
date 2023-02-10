@@ -1,5 +1,5 @@
-import Algorithm.constants as constants
-from direction import Direction
+import constants as constants
+from .direction import Direction
 
 
 class Position:

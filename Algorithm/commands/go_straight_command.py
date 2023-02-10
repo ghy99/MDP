@@ -1,7 +1,7 @@
-import Algorithm.constants as constants
-from Algorithm.Misc.direction import Direction
-from Algorithm.commands.command import Command
-from Algorithm.Misc.positioning import Position
+import constants as constants
+from Misc.direction import Direction
+from commands.command import Command
+from Misc.positioning import Position
 
 
 class StraightCommand(Command):

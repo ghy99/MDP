@@ -2,14 +2,14 @@ import math
 from queue import PriorityQueue
 from typing import List, Tuple
 
-import Algorithm.constants as constants
-from Algorithm.Misc.type_of_turn import TypeOfTurn
-from Algorithm.commands.command import Command
-from Algorithm.commands.go_straight_command import StraightCommand
-from Algorithm.commands.turn_command import TurnCommand
-from Algorithm.Grid.grid import Grid
-from Algorithm.Grid.grid_cell import GridCell
-from Algorithm.Misc.positioning import RobotPosition
+import constants as constants
+from Misc.type_of_turn import TypeOfTurn
+from commands.command import Command
+from commands.go_straight_command import StraightCommand
+from commands.turn_command import TurnCommand
+from Grid.grid import Grid
+from Grid.grid_cell import GridCell
+from Misc.positioning import RobotPosition
 
 
 class ModifiedAStar:
@@ -47,19 +47,28 @@ class ModifiedAStar:
                 neighbours.append((after, p, straight_dist, command))
 
         # Check turns
-        turn_penalty = 40  # SOME HEURISTIC VALUE (need to account for turns travelling more also!)
+        # SOME HEURISTIC VALUE (need to account for turns travelling more also!)
+        turn_penalty = 40
         turn_commands = [  # type of turn, Left, Right, Reverse
-            TurnCommand(TypeOfTurn.SMALL, True, False, False),  # L SMALL turn, forward
-            TurnCommand(TypeOfTurn.MEDIUM, True, False, False),  # L MEDIUM turn, forward
+            TurnCommand(TypeOfTurn.SMALL, True, False,
+                        False),  # L SMALL turn, forward
+            TurnCommand(TypeOfTurn.MEDIUM, True, False,
+                        False),  # L MEDIUM turn, forward
             # TurnCommand(TypeOfTurn.LARGE, True, False, False),  # L LARGE turn, forward
-            TurnCommand(TypeOfTurn.SMALL, True, False, True),  # L SMALL turn, reverse
-            TurnCommand(TypeOfTurn.MEDIUM, True, False, True),  # L MEDIUM turn, reverse
+            TurnCommand(TypeOfTurn.SMALL, True, False,
+                        True),  # L SMALL turn, reverse
+            TurnCommand(TypeOfTurn.MEDIUM, True, False,
+                        True),  # L MEDIUM turn, reverse
             # TurnCommand(TypeOfTurn.LARGE, True, False, True),  # L LARGE turn, reverse
-            TurnCommand(TypeOfTurn.SMALL, False, True, False),  # R SMALL turn, forward
-            TurnCommand(TypeOfTurn.MEDIUM, False, True, False),  # R MEDIUM turn, forward
+            TurnCommand(TypeOfTurn.SMALL, False, True,
+                        False),  # R SMALL turn, forward
+            TurnCommand(TypeOfTurn.MEDIUM, False, True,
+                        False),  # R MEDIUM turn, forward
             # TurnCommand(TypeOfTurn.LARGE, False, True, False),  # R LARGE turn, forward
-            TurnCommand(TypeOfTurn.SMALL, False, True, True),  # R SMALL turn, reverse
-            TurnCommand(TypeOfTurn.MEDIUM, False, True, True),  # R MEDIUM turn, reverse
+            TurnCommand(TypeOfTurn.SMALL, False, True,
+                        True),  # R SMALL turn, reverse
+            TurnCommand(TypeOfTurn.MEDIUM, False, True,
+                        True),  # R MEDIUM turn, reverse
             # TurnCommand(TypeOfTurn.LARGE, False, True, True),  # R LARGE turn, reverse
         ]
         for c in turn_commands:
@@ -85,8 +94,10 @@ class ModifiedAStar:
             if not (self.grid.check_valid_position(p_c) and self.grid.get_grid_cell_corresponding_to_coordinate(
                     *p_c.xy())):
                 return None, None
-            diff_in_x = p_c.x - p.x  # if positive means the new position is to the right, else to the left side
-            diff_in_y = p_c.y - p.y  # if positive means the new position is on top of old position, else otherwise
+            # if positive means the new position is to the right, else to the left side
+            diff_in_x = p_c.x - p.x
+            # if positive means the new position is on top of old position, else otherwise
+            diff_in_y = p_c.y - p.y
             for x in range(1, diff_in_x):
                 temp = p_c.copy()
                 if diff_in_x < 0:
@@ -110,7 +121,7 @@ class ModifiedAStar:
         command.apply_on_pos(p)
         if self.grid.check_valid_position(p) and (
                 after := self.grid.get_grid_cell_corresponding_to_coordinate(*p.xy())):
-            after.pos.direction = p.direction
+            after.position.direction = p.direction
             return after.copy(), p
         return None, None
 
@@ -135,19 +146,24 @@ class ModifiedAStar:
     def start_astar(self):
         frontier = PriorityQueue()  # Store frontier nodes to travel to.
         backtrack = dict()  # Store the sequence of grid cells being travelled.
-        cost = dict()  # Store the cost to travel from start to a target grid cell.
+        # Store the cost to travel from start to a target grid cell.
+        cost = dict()
 
         # We can check what the goal grid cell is
-        goal_node = self.grid.get_grid_cell_corresponding_to_coordinate(*self.end.xy()).copy()  # Take note of copy!
-        goal_node.pos.direction = self.end.direction  # Set the required direction at this grid cell.
+        goal_node = self.grid.get_grid_cell_corresponding_to_coordinate(
+            *self.end.xy()).copy()  # Take note of copy!
+        # Set the required direction at this grid cell.
+        goal_node.position.direction = self.end.direction
 
         # Add starting node set into the frontier.
         start_node: GridCell = self.grid.get_grid_cell_corresponding_to_coordinate(
             *self.start.xy()).copy()  # Take note of copy!
-        start_node.direction = self.start.direction  # Know which direction the robot is facing.
+        # Know which direction the robot is facing.
+        start_node.direction = self.start.direction
 
         offset = 0  # Used to tie-break.(?)
-        frontier.put((0, offset, (start_node, self.start)))  # Extra time parameter to tie-break same priority.
+        # Extra time parameter to tie-break same priority.
+        frontier.put((0, offset, (start_node, self.start)))
         cost[start_node] = 0
         # Having None as the parent means this key is the starting node.
         backtrack[start_node] = (None, None)  # Parent, Command
@@ -164,11 +180,14 @@ class ModifiedAStar:
             # Otherwise, we check through all possible locations that we can
             # travel to from this node.
             for new_node, new_pos, weight, c in self.get_neighbours(current_position):
-                new_cost = cost.get(current_node) + weight  # weight here stands for cost of moving forward or turning
+                # weight here stands for cost of moving forward or turning
+                new_cost = cost.get(current_node) + weight
 
                 if new_node not in backtrack or new_cost < cost[new_node]:
                     offset += 1
-                    priority = new_cost + self.distance_heuristic(new_pos) + self.direction_heuristic(new_pos)
+                    priority = new_cost + \
+                        self.distance_heuristic(
+                            new_pos) + self.direction_heuristic(new_pos)
 
                     frontier.put((priority, offset, (new_node, new_pos)))
                     backtrack[new_node] = (current_node, c)

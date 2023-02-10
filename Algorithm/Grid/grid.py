@@ -1,9 +1,9 @@
 from collections import deque
 from typing import List
-import Algorithm.constants as constants
-from Algorithm.Grid.grid_cell import GridCell
-from Algorithm.Grid.obstacle import Obstacle
-from Algorithm.Misc.positioning import Position
+import constants as constants
+from Grid.grid_cell import GridCell
+from Grid.obstacle import Obstacle
+from Misc.positioning import Position
 import math
 import pygame
 
@@ -22,12 +22,15 @@ class Grid:
         grid = deque()
         for i in range(constants.NO_OF_GRID_CELLS_PER_SIDE):
             row = deque()
-            for j in range(constants.NO_OF_GRID_CELLS_PER_SIDE):  # 20 cells per side of square with each being 10cm
+            # 20 cells per side of square with each being 10cm
+            for j in range(constants.NO_OF_GRID_CELLS_PER_SIDE):
                 x = constants.GRID_CELL_LENGTH * j  # 0, 10, ... , 190
                 y = constants.GRID_CELL_LENGTH * i  # 0, 10, ... , 190
-                new_cell = GridCell(Position(x, y), not self.check_valid_position(Position(x, y)))
+                new_cell = GridCell(
+                    Position(x, y), not self.check_valid_position(Position(x, y)))
                 row.append(new_cell)
-            grid.appendleft(row)  # grid[0] will refer to last row, grid[19] refer to first row (from the bottom)
+            # grid[0] will refer to last row, grid[19] refer to first row (from the bottom)
+            grid.appendleft(row)
         return grid
 
     def get_grid_cell_corresponding_to_coordinate(self, x, y):
@@ -37,7 +40,8 @@ class Grid:
         Note that the x-y coordinates are in terms of the grid, and must be scaled properly.(?)
         """
         col = math.floor(x / constants.GRID_CELL_LENGTH)
-        row = constants.NO_OF_GRID_CELLS_PER_SIDE - math.floor(y / constants.GRID_CELL_LENGTH) - 1
+        row = constants.NO_OF_GRID_CELLS_PER_SIDE - \
+            math.floor(y / constants.GRID_CELL_LENGTH) - 1
         try:
             return self.gridcells[row][col]
         except IndexError:
@@ -62,7 +66,7 @@ class Grid:
         Check if a current position can be here.
         """
         # Check if position is inside any obstacle.
-        if any(obstacle.check_within_boundary(*pos.xy()) for obstacle in self.obstacles):
+        if any(obstacle.check_within_boundary(pos) for obstacle in self.obstacles):
             return False
 
         # Check if position too close to the border.
@@ -95,21 +99,27 @@ class Grid:
         Draw the arena borders.
         """
         # Draw upper border
-        pygame.draw.line(screen, constants.RED, (0, 0), (constants.GRID_LENGTH, 0))
+        pygame.draw.line(screen, constants.RED, (0, 0),
+                         (constants.GRID_LENGTH, 0))
         # Draw lower border
-        pygame.draw.line(screen, constants.RED, (0, constants.GRID_LENGTH), (constants.GRID_LENGTH, constants.GRID_LENGTH))
+        pygame.draw.line(screen, constants.RED, (0, constants.GRID_LENGTH),
+                         (constants.GRID_LENGTH, constants.GRID_LENGTH))
         # Draw left border
-        pygame.draw.line(screen, constants.RED, (0, 0), (0, constants.GRID_LENGTH))
+        pygame.draw.line(screen, constants.RED, (0, 0),
+                         (0, constants.GRID_LENGTH))
         # Draw right border
-        pygame.draw.line(screen, constants.RED, (constants.GRID_LENGTH, 0), (constants.GRID_LENGTH, constants.GRID_LENGTH))
+        pygame.draw.line(screen, constants.RED, (constants.GRID_LENGTH, 0),
+                         (constants.GRID_LENGTH, constants.GRID_LENGTH))
 
         # Draw numbers on side of grid
         font = pygame.freetype.SysFont(None, 18)
         font.origin = True
         for i in range(constants.NO_OF_GRID_CELLS_PER_SIDE):
-            font.render_to(screen, (i*constants.GRID_CELL_LENGTH+8, constants.GRID_LENGTH + 25), f"{i}", pygame.Color('DarkBlue'))
+            font.render_to(screen, (i*constants.GRID_CELL_LENGTH+8,
+                           constants.GRID_LENGTH + 25), f"{i}", pygame.Color('DarkBlue'))
         for j in range(constants.NO_OF_GRID_CELLS_PER_SIDE):
-            font.render_to(screen, (constants.GRID_LENGTH + 10, constants.GRID_LENGTH - j * constants.GRID_CELL_LENGTH - 8), f"{j}", pygame.Color('DarkBlue'))
+            font.render_to(screen, (constants.GRID_LENGTH + 10, constants.GRID_LENGTH -
+                           j * constants.GRID_CELL_LENGTH - 8), f"{j}", pygame.Color('DarkBlue'))
 
     def draw_obstacles(self, screen):
         for ob in self.obstacles:

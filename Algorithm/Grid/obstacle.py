@@ -1,11 +1,10 @@
 import pygame
-import Algorithm.constants as constants
-from Algorithm.Misc.direction import Direction
-from Algorithm.Misc.positioning import Position, RobotPosition
+import constants as constants
+from Misc.direction import Direction
+from Misc.positioning import Position, RobotPosition
 
 
 class Obstacle:
-
     def __init__(self, position: Position, index):
         """
         x -> x-coordinate of the obstacle.
@@ -16,7 +15,8 @@ class Obstacle:
         # obstacle coordinates.
         # This is from the assumption that all obstacles are placed centered in each grid.
         if position.x % 10 != 0 or position.y % 10 != 0:
-            raise AssertionError("Obstacle center coordinates must be multiples of 10!")
+            raise AssertionError(
+                "Obstacle center coordinates must be multiples of 10!")
 
         self.position = position
 
@@ -24,8 +24,8 @@ class Obstacle:
         self.target_position = self.get_robot_target_pos()
 
         # Arrow to draw at the target coordinate.
-        self.target_image = pygame.transform.scale(pygame.image.load("entities/effects/target-pointer.png"),
-                                                   (25, 25))
+        # self.target_image = pygame.transform.scale(pygame.image.load("entities/effects/target-pointer.png"),
+        #                                            (25, 25))
 
         self.index = index
 
@@ -236,7 +236,8 @@ class Obstacle:
         # Draw the obstacle onto the grid.
         # We need to translate the obstacle's center into that with respect to PyGame
         # Get the coordinates of the grid's bottom left-hand corner.
-        rect = pygame.Rect(0, 0, constants.OBSTACLE_LENGTH, constants.OBSTACLE_LENGTH)
+        rect = pygame.Rect(0, 0, constants.OBSTACLE_LENGTH,
+                           constants.OBSTACLE_LENGTH)
         rect.center = self.position.xy_pygame()
         pygame.draw.rect(screen, constants.RED, rect)
 
@@ -262,13 +263,17 @@ class Obstacle:
         points = self.get_boundary_points()
 
         # Draw left border
-        pygame.draw.line(screen, constants.RED, points[0].xy_pygame(), points[2].xy_pygame())
+        pygame.draw.line(screen, constants.RED,
+                         points[0].xy_pygame(), points[2].xy_pygame())
         # Draw right border
-        pygame.draw.line(screen, constants.RED, points[1].xy_pygame(), points[3].xy_pygame())
+        pygame.draw.line(screen, constants.RED,
+                         points[1].xy_pygame(), points[3].xy_pygame())
         # Draw upper border
-        pygame.draw.line(screen, constants.RED, points[2].xy_pygame(), points[3].xy_pygame())
+        pygame.draw.line(screen, constants.RED,
+                         points[2].xy_pygame(), points[3].xy_pygame())
         # Draw lower border
-        pygame.draw.line(screen, constants.RED, points[0].xy_pygame(), points[1].xy_pygame())
+        pygame.draw.line(screen, constants.RED,
+                         points[0].xy_pygame(), points[1].xy_pygame())
 
     def draw_robot_target(self, screen):
         target = self.get_robot_target_pos()

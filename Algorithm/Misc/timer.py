@@ -1,4 +1,4 @@
-import Algorithm.constants as constants
+import constants as constants
 import pygame
 
 

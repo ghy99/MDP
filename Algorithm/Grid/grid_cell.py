@@ -1,6 +1,6 @@
 import pygame
-import Algorithm.constants as constants
-from Algorithm.Misc.positioning import Position
+import constants as constants
+from Misc.positioning import Position
 
 
 #

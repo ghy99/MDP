@@ -1,0 +1,5 @@
+Algorithm/.venv/*
+Algorithm/__pycache__/
+__pycache__/
+Android/
+Image-Rec/
