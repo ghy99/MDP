@@ -87,22 +87,21 @@ class ModifiedAStar:
                 return None, None
             diff_in_x = p_c.x - p.x  # if positive means the new position is to the right, else to the left side
             diff_in_y = p_c.y - p.y  # if positive means the new position is on top of old position, else otherwise
-            for x in range(1, diff_in_x):
+            for x in range(0, abs(diff_in_x/10)):
                 temp = p_c.copy()
-                if diff_in_x < 0:
-                    temp.x -= x
+                if diff_in_x > 0:  # go to the left!
+                    temp.x -= (x+1)*10
                 else:
-                    temp.x += x
+                    temp.x += (x+1)*10
                 if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
                         *temp.xy())):
                     return None, None
-            for y in range(1, diff_in_y):
+            for y in range(0, abs(diff_in_y/10)):
                 temp = p.copy()
-                temp.x = p_c.x
-                if diff_in_y < 0:
-                    temp.y -= y
+                if diff_in_y > 0:  # go down!
+                    temp.y += (y+1)*10
                 else:
-                    temp.y += y
+                    temp.y -= (y+1)*10
                 if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
                         *temp.xy())):
                     return None, None

@@ -10,11 +10,10 @@ from Algorithm.commands.go_straight_command import StraightCommand
 from Algorithm.Misc.direction import Direction
 from Algorithm.Grid.obstacle import Obstacle
 from Algorithm.path_finding.modified_astar import ModifiedAStar
-from Algorithm.robot.robot import Robot
 
 
 class Hamiltonian:
-    def __init__(self, robot: Robot, grid: Grid):
+    def __init__(self, robot, grid: Grid):
         self.robot = robot
         self.grid = grid
 
