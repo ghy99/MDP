@@ -16,4 +16,5 @@
         android:id="@+id/deviceAddress"
         android:textSize="15sp"
         android:textColor="@android:color/black"/>
+
 </LinearLayout>

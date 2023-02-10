@@ -127,7 +127,7 @@
             android:backgroundTint="#AFE3C0"
             android:paddingHorizontal="34dp"
             android:paddingVertical="14dp"
-            android:src="@drawable/blue_arrow_right"
+            android:src="@drawable/green_arrow_right"
             app:layout_constraintStart_toEndOf="@+id/leftButton"
             app:layout_constraintTop_toTopOf="@+id/forwardButton" />
 
@@ -142,7 +142,7 @@
             android:backgroundTint="#AFE3C0"
             android:paddingHorizontal="34dp"
             android:paddingVertical="14dp"
-            android:src="@drawable/blue_arrow_left"
+            android:src="@drawable/green_arrow_left"
             app:layout_constraintEnd_toStartOf="@+id/rightButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/rightButton" />
@@ -157,7 +157,7 @@
             android:backgroundTint="#AFE3C0"
             android:paddingHorizontal="34dp"
             android:paddingVertical="14dp"
-            android:src="@drawable/blue_arrow_down"
+            android:src="@drawable/green_arrow_down"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/forwardButton" />
 
@@ -170,7 +170,7 @@
             android:backgroundTint="#AFE3C0"
             android:paddingHorizontal="34dp"
             android:paddingVertical="14dp"
-            android:src="@drawable/blue_arrow"
+            android:src="@drawable/green_arrow_up"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline3" />
 

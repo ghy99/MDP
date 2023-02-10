@@ -1,5 +1,8 @@
 package com.example.mdp;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -702,7 +705,8 @@ public class Arena extends AppCompatActivity {
             // Bluetooth message
             // TODO: Check why w
             if (BluetoothService.BluetoothConnectionStatus) {
-                byte[] bytes = "STM:w100n".getBytes(Charset.defaultCharset());
+                // byte[] bytes = "STM:w100n".getBytes(Charset.defaultCharset());
+                byte[] bytes = "STM:n".getBytes(Charset.defaultCharset());
                 BluetoothService.write(bytes);
             }
 
@@ -716,7 +720,8 @@ public class Arena extends AppCompatActivity {
 
             // Bluetooth message
             if (BluetoothService.BluetoothConnectionStatus) {
-                byte[] bytes = "STM:s100n".getBytes(Charset.defaultCharset());
+                // byte[] bytes = "STM:s100n".getBytes(Charset.defaultCharset());
+                byte[] bytes = "STM:s".getBytes(Charset.defaultCharset());
                 BluetoothService.write(bytes);
             }
 
@@ -728,7 +733,8 @@ public class Arena extends AppCompatActivity {
         leftButton.setOnClickListener(v -> {
             Log.d(TAG, "left");
             if (BluetoothService.BluetoothConnectionStatus) {
-                byte[] bytes = "STM:ln".getBytes(Charset.defaultCharset());
+                // byte[] bytes = "STM:ln".getBytes(Charset.defaultCharset());
+                byte[] bytes = "STM:w".getBytes(Charset.defaultCharset());
                 BluetoothService.write(bytes);
             }
 
@@ -739,7 +745,8 @@ public class Arena extends AppCompatActivity {
         rightButton.setOnClickListener(v -> {
             Log.d(TAG, "right");
             if (BluetoothService.BluetoothConnectionStatus) {
-                byte[] bytes = "STM:rn".getBytes(Charset.defaultCharset());
+                // byte[] bytes = "STM:rn".getBytes(Charset.defaultCharset());
+                byte[] bytes = "STM:e".getBytes(Charset.defaultCharset());
                 BluetoothService.write(bytes);
             }
 
@@ -791,12 +798,22 @@ public class Arena extends AppCompatActivity {
         }
     }
 
+    /*
+     * ======================
+     * For movement commands:
+     * 0 - North
+     * 1 - East
+     * 2 - South
+     * 3 - West
+     * ======================
+     */
+
     private void forwardButtonCommand() {
         int orientation = (int) car.getRotation();
         int new_x, new_y;
         ObjectAnimator animator;
         switch (((orientation / 90) % 4 + 4) % 4) {
-            case 0: // North
+            case 0:
                 new_y = (int) car.getY() - SNAP_GRID_INTERVAL;
                 car.setY(new_y);
                 animator = ObjectAnimator.ofFloat(car, "y", new_y);
@@ -879,47 +896,237 @@ public class Arena extends AppCompatActivity {
 
     public void leftButtonCommand() {
         int orientation = (int) car.getRotation();
+        int new_x, new_y;
+        AnimatorSet animatorSet;
+        ObjectAnimator moveStraightAnimator, turnAnimator, moveStraightAgainAnimator;
+
         switch (((orientation / 90) % 4 + 4) % 4) {
             case 0:
-                car.setRotation(270);
+                new_y = (int) car.getY() - 2 * SNAP_GRID_INTERVAL;
+                new_x = (int) car.getX() - SNAP_GRID_INTERVAL;
+
+                moveStraightAnimator = ObjectAnimator.ofFloat(car, "y", new_y);
+                moveStraightAnimator.setDuration(ANIMATOR_DURATION);
+
+                turnAnimator = ObjectAnimator.ofFloat(car, "rotation", -90);
+                turnAnimator.setDuration(500);
+
+                moveStraightAgainAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
+                moveStraightAgainAnimator.setDuration(ANIMATOR_DURATION);
+
+                animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(moveStraightAnimator, turnAnimator, moveStraightAgainAnimator);
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        car.setY(new_y);
+                        car.setX(new_x);
+                        car.setRotation(270);
+                        updateXYDirText();
+                    }
+                });
+                animatorSet.start();
                 break;
             case 1:
-                car.setRotation(0);
+                new_y = (int) car.getY() - SNAP_GRID_INTERVAL;
+                new_x = (int) car.getX() + 2 * SNAP_GRID_INTERVAL;
+
+                moveStraightAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
+                moveStraightAnimator.setDuration(ANIMATOR_DURATION);
+
+                turnAnimator = ObjectAnimator.ofFloat(car, "rotation", 0);
+                turnAnimator.setDuration(500);
+
+                moveStraightAgainAnimator = ObjectAnimator.ofFloat(car, "y", new_y);
+                moveStraightAgainAnimator.setDuration(ANIMATOR_DURATION);
+
+                animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(moveStraightAnimator, turnAnimator, moveStraightAgainAnimator);
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        car.setY(new_y);
+                        car.setX(new_x);
+                        car.setRotation(0);
+                        updateXYDirText();
+                    }
+                });
+                animatorSet.start();
                 break;
             case 2:
-                car.setRotation(90);
+                new_y = (int) car.getY() + 2 * SNAP_GRID_INTERVAL;
+                new_x = (int) car.getX() + SNAP_GRID_INTERVAL;
+
+                moveStraightAnimator = ObjectAnimator.ofFloat(car, "y", new_y);
+                moveStraightAnimator.setDuration(ANIMATOR_DURATION);
+
+                turnAnimator = ObjectAnimator.ofFloat(car, "rotation", 90);
+                turnAnimator.setDuration(500);
+
+                moveStraightAgainAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
+                moveStraightAgainAnimator.setDuration(ANIMATOR_DURATION);
+
+                animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(moveStraightAnimator, turnAnimator, moveStraightAgainAnimator);
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        car.setY(new_y);
+                        car.setX(new_x);
+                        car.setRotation(90);
+                        updateXYDirText();
+                    }
+                });
+                animatorSet.start();
                 break;
             case 3:
-                car.setRotation(180);
+                new_y = (int) car.getY() + SNAP_GRID_INTERVAL;
+                new_x = (int) car.getX() - 2 * SNAP_GRID_INTERVAL;
+
+                moveStraightAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
+                moveStraightAnimator.setDuration(ANIMATOR_DURATION);
+
+                turnAnimator = ObjectAnimator.ofFloat(car, "rotation", 180);
+                turnAnimator.setDuration(500);
+
+                moveStraightAgainAnimator = ObjectAnimator.ofFloat(car, "y", new_y);
+                moveStraightAgainAnimator.setDuration(ANIMATOR_DURATION);
+
+                animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(moveStraightAnimator, turnAnimator, moveStraightAgainAnimator);
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        car.setY(new_y);
+                        car.setX(new_x);
+                        car.setRotation(180);
+                        updateXYDirText();
+                    }
+                });
+                animatorSet.start();
                 break;
             default:
                 // Shouldn't reach this case
                 break;
         }
-
-        updateXYDirText();
     }
 
     private void rightButtonCommand() {
         int orientation = (int) car.getRotation();
+        int new_x, new_y;
+        AnimatorSet animatorSet;
+        ObjectAnimator moveStraightAnimator, turnAnimator, moveStraightAgainAnimator;
+
         switch (((orientation / 90) % 4 + 4) % 4) {
             case 0:
-                car.setRotation(90);
+                new_y = (int) car.getY() - 2 * SNAP_GRID_INTERVAL;
+                new_x = (int) car.getX() + SNAP_GRID_INTERVAL;
+
+                moveStraightAnimator = ObjectAnimator.ofFloat(car, "y", new_y);
+                moveStraightAnimator.setDuration(ANIMATOR_DURATION);
+
+                turnAnimator = ObjectAnimator.ofFloat(car, "rotation", 90);
+                turnAnimator.setDuration(500);
+
+                moveStraightAgainAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
+                moveStraightAgainAnimator.setDuration(ANIMATOR_DURATION);
+
+                animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(moveStraightAnimator, turnAnimator, moveStraightAgainAnimator);
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        car.setY(new_y);
+                        car.setX(new_x);
+                        car.setRotation(90);
+                        updateXYDirText();
+                    }
+                });
+                animatorSet.start();
                 break;
             case 1:
-                car.setRotation(180);
+                new_y = (int) car.getY() + SNAP_GRID_INTERVAL;
+                new_x = (int) car.getX() + 2 * SNAP_GRID_INTERVAL;
+
+                moveStraightAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
+                moveStraightAnimator.setDuration(ANIMATOR_DURATION);
+
+                turnAnimator = ObjectAnimator.ofFloat(car, "rotation", 180);
+                turnAnimator.setDuration(500);
+
+                moveStraightAgainAnimator = ObjectAnimator.ofFloat(car, "y", new_y);
+                moveStraightAgainAnimator.setDuration(ANIMATOR_DURATION);
+
+                animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(moveStraightAnimator, turnAnimator, moveStraightAgainAnimator);
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        car.setY(new_y);
+                        car.setX(new_x);
+                        car.setRotation(180);
+                        updateXYDirText();
+                    }
+                });
+                animatorSet.start();
                 break;
             case 2:
-                car.setRotation(270);
+                new_y = (int) car.getY() + 2 * SNAP_GRID_INTERVAL;
+                new_x = (int) car.getX() - SNAP_GRID_INTERVAL;
+
+                moveStraightAnimator = ObjectAnimator.ofFloat(car, "y", new_y);
+                moveStraightAnimator.setDuration(ANIMATOR_DURATION);
+
+                turnAnimator = ObjectAnimator.ofFloat(car, "rotation", 270);
+                turnAnimator.setDuration(500);
+
+                moveStraightAgainAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
+                moveStraightAgainAnimator.setDuration(ANIMATOR_DURATION);
+
+                animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(moveStraightAnimator, turnAnimator, moveStraightAgainAnimator);
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        car.setY(new_y);
+                        car.setX(new_x);
+                        car.setRotation(270);
+                        updateXYDirText();
+                    }
+                });
+                animatorSet.start();
                 break;
             case 3:
-                car.setRotation(0);
+                new_y = (int) car.getY() - SNAP_GRID_INTERVAL;
+                new_x = (int) car.getX() - 2 * SNAP_GRID_INTERVAL;
+
+                moveStraightAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
+                moveStraightAnimator.setDuration(ANIMATOR_DURATION);
+
+                // TODO: fix this shit
+                turnAnimator = ObjectAnimator.ofFloat(car, "rotation", 360);
+                turnAnimator.setDuration(500);
+
+                moveStraightAgainAnimator = ObjectAnimator.ofFloat(car, "y", new_y);
+                moveStraightAgainAnimator.setDuration(ANIMATOR_DURATION);
+
+                animatorSet = new AnimatorSet();
+                animatorSet.playSequentially(moveStraightAnimator, turnAnimator, moveStraightAgainAnimator);
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        car.setY(new_y);
+                        car.setX(new_x);
+                        car.setRotation(0);
+                        updateXYDirText();
+                    }
+                });
+                animatorSet.start();
                 break;
             default:
                 // Shouldn't reach this case
                 break;
         }
-
         updateXYDirText();
     }
 
@@ -950,7 +1157,11 @@ public class Arena extends AppCompatActivity {
             Toast.makeText(Arena.this, "Obstacles sent", Toast.LENGTH_LONG).show();
             updateStatusWindow("IR Started");
         } else {
+            updateStatusWindow("IR Not Started");
             Toast.makeText(Arena.this, "Please connect to Bluetooth.", Toast.LENGTH_LONG).show();
+            sleepFor(ANIMATOR_DURATION);
+            updateStatusWindow("Ready");
+            return;
         }
 
         Chronometer IRTimer = (Chronometer) findViewById(R.id.IRTimer);
@@ -966,8 +1177,13 @@ public class Arena extends AppCompatActivity {
             Toast.makeText(Arena.this, "Shortest Path Started.", Toast.LENGTH_LONG).show();
             updateStatusWindow("SP Started");
         } else {
+            updateStatusWindow("SP Not Started");
             Toast.makeText(Arena.this, "Please connect to Bluetooth.", Toast.LENGTH_LONG).show();
+            sleepFor(ANIMATOR_DURATION);
+            updateStatusWindow("Ready");
+            return;
         }
+
         Chronometer IRTimer = (Chronometer) findViewById(R.id.IRTimer);
         long elapsedRealtime = SystemClock.elapsedRealtime();
         IRTimer.setBase(elapsedRealtime);
