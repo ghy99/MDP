@@ -2,7 +2,27 @@
 
 > Android app for MDP
 
-## 🛠 Requirements
+## 🎤 Communication Protocol
+
+> Replace paremeters inside []
+
+Update Robot Position
+
+```
+ROBOT,<[x]>,<[y]>,<[direction]>
+```
+
+Update Status (Send "STOPPED" to indicate end of IR)
+
+```
+STATUS,[Message]
+```
+
+Update Obstacle ID
+
+```
+TARGET,[obstacleNo],[obstacleID]
+```
 
 ## 📂 Project Folder Structure
 
