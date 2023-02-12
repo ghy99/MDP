@@ -51,24 +51,3 @@ def initGrid():
     return grid, obstacles
 
 
-''' Run A* Algo'''
-def runAlgo(grid, obstacles):
-    gridsize = settings.GRID_LENGTH // settings.GRID_CELL_LENGTH
-    copyObstacles = copy.deepcopy(obstacles)
-    astar = astarclass.Astar(settings.INITPOS, obstacles, grid, gridsize)
-    astar.processNeighbours(gridsize)
-    while(astar.obstacles):
-        astar.chooseDest()
-        astar.algorithm()
-        path = astar.constructPath()
-        
-        for cell in range(len(path)):
-            astar.grid.grid[path[cell][0]][path[cell][1]] = 1
-        astar.grid.plotgrid(gridsize, copyObstacles, astar.currentpos, path)
-        
-        astar.visited.clear()
-        astar.updateNewDest()
-        astar.pq.queue.clear()
-        astar.path.clear()
-        astar.pathcost.clear()
-        astar.resetGrid(gridsize, copyObstacles)

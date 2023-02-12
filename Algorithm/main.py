@@ -281,7 +281,14 @@ if __name__ == '__main__':
 
 
 if __name__ == "__main__":
-    # grid, obstacles = initGrid()
-    # runAlgo(grid, obstacles)
+    bot = Robot()
+    # algo = Astar(bot)
+    # algo.runAlgo()
+    # algo = Astar(self.getCurrentPos(), self.grid)
+#     bot.callAlgo()
+# self.algo = Astar()
+    # grid, obstacles = app.initGrid()
+    # a = astarclass.Astar(settings.INITPOS, obstacles, grid, settings.GRID_LENGTH//settings.GRID_CELL_LENGTH)
+    # a.runAlgo(grid, obstacles)
     sim = Simulation()
-    sim.runSimulation()
+    sim.runSimulation(bot)
