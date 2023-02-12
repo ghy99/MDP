@@ -56,10 +56,6 @@ class Hamiltonian:
             for obstacle in path:
                 targets.append(obstacle.target_position.xy())
 
-            print("Targets ", targets)
-            print("Path ", path)
-            print()
-
             dist = 0
             multiplier = 1
             for i in range(len(targets)-1):
@@ -83,7 +79,7 @@ class Hamiltonian:
                 dist += multiplier * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
                                                ((targets[i][1] - targets[i + 1][1])**2))
 
-            print("Path = ", targets, "\nTotal weighted Euclidean distance = ", dist)
+            # print("Path = ", targets, "\nTotal weighted Euclidean distance = ", dist)
             return dist
 
         print("Calculating Distance for all possible permutation\n")
@@ -92,11 +88,13 @@ class Hamiltonian:
         simple = min(perms, key=calc_distance)
         print("\nFound a simple hamiltonian path: ")
         # print(simple)
+
         # print out every obstacle in order of visitation
         for ob in simple:
             print(f"\t{ob}")
         print()
         print("Found Shortest Hamiltonian Path")
+
         # calc_distance(simple)
         # returns order of visitation of obstacles (the lowest cost)
         return simple
@@ -110,6 +108,7 @@ class Hamiltonian:
         print("Compressing commands... ", end="")
         index = 0
         new_commands = deque()
+
         while index < len(self.commands):
             command = self.commands[index]
             if isinstance(command, StraightCommand):
@@ -131,19 +130,23 @@ class Hamiltonian:
         self.simple_hamiltonian = self.compute_simple_hamiltonian_path()
         print()
 
-        # We use a copy rather than get a reference.
+        # we use a deep copy rather than a reference
         curr = self.robot.pos.copy()
         for obstacle in self.simple_hamiltonian:
             target = obstacle.get_robot_target_pos()
-            print(f"Planning {curr} to {target}")
+            # print(f"Planning {curr} to {target}")
             res = ModifiedAStar(self.grid, self, curr, target).start_astar()
             if res is None:
-                print(f"\tNo path found from {curr} to {obstacle}")
+                print(f"No path found from {curr} to {obstacle}")
             else:
-                print("\tPath found.")
+                print("Path found!")
                 curr = res
                 self.commands.append(ScanCommand(
                     constants.ROBOT_SCAN_TIME, obstacle.index))
 
         self.compress_paths()
+
+        print()
+        for command in self.commands:
+            print(f'{command}\n')
         print("-" * 40)

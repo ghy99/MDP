@@ -25,9 +25,7 @@ class ModifiedAStar:
     def get_neighbours(self, pos: RobotPosition) -> List[Tuple[GridCell, RobotPosition, int, Command]]:
         """
         Get movement neighbours from this position.
-
         Note that all values in the Position object (x, y, direction) are all with respect to the grid!
-
         We also expect the return Positions to be with respect to the grid.
         """
         # We assume the robot will move by 10 when travelling straight, while moving a fixed x and y value when turning
@@ -40,6 +38,7 @@ class ModifiedAStar:
             StraightCommand(straight_dist),
             StraightCommand(-straight_dist)
         ]
+
         for command in straight_commands:
             # Check if doing this command does not bring us to any invalid position.
             after, p = self.check_valid_command(command, pos)
@@ -71,12 +70,14 @@ class ModifiedAStar:
                         True),  # R MEDIUM turn, reverse
             # TurnCommand(TypeOfTurn.LARGE, False, True, True),  # R LARGE turn, reverse
         ]
+
         for c in turn_commands:
             # Check if doing this command does not bring us to any invalid position.
             after, p = self.check_valid_command(c, pos)
+
             if after:
                 neighbours.append((after, p, turn_penalty, c))
-        print(neighbours)
+
         return neighbours
 
     def check_valid_command(self, command: Command, p: RobotPosition):
@@ -87,34 +88,47 @@ class ModifiedAStar:
         """
         # Check specifically for validity of turn command. Robot should not exceed the grid or hit the obstacles
         p = p.copy()
+
         if isinstance(command, TurnCommand):
             p_c = p.copy()
             command.apply_on_pos(p_c)
+            # print("Position after: ", p_c.x, p_c.y, p_c.direction)
+
             # make sure that the final position is a valid one
             if not (self.grid.check_valid_position(p_c) and self.grid.get_grid_cell_corresponding_to_coordinate(
                     *p_c.xy())):
+                # print("Not valid position: ", p_c.x, p_c.y, p_c.direction)
                 return None, None
+
             # if positive means the new position is to the right, else to the left side
             diff_in_x = p_c.x - p.x
             # if positive means the new position is on top of old position, else otherwise
             diff_in_y = p_c.y - p.y
-            for x in range(1, diff_in_x):
+
+            for x in range(0, abs(diff_in_x//10)):
                 temp = p_c.copy()
+
                 if diff_in_x > 0:  # go to the left!
                     temp.x -= (x+1)*10
                 else:
                     temp.x += (x+1)*10
+
                 if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
                         *temp.xy())):
+                    # print("Fail x: ", p_c.x, p_c.y, p_c.direction)
                     return None, None
-            for y in range(0, abs(diff_in_y/10)):
+
+            for y in range(0, abs(diff_in_y//10)):
                 temp = p.copy()
+
                 if diff_in_y > 0:  # go down!
                     temp.y += (y+1)*10
                 else:
                     temp.y -= (y+1)*10
+
                 if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
                         *temp.xy())):
+                    # print("Fail y: ", p_c.x, p_c.y, p_c.direction)
                     return None, None
 
         command.apply_on_pos(p)
@@ -145,18 +159,21 @@ class ModifiedAStar:
     def start_astar(self):
         frontier = PriorityQueue()  # Store frontier nodes to travel to.
         backtrack = dict()  # Store the sequence of grid cells being travelled.
+
         # Store the cost to travel from start to a target grid cell.
         cost = dict()
 
         # We can check what the goal grid cell is
         goal_node = self.grid.get_grid_cell_corresponding_to_coordinate(
             *self.end.xy()).copy()  # Take note of copy!
+
         # Set the required direction at this grid cell.
         goal_node.position.direction = self.end.direction
 
         # Add starting node set into the frontier.
         start_node: GridCell = self.grid.get_grid_cell_corresponding_to_coordinate(
             *self.start.xy()).copy()  # Take note of copy!
+
         # Know which direction the robot is facing.
         start_node.direction = self.start.direction
 
@@ -170,6 +187,8 @@ class ModifiedAStar:
         while not frontier.empty():  # While there are still nodes to process.
             # Get the highest priority node.
             priority, _, (current_node, current_position) = frontier.get()
+            # print("Curr node", current_node)
+
             # If the current node is our goal.
             if current_node == goal_node:
                 # Get the commands needed to get to destination.
@@ -180,6 +199,7 @@ class ModifiedAStar:
             # travel to from this node.
             for new_node, new_pos, weight, c in self.get_neighbours(current_position):
                 # weight here stands for cost of moving forward or turning
+                # print("Neighbour pos", new_pos)
                 new_cost = cost.get(current_node) + weight
 
                 if new_node not in backtrack or new_cost < cost[new_node]:
@@ -191,6 +211,7 @@ class ModifiedAStar:
                     frontier.put((priority, offset, (new_node, new_pos)))
                     backtrack[new_node] = (current_node, c)
                     cost[new_node] = new_cost
+
         # If we are here, means that there was no path that we could find.
         # We return None to show that we cannot find a path.
         return None
@@ -201,9 +222,13 @@ class ModifiedAStar:
         """
         commands = []
         curr = goal_node
+        # print("Extracting commands", backtrack)
+        # print("Starting node", curr)
         while curr:
             curr, c = backtrack.get(curr, (None, None))
+            # print("extract_commands:", curr, c)
             if c:
                 commands.append(c)
+
         commands.reverse()
         self.brain.commands.extend(commands)

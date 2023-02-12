@@ -35,8 +35,7 @@ class TurnCommand(Command):
         self.reverse = reverse
 
     def __str__(self):
-        return f"TurnCommand:{self.type_of_turn}, {self.total_ticks} ticks, rev={self.reverse}, left={self.left}, \
-        right= {self.right}) "
+        return f"TurnCommand:{self.type_of_turn}, {self.total_ticks} ticks, rev={self.reverse}, left={self.left}, right={self.right}) "
 
     __repr__ = __str__
 
@@ -88,6 +87,7 @@ class TurnCommand(Command):
                     curr_pos.x += 40
                     curr_pos.y -= 30
                     curr_pos.direction = Direction.RIGHT
+
             # else:
             #     match curr_pos.direction:
             #         case Direction.TOP:
@@ -256,6 +256,7 @@ class TurnCommand(Command):
             #             curr_pos.x -= 30
             #             curr_pos.y += 30
             #             curr_pos.direction = Direction.RIGHT
+
         return self
 
     def convert_to_message(self):
