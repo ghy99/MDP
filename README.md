@@ -16,5 +16,3 @@
 ├── RPI
 └── settings.gradle
 ```
-
-## 🎤 Communication Protocol
