@@ -42,7 +42,8 @@ class Main:
 
         print(settings.PC_HOST)
         if self.client is None:
-            print(f"Attempting to connect to {settings.RPI_HOST}:{settings.RPI_PORT}")
+            print(
+                f"Attempting to connect to {settings.RPI_HOST}:{settings.RPI_PORT}")
             self.client = RPiClient(settings.RPI_HOST, settings.RPI_PORT)
             #     Wait to connect to RPi.
             while True:
@@ -118,17 +119,19 @@ class Main:
             for i in range(len(obs_priority)):
                 if isinstance(obs_priority[i], Obstacle):
                     x = obs_priority[i].pos.x // settings.SCALING_FACTOR // 10
-                    y = (200 - (obs_priority[i].pos.y // settings.SCALING_FACTOR) - 5) // 10
-                    match obs_priority[i].pos.direction:
-                        case Direction.TOP:
-                            direction = "N"
-                        case Direction.BOTTOM:
-                            direction = "S"
-                        case Direction.RIGHT:
-                            direction = "E"
-                        case Direction.LEFT:
-                            direction = "W"
-                    obs_str = obs_str + str(x) + "," + str(y) + "," + direction + ";"
+                    y = (200 - (obs_priority[i].pos.y //
+                         settings.SCALING_FACTOR) - 5) // 10
+
+                    if obs_priority[i].pos.direction == Direction.TOP:
+                        direction = "N"
+                    elif obs_priority[i].pos.direction == Direction.BOTTOM:
+                        direction = "S"
+                    elif obs_priority[i].pos.direction == Direction.RIGHT:
+                        direction = "E"
+                    elif obs_priority[i].pos.direction == Direction.LEFT:
+                        direction = "W"
+                    obs_str = obs_str + str(x) + "," + \
+                        str(y) + "," + direction + ";"
             obs_str = obs_str[:-1] + "\n"
             print(obs_str)
             print("Sending list of commands to RPi...")
@@ -148,7 +151,6 @@ class Main:
             #     client.send_message(sent_commands)
             #     # client.close()
 
-
         # String commands from Rpi
         elif isinstance(data[0], str):
             # Check valid image taken
@@ -156,8 +158,10 @@ class Main:
                 if self.count == 0:
                     if len(self.commands) != 0:
                         if "STM:pn\n" in self.commands:
-                            sent_commands = self.commands[:self.commands.index("STM:pn\n") + 1]
-                            self.commands = self.commands[self.commands.index("STM:pn\n") + 1:]
+                            sent_commands = self.commands[:self.commands.index(
+                                "STM:pn\n") + 1]
+                            self.commands = self.commands[self.commands.index(
+                                "STM:pn\n") + 1:]
                         else:
                             sent_commands = self.commands
                         print(sent_commands)
@@ -169,8 +173,10 @@ class Main:
                     amended_commands = ["STM:w010n\n"]
                     if len(self.commands) != 0:
                         if "STM:pn\n" in self.commands:
-                            sent_commands = self.commands[:self.commands.index("STM:pn\n") + 1]
-                            self.commands = self.commands[self.commands.index("STM:pn\n") + 1:]
+                            sent_commands = self.commands[:self.commands.index(
+                                "STM:pn\n") + 1]
+                            self.commands = self.commands[self.commands.index(
+                                "STM:pn\n") + 1:]
                         else:
                             sent_commands = self.commands
                         amended_commands = amended_commands + sent_commands
@@ -183,8 +189,10 @@ class Main:
                     amended_commands = ["STM:w020n\n"]
                     if len(self.commands) != 0:
                         if "STM:pn\n" in self.commands:
-                            sent_commands = self.commands[:self.commands.index("STM:pn\n") + 1]
-                            self.commands = self.commands[self.commands.index("STM:pn\n") + 1:]
+                            sent_commands = self.commands[:self.commands.index(
+                                "STM:pn\n") + 1]
+                            self.commands = self.commands[self.commands.index(
+                                "STM:pn\n") + 1:]
                         else:
                             sent_commands = self.commands
                         amended_commands = amended_commands + sent_commands
@@ -195,8 +203,10 @@ class Main:
             # Start sending algo commands
             elif data[0] == "START":
                 if len(self.commands) != 0:
-                    sent_commands = self.commands[:self.commands.index("STM:pn\n") + 1]
-                    self.commands = self.commands[self.commands.index("STM:pn\n") + 1:]
+                    sent_commands = self.commands[:self.commands.index(
+                        "STM:pn\n") + 1]
+                    self.commands = self.commands[self.commands.index(
+                        "STM:pn\n") + 1:]
                     print(sent_commands)
                     print(self.commands)
                     client.send_message(sent_commands)
@@ -205,7 +215,8 @@ class Main:
             # Not valid data
             elif data[0] == "bullseye":
                 print("Sending list of commands to RPi...")
-                fixed_commands = ["STM:Ln\n", "STM:w060n\n", "STM:ln\n", "STM:w025n\n", "STM:ln\n", "STM:pn\n"]
+                fixed_commands = ["STM:Ln\n", "STM:w060n\n",
+                                  "STM:ln\n", "STM:w025n\n", "STM:ln\n", "STM:pn\n"]
                 print(fixed_commands)
                 client.send_message(fixed_commands)
 
@@ -216,8 +227,10 @@ class Main:
                     amended_commands = ["STM:w020n\n"]
                     if len(self.commands) != 0:
                         if "STM:pn\n" in self.commands:
-                            sent_commands = self.commands[:self.commands.index("STM:pn\n") + 1]
-                            self.commands = self.commands[self.commands.index("STM:pn\n") + 1:]
+                            sent_commands = self.commands[:self.commands.index(
+                                "STM:pn\n") + 1]
+                            self.commands = self.commands[self.commands.index(
+                                "STM:pn\n") + 1:]
                         else:
                             sent_commands = self.commands
                         amended_commands = amended_commands + sent_commands
@@ -263,7 +276,7 @@ if __name__ == '__main__':
     Rpi Connection
     """
     # sim()
-    #init()
+    # init()
     test()
 
 
@@ -271,4 +284,4 @@ if __name__ == "__main__":
     # grid, obstacles = initGrid()
     # runAlgo(grid, obstacles)
     sim = Simulation()
-    sim.runSimulation()    
+    sim.runSimulation()
