@@ -30,7 +30,7 @@ def createObstacles(gridsize):
     # grid.printgrid(gridsize)
     obstaclesNo = int(input("Enter number of obstacles: "))
     print("x = row number (1-20), y = column number (1-20), D = Direction (N S E W)")                          # this part is for selecting obstacles. change to passing in obstacles as a parameter
-    print(f"Select {obstaclesNo} obstacle positions, separated by space(x y D):")
+    print(f"Select {obstaclesNo} obstacle positions, separated by space (x y D):")
     for i in range(obstaclesNo):
         x, y, direction = input().split(" ")
         obstacles.append((gridsize - int(x), int(y) - 1, direction)) # start counting from bottom left corner

@@ -4,7 +4,6 @@ from copy import deepcopy
 import settings
 import app
 
-
 class Simulation():
     def __init__(self):
         pygame.init()
