@@ -35,7 +35,6 @@ def createObstacles(gridsize):
         x, y, direction = input().split(" ")
         obstacles.append((gridsize - int(x), int(y) - 1, direction)) # start counting from bottom left corner
     print(obstacles)
-    
     return obstacles
 
 ''' create grid object and list of obstacles '''

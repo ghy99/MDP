@@ -3,7 +3,7 @@ import time
 from typing import List
 import pickle
 import socket
-import settings
+# import settings
 from pygame_app import AlgoSimulator, AlgoMinimal
 from Algor import Direction
 from entities.connection.rpi_client import RPiClient
@@ -280,15 +280,15 @@ if __name__ == '__main__':
     test()
 
 
-if __name__ == "__main__":
-    bot = Robot()
-    # algo = Astar(bot)
-    # algo.runAlgo()
-    # algo = Astar(self.getCurrentPos(), self.grid)
-#     bot.callAlgo()
-# self.algo = Astar()
-    # grid, obstacles = app.initGrid()
-    # a = astarclass.Astar(settings.INITPOS, obstacles, grid, settings.GRID_LENGTH//settings.GRID_CELL_LENGTH)
-    # a.runAlgo(grid, obstacles)
-    sim = Simulation()
-    sim.runSimulation(bot)
+# if __name__ == "__main__":
+#     bot = Robot()
+#     # algo = Astar(bot)
+#     # algo.runAlgo()
+#     # algo = Astar(self.getCurrentPos(), self.grid)
+# #     bot.callAlgo()
+# # self.algo = Astar()
+#     # grid, obstacles = app.initGrid()
+#     # a = astarclass.Astar(settings.INITPOS, obstacles, grid, settings.GRID_LENGTH//settings.GRID_CELL_LENGTH)
+#     # a.runAlgo(grid, obstacles)
+#     sim = Simulation()
+#     sim.runSimulation(bot)
