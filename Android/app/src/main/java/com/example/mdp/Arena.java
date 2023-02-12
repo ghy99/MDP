@@ -1103,7 +1103,6 @@ public class Arena extends AppCompatActivity {
                 moveStraightAnimator = ObjectAnimator.ofFloat(car, "x", new_x);
                 moveStraightAnimator.setDuration(ANIMATOR_DURATION);
 
-                // TODO: fix this shit
                 turnAnimator = ObjectAnimator.ofFloat(car, "rotation", 360);
                 turnAnimator.setDuration(500);
 
@@ -1136,6 +1135,9 @@ public class Arena extends AppCompatActivity {
         updateStatusWindow("Ready");
     }
 
+    /*
+     * TODO: Decide what to do with this string builder LOL
+     */
     private void sendObstaclesEvent() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
@@ -1302,6 +1304,9 @@ public class Arena extends AppCompatActivity {
         Toast.makeText(Arena.this, "Preset 1 Applied", Toast.LENGTH_SHORT).show();
     }
 
+    /*
+     * TODO: Figure out what I want to do with this shit
+     */
     public String[][] savedPreset = {};
 
     private void setPreset2Button() {
@@ -1554,6 +1559,9 @@ public class Arena extends AppCompatActivity {
         }
     }
 
+    /*
+     * TODO: Decide what to do here also
+     */
     private void setSaveButton() {
         savedPreset = savedObstacles();
         StringBuilder stringBuilder = new StringBuilder();
