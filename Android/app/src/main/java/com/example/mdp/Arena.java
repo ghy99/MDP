@@ -1771,7 +1771,7 @@ public class Arena extends AppCompatActivity {
                     // updateRobotPosition(Integer.parseInt(x), Integer.parseInt(y), direction_int);
                     updateRobotPosition(Integer.parseInt(x), adjusted_y, direction_int);
                     break;
-                // update obstacle ID (format - TARGET, obstacle_number, target_ID)
+                // update obstacle ID (format - TARGET,obstacle_number,target_ID)
                 case Helper.TARGET:
                     int obstacleNumber = Character.getNumericValue(message.charAt(7));
                     String solution = message.substring(9);
@@ -1841,38 +1841,24 @@ public class Arena extends AppCompatActivity {
                     }
 
                     else {
-                        switch (moveCommand) { // Turn commands
-                            case "ln": // forward left (w, w,w, a, w, w, w)
+                        switch (moveCommand) {
+                            case "ln": // forward left (w, w, w, a, w, w, w)
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 leftButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 break;
                             case "rn": // forward right (w,w, w, d, w, w,w)
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 rightButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 forwardButtonCommand();
-                                // sleepFor(500);
                                 break;
                             case "Ln": // reverse left (s, s, s, d, s, s, s)
                                 reverseButtonCommand();
@@ -1900,7 +1886,6 @@ public class Arena extends AppCompatActivity {
                                 break;
                             default:
                                 Log.d("Move command", "Command is not a valid turn");
-                                Log.d("this", moveCommand); // checking value of moveCommand
                                 break;
                         }
                     }

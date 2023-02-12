@@ -17,8 +17,7 @@ class Position:
         self.direction = direction
 
     def __str__(self):
-        return f"Position({self.x}, {self.y}, " \
-               f"angle={self.direction})"
+        return f"Position({self.x}, {self.y}, angle={self.direction})"
 
     __repr__ = __str__
 
