@@ -109,6 +109,7 @@ class TurnCommand(Command):
             #             curr_pos.x += 30
             #             curr_pos.y -= 30
             #             curr_pos.direction = Direction.RIGHT
+
         # turn right and forward
         if self.right and not self.left and not self.reverse:
             if self.type_of_turn == TypeOfTurn.SMALL:
@@ -159,6 +160,7 @@ class TurnCommand(Command):
             #             curr_pos.x -= 30
             #             curr_pos.y -= 30
             #             curr_pos.direction = Direction.LEFT
+
         # turn front wheels left and reverse
         if self.left and not self.right and self.reverse:
             if self.type_of_turn == TypeOfTurn.SMALL:

@@ -115,6 +115,7 @@ class Hamiltonian:
 
         while index < len(self.commands):
             command = self.commands[index]
+
             if isinstance(command, StraightCommand):
                 new_length = 0
                 while index < len(self.commands) and isinstance(self.commands[index], StraightCommand):
@@ -125,6 +126,7 @@ class Hamiltonian:
             else:
                 new_commands.append(command)
                 index += 1
+
         self.commands = new_commands
         print("Done!")
 
@@ -152,5 +154,5 @@ class Hamiltonian:
 
         print()
         for command in self.commands:
-            print(f'{command}\n')
+            print(f'{command}')
         print("-" * 40)
