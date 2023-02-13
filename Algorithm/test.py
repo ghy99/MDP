@@ -6,7 +6,7 @@ from Misc.positioning import Position
 from Misc.direction import Direction
 
 tmp = [[50, 50, Direction.TOP], [90, 90, Direction.BOTTOM],
-       [40, 180, Direction.LEFT], [120, 150, Direction.RIGHT]]
+       [20, 80, Direction.BOTTOM], [120, 150, Direction.RIGHT]]
 obstacles = []
 i = 0
 for x, y, direction in tmp:
@@ -15,7 +15,12 @@ for x, y, direction in tmp:
     i += 1
     obstacles.append(obstacle)
 
+print("list of obstacles: ")
+print(obstacles)
 grid = Grid(obstacles)
+print("list of target positions")
+for x in grid.obstacles:
+    print(x.target_position)
 robot = Robot(grid)
 test = Hamiltonian(grid=grid, robot=robot)
 test.plan_path()

@@ -39,6 +39,9 @@ class Robot:
     def get_current_pos(self):
         return self.pos
 
+    def __str__(self):
+        print(f"robot is at {self.pos}")
+
     def start_algo_from_position(self, grid):
         self.pos = self.get_current_pos()
         self._start_copy = self.pos.copy()

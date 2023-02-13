@@ -1,7 +1,7 @@
 import socket
 
 # PyGame settings
-SCALING_FACTOR = 3
+# SCALING_FACTOR = 3
 FRAMES = 50
 WINDOW_SIZE = 800, 650
 
@@ -33,7 +33,7 @@ OFFSET = GRID_CELL_LENGTH // 2
 
 # Obstacle Attributes
 OBSTACLE_LENGTH = 10
-OBSTACLE_SAFETY_WIDTH = 20
+OBSTACLE_SAFETY_WIDTH = 10
 # OBSTACLE_SAFETY_WIDTH = ROBOT_SAFETY_DISTANCE // 3 * 4  # With respect to the center of the obstacle
 
 # Path Finding Attributes
