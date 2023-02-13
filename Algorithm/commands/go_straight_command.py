@@ -16,7 +16,7 @@ class StraightCommand(Command):
         self.dist = dist
 
     def __str__(self):
-        return f"StraightCommand(dist={self.dist / constants.SCALING_FACTOR}, {self.total_ticks} ticks)"
+        return f"StraightCommand(dist={self.dist}, {self.total_ticks} ticks)"
 
     __repr__ = __str__
 
