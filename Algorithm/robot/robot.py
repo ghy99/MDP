@@ -39,6 +39,11 @@ class Robot:
     def get_current_pos(self):
         return self.pos
 
+    def setCurrentPos(self, x, y, direction):
+        self.pos.x = constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - (x * 10)
+        self.pos.y = y * 10
+        self.pos.direction = direction
+
     def start_algo_from_position(self, grid):
         self.pos = self.get_current_pos()
         self._start_copy = self.pos.copy()
