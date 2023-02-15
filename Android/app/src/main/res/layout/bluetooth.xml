@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#AFE3C0">
+    android:background="#F2D785">
 
     <TextView
         android:id="@+id/connStatusTextView"
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="104dp"
         android:layout_marginEnd="24dp"
-        android:backgroundTint="#036016"
+        android:backgroundTint="#A62424"
         android:fontFamily="@font/jockey_one_regular"
         android:paddingHorizontal="34dp"
         android:paddingVertical="14dp"
@@ -103,13 +103,14 @@
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:background="#90C290"
-        android:listSelector="#588157"
+        android:background="#DC3636"
+        android:listSelector="#B83939"
         android:padding="10dp"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -134,14 +135,13 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="10dp"
-        android:background="#90C290"
-        android:listSelector="#588157"
+        android:background="#DC3636"
+        android:listSelector="#B83939"
         android:padding="10dp"
         app:layout_constraintBottom_toTopOf="@+id/connectBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5">
-
     </ListView>
 
     <Button
@@ -150,7 +150,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="24dp"
-        android:backgroundTint="#036016"
+        android:backgroundTint="#A62424"
         android:fontFamily="@font/jockey_one_regular"
         android:paddingHorizontal="34dp"
         android:paddingVertical="14dp"

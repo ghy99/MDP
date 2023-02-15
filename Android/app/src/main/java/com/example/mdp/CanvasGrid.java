@@ -22,7 +22,7 @@ public class CanvasGrid extends View {
         super(context, attributeSet);
 
         String backgroundColor = "#F3F4F8";
-        String gridColor = "#036016";
+        String gridColor = "#A62424";
 
         blackPaint.setColor(Color.BLACK);
         whitePaint.setColor(Color.WHITE);

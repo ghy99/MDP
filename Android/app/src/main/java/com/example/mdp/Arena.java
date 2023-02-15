@@ -1139,17 +1139,17 @@ public class Arena extends AppCompatActivity {
      * TODO: Decide what to do with this string builder LOL
      */
     private void sendObstaclesEvent() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder
-                .append("ALG:")
-                .append(getObstacleString(obstacle1) + "0;")
-                .append(getObstacleString(obstacle2) + "1;")
-                .append(getObstacleString(obstacle3) + "2;")
-                .append(getObstacleString(obstacle4) + "3;")
-                .append(getObstacleString(obstacle5) + "4;")
-                .append(getObstacleString(obstacle6) + "5;")
-                .append(getObstacleString(obstacle7) + "6;")
-                .append(getObstacleString(obstacle8) + "7;");
+        // StringBuilder stringBuilder = new StringBuilder();
+        // stringBuilder
+        // .append("ALG:")
+        // .append(getObstacleString(obstacle1) + "0;")
+        // .append(getObstacleString(obstacle2) + "1;")
+        // .append(getObstacleString(obstacle3) + "2;")
+        // .append(getObstacleString(obstacle4) + "3;")
+        // .append(getObstacleString(obstacle5) + "4;")
+        // .append(getObstacleString(obstacle6) + "5;")
+        // .append(getObstacleString(obstacle7) + "6;")
+        // .append(getObstacleString(obstacle8) + "7;");
         String IRstart = "ALG:START";
 
         if (BluetoothService.BluetoothConnectionStatus) {
@@ -1611,10 +1611,17 @@ public class Arena extends AppCompatActivity {
      * NOTE: 19 because grid is only 20 x 20
      */
     private String getObstacleString(ImageView obstacle) {
-        if ((int) (obstacle.getX() / 40) > 19 || ((int) obstacle.getY() / 40) > 19) {
+        int x = (int) obstacle.getX() / SNAP_GRID_INTERVAL;
+        int y = (int) obstacle.getY() / SNAP_GRID_INTERVAL;
+        // (0,0) starts from top left hence invert y
+        int new_y = 20 - y - 1;
+        Log.d(TAG, "obstacle at " + x + "," + new_y);
+
+        if (x > 19 || new_y > 19) {
             return "";
         } else {
-            return ((int) obstacle.getX() / 40) + "," + ((int) obstacle.getY() / 40) + ","
+            return x + "," + new_y
+                    + ","
                     + getImageOrientation(obstacle) + ",";
         }
     }

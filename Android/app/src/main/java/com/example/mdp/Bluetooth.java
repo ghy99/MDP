@@ -432,8 +432,8 @@ public class Bluetooth extends AppCompatActivity {
                         .show();
                 editor.putString("connStatus", "Connected to " + myDevice.getName());
                 connStatusTextView.setText("Connected to " + myDevice.getName());
-                // connStatusTextView.setTextColor(Color.parseColor("#6BDE42"));
-                connStatusTextView.setTextColor(Color.parseColor("#FFA500"));
+                connStatusTextView.setTextColor(Color.parseColor("#6BDE42"));
+                // connStatusTextView.setTextColor(Color.parseColor("#FFA500"));
             } else if (status.equals("disconnected") && retryConnection == false) {
                 Log.d(TAG, "mBroadcastReceiver5: Disconnected from " + myDevice.getName());
                 Toast.makeText(Bluetooth.this, "Disconnected from " + myDevice.getName(), Toast.LENGTH_SHORT).show();
