@@ -8,7 +8,7 @@ class RPiClient:
     def __init__(self, host, port):
         self.host = host
         self.port = port
-        self.socket = socket.socket()
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self):
         self.socket.connect((self.host, self.port))
@@ -20,7 +20,7 @@ class RPiClient:
 
     def receive_message(self):
         data = self.socket.recv(1024)
-        print(data.__len__())
+        print("length of data: " + data.__len__())
         if not data:
             return False
         return data
