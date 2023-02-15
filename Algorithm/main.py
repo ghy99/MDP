@@ -3,8 +3,12 @@ import time
 from typing import List
 import socket
 import constants
-from pygame_app import AlgoSimulator, AlgoMinimal
+# from pygame_app import AlgoSimulator, AlgoMinimal
 from Misc.direction import Direction
+from Misc.positioning import Position
+from Grid.grid import Grid
+from robot.robot import Robot
+from simulation import Simulation
 from ConnectionToRpi.rpi_client import RPiClient
 from Grid.obstacle import Obstacle
 
@@ -26,16 +30,35 @@ class Main:
         return obs
 
     def run_simulator(self):
-        """ 
-        Fill in obstacle positions with respect to lower bottom left corner.
-        (x-coordinate, y-coordinate, Direction)
-        obstacles = [[15, 75, 0, 0]]
-        obs = parse_obstacle_data(obstacles) 
-        """
-        obs = self.parse_obstacle_data([])
-        app = AlgoSimulator(obs)
-        app.init()
-        app.execute()
+        world1 = [
+            [50, 50, Direction.TOP], 
+            [90, 90, Direction.BOTTOM], 
+            [40, 180, Direction.BOTTOM],
+            [120, 150, Direction.RIGHT], 
+            [150, 40, Direction.LEFT],
+            [190, 190, Direction.LEFT]
+        ]
+        obstacles = []
+        i = 0
+        for x, y, direction in world1:
+            position: Position = Position(x, y, direction)
+            obstacle: Obstacle = Obstacle(position, i)
+            i += 1
+            obstacles.append(obstacle)
+        grid = Grid(obstacles)
+        bot = Robot(grid)
+        sim = Simulation()
+        sim.runSimulation(bot)
+        # """ 
+        # Fill in obstacle positions with respect to lower bottom left corner.
+        # (x-coordinate, y-coordinate, Direction)
+        # obstacles = [[15, 75, 0, 0]]
+        # obs = parse_obstacle_data(obstacles) 
+        # """
+        # obs = self.parse_obstacle_data([])
+        # app = AlgoSimulator(obs)
+        # app.init()
+        # app.execute()
 
     def run_minimal(self, also_run_simulator):
         # Create a client to connect to the RPi.
@@ -281,7 +304,9 @@ if __name__ == '__main__':
     """
     # sim()
     # init()
-    test()
+    # test()
+    main = Main()
+    main.run_simulator()
 
 
 # if __name__ == "__main__":

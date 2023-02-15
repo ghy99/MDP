@@ -2,8 +2,12 @@ import pygame
 import sys
 from copy import deepcopy
 import constants
+from commands.go_straight_command import StraightCommand
+from commands.turn_command import TurnCommand
+from commands.scan_obstacle_command import ScanCommand
 # import app
 from Misc.direction import Direction
+from Misc.type_of_turn import TypeOfTurn
 
 
 class Simulation():
@@ -11,10 +15,11 @@ class Simulation():
         pygame.init()
         self.running = True
         # window size = 800, 650
-        self.obstacles = []
+        # self.obstacles = []
+        # self.obstacles = self.bot.hamiltonian.grid.obstacles
         self.font = pygame.font.SysFont('Arial', 25)
         self.screen = pygame.display.set_mode(
-            (800, 650), pygame.HWSURFACE | pygame.DOUBLEBUF)
+            (800, 650), pygame.RESIZABLE)
         self.clock = None
         pygame.mouse.set_visible(1)
         pygame.display.set_caption("Vroom Vroom Simulation")
@@ -28,23 +33,7 @@ class Simulation():
         currentPos = ((constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
                       currentPosX) // 10, currentPosY // 10, direction)
         cls.bot.setCurrentPos(currentPos[0], currentPos[1], currentPos[2])
-        cls.obstacles.clear()
-
-    ''' Get Obstacle coordinate & direction through input '''
-    def createObstacles(gridsize):
-        obstacles = []
-        # grid.printgrid(gridsize)
-        obstaclesNo = int(input("Enter number of obstacles: "))
-        # this part is for selecting obstacles. change to passing in obstacles as a parameter
-        print("x = row number (1-20), y = column number (1-20), D = Direction (N S E W)")
-        print(
-            f"Select {obstaclesNo} obstacle positions, separated by space (x y D):")
-        for i in range(obstaclesNo):
-            x, y, direction = input().split(" ")
-            # start counting from bottom left corner
-            obstacles.append((gridsize - int(x), int(y) - 1, direction))
-        print(obstacles)
-        return obstacles
+        cls.bot.hamiltonian.commands.clear()
 
     def selectObstacles(cls, y, x, cellSize, color):
         newRect = pygame.Rect(y * cellSize, x * cellSize, cellSize, cellSize)
@@ -53,6 +42,19 @@ class Simulation():
 
     def drawRobot(cls, robotPos, cellSize, directionColor, botColor, botAreaColor):
         # print(robotPos)
+        # if robotPos[2] == Direction.TOP:
+        #     for x in range(robotPos[0] - 1, robotPos[0] + 2):
+        #         for y in range(robotPos[1] - 1, robotPos[1] + 1):
+        #             if (0 <= x * cellSize < constants.GRID_LENGTH * constants.SCALING_FACTOR) and (0 <= y * cellSize < constants.GRID_LENGTH * constants.SCALING_FACTOR):
+        #                 if robotPos[0] == x and robotPos[1] == y:
+        #                     cls.selectObstacles(robotPos[1], robotPos[0], cellSize, botColor)
+        #     pass
+        # elif robotPos[2] == Direction.RIGHT:
+        #     pass
+        # elif robotPos[2] == Direction.BOTTOM:
+        #     pass
+        # elif robotPos[2] == Direction.LEFT:
+        #     pass
         for x in range(robotPos[0] - 1, robotPos[0] + 2):
             for y in range(robotPos[1] - 1, robotPos[1] + 2):
                 if (0 <= x * cellSize < constants.GRID_LENGTH * constants.SCALING_FACTOR) and (0 <= y * cellSize < constants.GRID_LENGTH * constants.SCALING_FACTOR):
@@ -111,44 +113,33 @@ class Simulation():
 
     def drawObstaclesButton(cls, obstacles, color):
         size = constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR
-        turningSize = ((constants.GRID_CELL_LENGTH *
-                       constants.SCALING_FACTOR * 3) + 10) // 4
-        # self.selectObstacles(x // (10 * 3), y // ( 10 * 3),
-        # constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR,
-        # constants.GREY)
+        # turningSize = ((constants.GRID_CELL_LENGTH *
+        #                constants.SCALING_FACTOR * 3) + 10) // 4
         for i in obstacles:
-            x = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                 i.position.x) // constants.GRID_CELL_LENGTH
-            y = (i.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            y = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                 i.position.y) // constants.GRID_CELL_LENGTH
+            # x = i.position.x // constants.GRID_CELL_LENGTH
+            x = i.position.x // constants.GRID_CELL_LENGTH
             direction = i.position.direction
-            # print(f"obstacle coordinates: {i.position.x, i.position.y, i.position.direction}")
             cls.selectObstacles(
-                y, x, constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, constants.YELLOW)
-            # cls.selectObstacles(i[1], i[0], constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, constants.YELLOW)
-            # if i[2] == 'N':
+                x, y, constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, constants.YELLOW)
+
             if direction == Direction.TOP:
-                # imageSide = pygame.Rect(i[1] * size, i[0] * size, size, 5)
-                imageSide = pygame.Rect(y * size, x * size, size, 5)
+                imageSide = pygame.Rect(x * size, y * size, size, 5)
                 cls.screen.fill(color, imageSide)
                 pygame.draw.rect(cls.screen, color, imageSide, 5)
-            # elif i[2] == 'E':
             elif direction == Direction.RIGHT:
-                # imageSide = pygame.Rect((i[1] * size) + size - 5, (i[0] * size), 5, size)
                 imageSide = pygame.Rect(
-                    (y * size) + size - 5, (x * size), 5, size)
+                    (x * size) + size - 5, (y * size), 5, size)
                 cls.screen.fill(color, imageSide)
                 pygame.draw.rect(cls.screen, color, imageSide, 5)
-            # elif i[2] == 'S':
             elif direction == Direction.BOTTOM:
-                # imageSide = pygame.Rect(i[1] * size, (i[0] * size) + size - 5, size, 5)
                 imageSide = pygame.Rect(
-                    y * size, (x * size) + size - 5, size, 5)
+                    x * size, (y * size) + size - 5, size, 5)
                 cls.screen.fill(color, imageSide)
                 pygame.draw.rect(cls.screen, color, imageSide, 5)
-            # elif i[2] == 'W':
             elif direction == Direction.LEFT:
-                # imageSide = pygame.Rect(i[1] * size, i[0] * size, 5, size)
-                imageSide = pygame.Rect(y * size, x * size, 5, size)
+                imageSide = pygame.Rect(x * size, y * size, 5, size)
                 cls.screen.fill(color, imageSide)
                 pygame.draw.rect(cls.screen, color, imageSide, 5)
 
@@ -185,848 +176,848 @@ class Simulation():
         cls.drawImage(img, 650, 182.5, constants.GREY,
                       size, size)       # Slant Backward W
 
-    def moveForward(self, currentPos, gridSize, cellSize):
+    def moveForward(self, gridSize, cellSize):
         steps = 1
-        if currentPos[2] == Direction.TOP:
-            for y in range(currentPos[1] - 1, currentPos[1] + 2):
-                for obstacle in self.obstacles:
-                    i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                         obstacle.position.x) // constants.GRID_CELL_LENGTH
-                    j = (obstacle.position.y -
-                         constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                    if (currentPos[0] - 2 == i) and (y == j):
-                        print(f"COLLISION!")
-                        return
-            if (0 <= (currentPos[0] - steps) * cellSize < gridSize) and (0 <= currentPos[1] * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+        if self.currentPos[2] == Direction.TOP:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
+            #     for obstacle in self.obstacles:
+            #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+            #              obstacle.position.x) // constants.GRID_CELL_LENGTH
+            #         j = (obstacle.position.y -
+            #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
+            #             print(f"COLLISION!")
+            #             return
+            if (0 <= (self.currentPos[0] - steps) * cellSize < gridSize) and (0 <= self.currentPos[1] * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - steps, currentPos[1], currentPos[2])
-        elif currentPos[2] == Direction.RIGHT:
-            for x in range(currentPos[0] - 1, currentPos[0] + 2):
-                for obstacle in self.obstacles:
-                    i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                         obstacle.position.x) // constants.GRID_CELL_LENGTH
-                    j = (obstacle.position.y -
-                         constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                    if (x == i) and (currentPos[1] + 2 == j):
-                        print(f"COLLISION!")
-                        return
-            if (0 <= currentPos[0] * cellSize < gridSize) and (0 <= (currentPos[1] + steps) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize,
+                    self.currentPos[0] - steps, self.currentPos[1], self.currentPos[2])
+        elif self.currentPos[2] == Direction.RIGHT:
+            # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 2):
+            #     for obstacle in self.obstacles:
+            #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+            #              obstacle.position.x) // constants.GRID_CELL_LENGTH
+            #         j = (obstacle.position.y -
+            #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            #         if (x == i) and (self.currentPos[1] + 2 == j):
+            #             print(f"COLLISION!")
+            #             return
+            if (0 <= self.currentPos[0] * cellSize < gridSize) and (0 <= (self.currentPos[1] + steps) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize,
                                constants.GREEN, constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0], currentPos[1] + steps, currentPos[2])
-        elif currentPos[2] == Direction.BOTTOM:
-            for y in range(currentPos[1] - 1, currentPos[1] + 2):
-                for obstacle in self.obstacles:
-                    i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                         obstacle.position.x) // constants.GRID_CELL_LENGTH
-                    j = (obstacle.position.y -
-                         constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                    if (currentPos[0] + 2 == i) and (y == j):
-                        print(f"COLLISION!")
-                        return
-            if (0 <= (currentPos[0] + steps) * cellSize < gridSize) and (0 <= currentPos[1] * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0], self.currentPos[1] + steps, self.currentPos[2])
+        elif self.currentPos[2] == Direction.BOTTOM:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
+            #     for obstacle in self.obstacles:
+            #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+            #              obstacle.position.x) // constants.GRID_CELL_LENGTH
+            #         j = (obstacle.position.y -
+            #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            #         if (self.currentPos[0] + 2 == i) and (y == j):
+            #             print(f"COLLISION!")
+            #             return
+            if (0 <= (self.currentPos[0] + steps) * cellSize < gridSize) and (0 <= self.currentPos[1] * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + steps, currentPos[1], currentPos[2])
-        elif currentPos[2] == Direction.LEFT:
-            for x in range(currentPos[0] - 1, currentPos[0] + 2):
-                for obstacle in self.obstacles:
-                    i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                         obstacle.position.x) // constants.GRID_CELL_LENGTH
-                    j = (obstacle.position.y -
-                         constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                    if (x == i) and (currentPos[1] - 2 == j):
-                        print(f"COLLISION!")
-                        return
-            if (0 <= currentPos[0] * cellSize < gridSize) and (0 <= (currentPos[1] - steps) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] + steps, self.currentPos[1], self.currentPos[2])
+        elif self.currentPos[2] == Direction.LEFT:
+            # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 2):
+            #     for obstacle in self.obstacles:
+            #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+            #              obstacle.position.x) // constants.GRID_CELL_LENGTH
+            #         j = (obstacle.position.y -
+            #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            #         if (x == i) and (self.currentPos[1] - 2 == j):
+            #             print(f"COLLISION!")
+            #             return
+            if (0 <= self.currentPos[0] * cellSize < gridSize) and (0 <= (self.currentPos[1] - steps) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0], currentPos[1] - steps, currentPos[2])
+                    self.currentPos[0], self.currentPos[1] - steps, self.currentPos[2])
 
-    def moveBackward(self, currentPos, gridSize, cellSize):
+    def moveBackward(self, gridSize, cellSize):
         steps = 1
-        if currentPos[2] == Direction.TOP:
-            for y in range(currentPos[1] - 1, currentPos[1] + 2):
-                for obstacle in self.obstacles:
-                    i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                         obstacle.position.x) // constants.GRID_CELL_LENGTH
-                    j = (obstacle.position.y -
-                         constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                    if (currentPos[0] + 2 == i) and (y == j):
-                        print(f"COLLISION!")
-                        return
-            if (0 <= (currentPos[0] + steps) * cellSize < gridSize) and (0 <= currentPos[1] * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+        if self.currentPos[2] == Direction.TOP:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
+            #     for obstacle in self.obstacles:
+            #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+            #              obstacle.position.x) // constants.GRID_CELL_LENGTH
+            #         j = (obstacle.position.y -
+            #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            #         if (currentPos[0] + 2 == i) and (y == j):
+            #             print(f"COLLISION!")
+            #             return
+            if (0 <= (self.currentPos[0] + steps) * cellSize < gridSize) and (0 <= self.currentPos[1] * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + steps, currentPos[1], currentPos[2])
-        elif currentPos[2] == Direction.RIGHT:
-            for x in range(currentPos[0] - 1, currentPos[0] + 2):
-                for obstacle in self.obstacles:
-                    i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                         obstacle.position.x) // constants.GRID_CELL_LENGTH
-                    j = (obstacle.position.y -
-                         constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                    if (x == i) and (currentPos[1] - 2 == j):
-                        print(f"COLLISION!")
-                        return
-            if (0 <= currentPos[0] * cellSize < gridSize) and (0 <= (currentPos[1] - steps) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] + steps, self.currentPos[1], self.currentPos[2])
+        elif self.currentPos[2] == Direction.RIGHT:
+            # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 2):
+            #     for obstacle in self.obstacles:
+            #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+            #              obstacle.position.x) // constants.GRID_CELL_LENGTH
+            #         j = (obstacle.position.y -
+            #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            #         if (x == i) and (self.currentPos[1] - 2 == j):
+            #             print(f"COLLISION!")
+            #             return
+            if (0 <= self.currentPos[0] * cellSize < gridSize) and (0 <= (self.currentPos[1] - steps) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0], currentPos[1] - steps, currentPos[2])
-        elif currentPos[2] == Direction.BOTTOM:
-            for y in range(currentPos[1] - 1, currentPos[1] + 2):
-                for obstacle in self.obstacles:
-                    i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                         obstacle.position.x) // constants.GRID_CELL_LENGTH
-                    j = (obstacle.position.y -
-                         constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                    if (currentPos[0] - 2 == i) and (y == j):
-                        print(f"COLLISION!")
-                        return
-            if (0 <= (currentPos[0] - steps) * cellSize < gridSize) and (0 <= currentPos[1] * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0], self.currentPos[1] - steps, self.currentPos[2])
+        elif self.currentPos[2] == Direction.BOTTOM:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
+            #     for obstacle in self.obstacles:
+            #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+            #              obstacle.position.x) // constants.GRID_CELL_LENGTH
+            #         j = (obstacle.position.y -
+            #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
+            #             print(f"COLLISION!")
+            #             return
+            if (0 <= (self.currentPos[0] - steps) * cellSize < gridSize) and (0 <= self.currentPos[1] * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - steps, currentPos[1], currentPos[2])
-        elif currentPos[2] == Direction.LEFT:
-            for x in range(currentPos[0] - 1, currentPos[0] + 2):
-                for obstacle in self.obstacles:
-                    i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                         obstacle.position.x) // constants.GRID_CELL_LENGTH
-                    j = (obstacle.position.y -
-                         constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                    if (x == i) and (currentPos[1] + 2 == j):
-                        print(f"COLLISION!")
-                        return
-            if (0 <= currentPos[0] * cellSize < gridSize) and (0 <= (currentPos[1] + steps) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] - steps, self.currentPos[1], self.currentPos[2])
+        elif self.currentPos[2] == Direction.LEFT:
+            # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 2):
+            #     for obstacle in self.obstacles:
+            #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+            #              obstacle.position.x) // constants.GRID_CELL_LENGTH
+            #         j = (obstacle.position.y -
+            #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+            #         if (x == i) and (self.currentPos[1] + 2 == j):
+            #             print(f"COLLISION!")
+            #             return
+            if (0 <= self.currentPos[0] * cellSize < gridSize) and (0 <= (self.currentPos[1] + steps) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0], currentPos[1] + steps, currentPos[2])
+                    self.currentPos[0], self.currentPos[1] + steps, self.currentPos[2])
 
-    def turnRight(self, currentPos, gridSize, cellSize):
-        xSteps = 4
+    def turnRight(self, gridSize, cellSize):
+        xSteps = 2
         ySteps = 3
-        if currentPos[2] == Direction.TOP:
-            if (0 <= (currentPos[0] - xSteps) * cellSize < gridSize) and (0 <= (currentPos[1] + ySteps) * cellSize < gridSize):
-                for x in range(currentPos[0] - 5, currentPos[0] + 2):
-                    for y in range(currentPos[1] - 1, currentPos[1] + 5):
-                        if (x > currentPos[0] - 3) and (y > currentPos[1] + 1):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                        if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                            newRect = pygame.Rect(
-                                y * cellSize, x * cellSize, cellSize, cellSize)
-                            self.screen.fill(constants.GREEN, newRect)
-                            pygame.draw.rect(
-                                self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] - 4) * cellSize < gridSize) and (0 <= (currentPos[1] + 3) * cellSize < gridSize):
-                print(f"TURNING RIGHT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+        if self.currentPos[2] == Direction.TOP:
+            if (0 <= (self.currentPos[0] - xSteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] + ySteps) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
+                #         if (x > self.currentPos[0] - 3) and (y > self.currentPos[1] + 1):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #         if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #             newRect = pygame.Rect(
+                #                 y * cellSize, x * cellSize, cellSize, cellSize)
+                #             self.screen.fill(constants.GREEN, newRect)
+                #             pygame.draw.rect(
+                #                 self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] - 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 3) * cellSize < gridSize):
+                print(f"TURNING RIGHT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - xSteps, currentPos[1] + ySteps, Direction.RIGHT)
-        elif currentPos[2] == Direction.RIGHT:
-            if (0 <= (currentPos[0] + ySteps) * cellSize < gridSize) and (0 <= (currentPos[1] + xSteps) * cellSize < gridSize):
-                for x in range(currentPos[0] - 1, currentPos[0] + 5):
-                    for y in range(currentPos[1] - 1, currentPos[1] + 6):
-                        if (x > currentPos[0] + 1) and (y < currentPos[1] + 3):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] + 3) * cellSize < gridSize) and (0 <= (currentPos[1] + 4) * cellSize < gridSize):
-                print(f"TURNING RIGHT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] - xSteps, self.currentPos[1] + ySteps, Direction.RIGHT)
+        elif self.currentPos[2] == Direction.RIGHT:
+            if (0 <= (self.currentPos[0] + ySteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xSteps) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
+                #         if (x > self.currentPos[0] + 1) and (y < self.currentPos[1] + 3):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] + 3) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 4) * cellSize < gridSize):
+                print(f"TURNING RIGHT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + ySteps, currentPos[1] + xSteps, Direction.BOTTOM)
-        elif currentPos[2] == Direction.BOTTOM:
-            if (0 <= (currentPos[0] + xSteps) * cellSize < gridSize) and (0 <= (currentPos[1] - ySteps) * cellSize < gridSize):
-                for x in range(currentPos[0] - 1, currentPos[0] + 6):
-                    for y in range(currentPos[1] - 4, currentPos[1] + 2):
-                        if (x < currentPos[0] + 3) and (y < currentPos[1] - 1):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] + 4) * cellSize < gridSize) and (0 <= (currentPos[1] - 3) * cellSize < gridSize):
-                print(f"TURNING RIGHT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] + ySteps, self.currentPos[1] + xSteps, Direction.BOTTOM)
+        elif self.currentPos[2] == Direction.BOTTOM:
+            if (0 <= (self.currentPos[0] + xSteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] - ySteps) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
+                #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
+                #         if (x < self.currentPos[0] + 3) and (y < self.currentPos[1] - 1):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] + 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] - 3) * cellSize < gridSize):
+                print(f"TURNING RIGHT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + xSteps, currentPos[1] - ySteps, Direction.LEFT)
-        elif currentPos[2] == Direction.LEFT:
-            if (0 <= (currentPos[0] - ySteps) * cellSize < gridSize) and (0 <= (currentPos[1] - xSteps) * cellSize < gridSize):
-                for x in range(currentPos[0] - 4, currentPos[0] + 2):
-                    for y in range(currentPos[1] - 5, currentPos[1] + 2):
-                        if (x < currentPos[0] - 1) and (y > currentPos[1] - 3):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] - 4) * cellSize < gridSize) and (0 <= (currentPos[1] - 3) * cellSize < gridSize):
-                print(f"TURNING RIGHT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] + xSteps, self.currentPos[1] - ySteps, Direction.LEFT)
+        elif self.currentPos[2] == Direction.LEFT:
+            if (0 <= (self.currentPos[0] - ySteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xSteps) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
+                #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
+                #         if (x < self.currentPos[0] - 1) and (y > self.currentPos[1] - 3):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] - 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] - 3) * cellSize < gridSize):
+                print(f"TURNING RIGHT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - ySteps, currentPos[1] - xSteps, Direction.TOP)
+                    self.currentPos[0] - ySteps, self.currentPos[1] - xSteps, Direction.TOP)
 
-    def turnLeft(self, currentPos, gridSize, cellSize):
-        xStep = 4
+    def turnLeft(self, gridSize, cellSize):
+        xStep = 2
         yStep = 3
-        if currentPos[2] == Direction.TOP:
-            if (0 <= (currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (currentPos[1] - yStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 5, currentPos[0] + 2):
-                    for y in range(currentPos[1] - 4, currentPos[1] + 2):
-                        if (x > currentPos[0] - 3) and (y < currentPos[1] - 1):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] - 4) * cellSize < gridSize) and (0 <= (currentPos[1] - 3) * cellSize < gridSize):
-                print(f"TURNING LEFT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+        if self.currentPos[2] == Direction.TOP:
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
+                #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
+                #         if (x > self.currentPos[0] - 3) and (y < self.currentPos[1] - 1):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] - 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] - 3) * cellSize < gridSize):
+                print(f"TURNING LEFT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - xStep, currentPos[1] - yStep, Direction.LEFT)
-        elif currentPos[2] == Direction.RIGHT:
-            if (0 <= (currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (currentPos[1] + xStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 4, currentPos[0] + 2):
-                    for y in range(currentPos[1] - 1, currentPos[1] + 6):
-                        if (x < currentPos[0] - 1) and (y < currentPos[1] + 3):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] - 3) * cellSize < gridSize) and (0 <= (currentPos[1] + 4) * cellSize < gridSize):
-                print(f"TURNING LEFT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, Direction.LEFT)
+        elif self.currentPos[2] == Direction.RIGHT:
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
+                #         if (x < self.currentPos[0] - 1) and (y < self.currentPos[1] + 3):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] - 3) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 4) * cellSize < gridSize):
+                print(f"TURNING LEFT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - yStep, currentPos[1] + xStep, Direction.TOP)
-        elif currentPos[2] == Direction.BOTTOM:
-            if (0 <= (currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (currentPos[1] + yStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 1, currentPos[0] + 6):
-                    for y in range(currentPos[1] - 1, currentPos[1] + 5):
-                        if (x < currentPos[0] + 3) and (y > currentPos[1] + 1):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] + 4) * cellSize < gridSize) and (0 <= (currentPos[1] + 3) * cellSize < gridSize):
-                print(f"TURNING LEFT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, Direction.TOP)
+        elif self.currentPos[2] == Direction.BOTTOM:
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
+                #         if (x < self.currentPos[0] + 3) and (y > self.currentPos[1] + 1):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] + 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 3) * cellSize < gridSize):
+                print(f"TURNING LEFT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + xStep, currentPos[1] + yStep, Direction.RIGHT)
-        elif currentPos[2] == Direction.LEFT:
-            if (0 <= (currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (currentPos[1] - xStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 1, currentPos[0] + 5):
-                    for y in range(currentPos[1] - 5, currentPos[1] + 2):
-                        if (x > currentPos[0] + 1) and (y > currentPos[1] - 3):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] + 3) * cellSize < gridSize) and (0 <= (currentPos[1] - 4) * cellSize < gridSize):
-                print(f"TURNING LEFT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, Direction.RIGHT)
+        elif self.currentPos[2] == Direction.LEFT:
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
+                #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
+                #         if (x > self.currentPos[0] + 1) and (y > self.currentPos[1] - 3):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] + 3) * cellSize < gridSize) and (0 <= (self.currentPos[1] - 4) * cellSize < gridSize):
+                print(f"TURNING LEFT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + yStep, currentPos[1] - xStep, Direction.BOTTOM)
+                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, Direction.BOTTOM)
 
-    def reverseTurnRight(self, currentPos, gridSize, cellSize):
+    def reverseTurnRight(self, gridSize, cellSize):
         xStep = 3
-        yStep = 4
-        if currentPos[2] == Direction.TOP:
-            if (0 <= (currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (currentPos[1] + yStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 1, currentPos[0] + 5):
-                    for y in range(currentPos[1] - 1, currentPos[1] + 6):
-                        if (x < currentPos[0] + 2) and (y > currentPos[1] + 1):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] - 4) * cellSize < gridSize) and (0 <= (currentPos[1] + 3) * cellSize < gridSize):
-                print(f"REVERSE RIGHT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+        yStep = 2
+        if self.currentPos[2] == Direction.TOP:
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
+                #         if (x < self.currentPos[0] + 2) and (y > self.currentPos[1] + 1):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] - 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 3) * cellSize < gridSize):
+                print(f"REVERSE RIGHT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + xStep, currentPos[1] + yStep, Direction.LEFT)
-        elif currentPos[2] == Direction.RIGHT:
-            if (0 <= (currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (currentPos[1] - xStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 1, currentPos[0] + 6):
-                    for y in range(currentPos[1] - 4, currentPos[1] + 2):
-                        if (x > currentPos[0] + 1) and (y > currentPos[1] - 2):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                        if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                            newRect = pygame.Rect(
-                                y * cellSize, x * cellSize, cellSize, cellSize)
-                            self.screen.fill(constants.GREEN, newRect)
-                            pygame.draw.rect(
-                                self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] + 3) * cellSize < gridSize) and (0 <= (currentPos[1] + 4) * cellSize < gridSize):
-                print(f"REVERSE RIGHT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, Direction.LEFT)
+        elif self.currentPos[2] == Direction.RIGHT:
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
+                #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
+                #         if (x > self.currentPos[0] + 1) and (y > self.currentPos[1] - 2):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #         if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #             newRect = pygame.Rect(
+                #                 y * cellSize, x * cellSize, cellSize, cellSize)
+                #             self.screen.fill(constants.GREEN, newRect)
+                #             pygame.draw.rect(
+                #                 self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] + 3) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 4) * cellSize < gridSize):
+                print(f"REVERSE RIGHT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + yStep, currentPos[1] - xStep, Direction.TOP)
-        elif currentPos[2] == Direction.BOTTOM:
-            if (0 <= (currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (currentPos[1] - yStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 4, currentPos[0] + 2):
-                    for y in range(currentPos[1] - 5, currentPos[1] + 2):
-                        if (x > currentPos[0] - 2) and (y < currentPos[1] - 1):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] + 4) * cellSize < gridSize) and (0 <= (currentPos[1] - 3) * cellSize < gridSize):
-                print(f"REVERSE RIGHT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, Direction.TOP)
+        elif self.currentPos[2] == Direction.BOTTOM:
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
+                #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
+                #         if (x > self.currentPos[0] - 2) and (y < self.currentPos[1] - 1):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] + 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] - 3) * cellSize < gridSize):
+                print(f"REVERSE RIGHT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - xStep, currentPos[1] - yStep, Direction.RIGHT)
-        elif currentPos[2] == Direction.LEFT:
-            if (0 <= (currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (currentPos[1] + xStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 5, currentPos[0] + 2):
-                    for y in range(currentPos[1] - 1, currentPos[1] + 5):
-                        if (x < currentPos[0] - 1) and (y < currentPos[1] + 2):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] - 4) * cellSize < gridSize) and (0 <= (currentPos[1] - 3) * cellSize < gridSize):
-                print(f"REVERSE RIGHT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, Direction.RIGHT)
+        elif self.currentPos[2] == Direction.LEFT:
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
+                #         if (x < self.currentPos[0] - 1) and (y < self.currentPos[1] + 2):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] - 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] - 3) * cellSize < gridSize):
+                print(f"REVERSE RIGHT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - yStep, currentPos[1] + xStep, Direction.BOTTOM)
+                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, Direction.BOTTOM)
 
-    def reverseTurnLeft(self, currentPos, gridSize, cellSize):
+    def reverseTurnLeft(self, gridSize, cellSize):
         xStep = 3
-        yStep = 4
-        if currentPos[2] == Direction.TOP:
-            if (0 <= (currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (currentPos[1] - yStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 1, currentPos[0] + 5):
-                    for y in range(currentPos[1] - 5, currentPos[1] + 2):
-                        if (x < currentPos[0] + 2) and (y < currentPos[1] - 1):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] - 4) * cellSize < gridSize) and (0 <= (currentPos[1] - 3) * cellSize < gridSize):
-                print(f"REVERSE LEFT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+        yStep = 2
+        if self.currentPos[2] == Direction.TOP:
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
+                #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
+                #         if (x < self.currentPos[0] + 2) and (y < self.currentPos[1] - 1):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] - 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] - 3) * cellSize < gridSize):
+                print(f"REVERSE LEFT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + xStep, currentPos[1] - 4, Direction.RIGHT)
-        elif currentPos[2] == Direction.RIGHT:
-            if (0 <= (currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (currentPos[1] - xStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 5, currentPos[0] + 2):
-                    for y in range(currentPos[1] - 4, currentPos[1] + 2):
-                        if (x < currentPos[0] - 1) and (y > currentPos[1] - 2):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] - 3) * cellSize < gridSize) and (0 <= (currentPos[1] + 4) * cellSize < gridSize):
-                print(f"REVERSE LEFT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] + xStep, self.currentPos[1] - 4, Direction.RIGHT)
+        elif self.currentPos[2] == Direction.RIGHT:
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
+                #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
+                #         if (x < self.currentPos[0] - 1) and (y > self.currentPos[1] - 2):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] - 3) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 4) * cellSize < gridSize):
+                print(f"REVERSE LEFT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - yStep, currentPos[1] - xStep, Direction.BOTTOM)
-        elif currentPos[2] == Direction.BOTTOM:
-            if (0 <= (currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (currentPos[1] + yStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 4, currentPos[0] + 2):
-                    for y in range(currentPos[1] - 1, currentPos[1] + 6):
-                        if (x > currentPos[0] - 2) and (y > currentPos[1] + 1):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] + 4) * cellSize < gridSize) and (0 <= (currentPos[1] + 3) * cellSize < gridSize):
-                print(f"REVERSE LEFT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, Direction.BOTTOM)
+        elif self.currentPos[2] == Direction.BOTTOM:
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
+                #         if (x > self.currentPos[0] - 2) and (y > self.currentPos[1] + 1):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] + 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 3) * cellSize < gridSize):
+                print(f"REVERSE LEFT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - xStep, currentPos[1] + yStep, Direction.LEFT)
-        elif currentPos[2] == Direction.LEFT:
-            if (0 <= (currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (currentPos[1] + xStep) * cellSize < gridSize):
-                for x in range(currentPos[0] - 1, currentPos[0] + 6):
-                    for y in range(currentPos[1] - 1, currentPos[1] + 5):
-                        if (x > currentPos[0] + 1) and (y < currentPos[1] + 2):
-                            continue
-                        else:
-                            for obstacle in self.obstacles:
-                                i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                                     obstacle.position.x) // constants.GRID_CELL_LENGTH
-                                j = (
-                                    obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-                                if (x == i) and (y == j):
-                                    print(f"COLLISION!")
-                                    return
-                            if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                                newRect = pygame.Rect(
-                                    y * cellSize, x * cellSize, cellSize, cellSize)
-                                self.screen.fill(constants.GREEN, newRect)
-                                pygame.draw.rect(
-                                    self.screen, constants.GREEN, newRect, 2)
-                # if (0 <= (currentPos[0] + 3) * cellSize < gridSize) and (0 <= (currentPos[1] - 4) * cellSize < gridSize):
-                print(f"REVERSE LEFT\t{currentPos}")
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, Direction.LEFT)
+        elif self.currentPos[2] == Direction.LEFT:
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
+                #         if (x > self.currentPos[0] + 1) and (y < self.currentPos[1] + 2):
+                #             continue
+                #         else:
+                #             for obstacle in self.obstacles:
+                #                 i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                #                      obstacle.position.x) // constants.GRID_CELL_LENGTH
+                #                 j = (
+                #                     obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
+                #                 if (x == i) and (y == j):
+                #                     print(f"COLLISION!")
+                #                     return
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
+                # if (0 <= (self.currentPos[0] + 3) * cellSize < gridSize) and (0 <= (self.currentPos[1] - 4) * cellSize < gridSize):
+                print(f"REVERSE LEFT\t{self.currentPos}")
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + yStep, currentPos[1] + xStep, Direction.TOP)
+                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, Direction.TOP)
 
-    def moveNorthEast(self, currentPos, gridSize, cellSize):
+    def moveNorthEast(self, gridSize, cellSize):
         xStep = 4
         yStep = 1
-        if currentPos[2] == Direction.TOP:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+        if self.currentPos[2] == Direction.TOP:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (currentPos[1] + yStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - xStep, currentPos[1] + yStep, currentPos[2])
-        elif currentPos[2] == Direction.RIGHT:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.RIGHT:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (currentPos[1] + xStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + yStep, currentPos[1] + xStep, currentPos[2])
-        elif currentPos[2] == Direction.BOTTOM:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.BOTTOM:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (currentPos[1] - yStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + xStep, currentPos[1] - yStep, currentPos[2])
-        elif currentPos[2] == Direction.LEFT:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] + xStep, self.currentPos[1] - yStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.LEFT:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (currentPos[1] - xStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - yStep, currentPos[1] - xStep, currentPos[2])
+                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, self.currentPos[2])
 
-    def moveNorthWest(self, currentPos, gridSize, cellSize):
+    def moveNorthWest(self, gridSize, cellSize):
         xStep = 4
         yStep = 1
-        if currentPos[2] == Direction.TOP:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+        if self.currentPos[2] == Direction.TOP:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (currentPos[1] - yStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - xStep, currentPos[1] - yStep, currentPos[2])
-        elif currentPos[2] == Direction.RIGHT:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.RIGHT:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (currentPos[1] + xStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - yStep, currentPos[1] + xStep, currentPos[2])
-        elif currentPos[2] == Direction.BOTTOM:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.BOTTOM:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (currentPos[1] + yStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + xStep, currentPos[1] + yStep, currentPos[2])
-        elif currentPos[2] == Direction.LEFT:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.LEFT:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (currentPos[1] - xStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + yStep, currentPos[1] - xStep, currentPos[2])
+                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, self.currentPos[2])
 
-    def moveSouthEast(self, currentPos, gridSize, cellSize):
+    def moveSouthEast(self, gridSize, cellSize):
         xStep = 4
         yStep = 1
-        if currentPos[2] == Direction.TOP:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+        if self.currentPos[2] == Direction.TOP:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (currentPos[1] + yStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + xStep, currentPos[1] + yStep, currentPos[2])
-        elif currentPos[2] == Direction.RIGHT:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.RIGHT:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (currentPos[1] - xStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + yStep, currentPos[1] - xStep, currentPos[2])
-        elif currentPos[2] == Direction.BOTTOM:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.BOTTOM:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (currentPos[1] - yStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - xStep, currentPos[1] - yStep, currentPos[2])
-        elif currentPos[2] == Direction.LEFT:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.LEFT:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (currentPos[1] + xStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - yStep, currentPos[1] + xStep, currentPos[2])
+                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, self.currentPos[2])
 
-    def moveSouthWest(self, currentPos, gridSize, cellSize):
+    def moveSouthWest(self, gridSize, cellSize):
         xStep = 4
         yStep = 1
-        if currentPos[2] == Direction.TOP:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+        if self.currentPos[2] == Direction.TOP:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (currentPos[1] - yStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + xStep, currentPos[1] - yStep, currentPos[2])
-        elif currentPos[2] == Direction.RIGHT:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] + xStep, self.currentPos[1] - yStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.RIGHT:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (currentPos[1] - xStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - yStep, currentPos[1] - xStep, currentPos[2])
-        elif currentPos[2] == Direction.BOTTOM:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.BOTTOM:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (currentPos[1] + yStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] - xStep, currentPos[1] + yStep, currentPos[2])
-        elif currentPos[2] == Direction.LEFT:
-            # for y in range(currentPos[1] - 1, currentPos[1] + 2):
+                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, self.currentPos[2])
+        elif self.currentPos[2] == Direction.LEFT:
+            # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
             #         i = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y - constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] - 2 == i) and (y == j):
+            #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (currentPos[1] + xStep) * cellSize < gridSize):
-                self.drawRobot(currentPos, cellSize, constants.GREEN,
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+                self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    currentPos[0] + yStep, currentPos[1] + xStep, currentPos[2])
+                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, self.currentPos[2])
 
-    def movement(self, x, y, buttonLength, buttonWidth, currentPos):
+    def movement(self, x, y, buttonLength, buttonWidth):
         # move North
         if (685 < x < 685 + buttonLength) and (110 < y < 110 + buttonWidth):
-            self.moveForward(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            self.moveForward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                              constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move South
         elif (685 < x < 685 + buttonLength) and (180 < y < 180 + buttonWidth):
-            self.moveBackward(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            self.moveBackward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move Forward East
         elif (720 < x < 720 + buttonLength) and (132.5 < y < 132.5 + buttonWidth):
-            self.turnRight(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            self.turnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move Forward West
         elif (650 < x < 650 + buttonLength) and (132.5 < y < 132.5 + buttonWidth):
-            self.turnLeft(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            self.turnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                           constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move Backward East
         elif (720 < x < 720 + buttonLength) and (160 < y < 160 + buttonWidth):
-            self.reverseTurnRight(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            self.reverseTurnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                   constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move backward West
         elif (650 < x < 650 + buttonLength) and (160 < y < 160 + buttonWidth):
-            self.reverseTurnLeft(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            self.reverseTurnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                  constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move North East
         elif (720 < x < 720 + buttonLength) and (107.5 < y < 107.5 + buttonWidth):
-            print(f"YOU CLICKED THE NORTHEAST BUTTON\T{currentPos}")
-            self.moveNorthEast(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            print(f"YOU CLICKED THE NORTHEAST BUTTON\T{self.currentPos}")
+            self.moveNorthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move North West
         elif (650 < x < 650 + buttonLength) and (107.5 < y < 107.5 + buttonWidth):
-            print(f"YOU CLICKED THE NORTHWEST BUTTON\T{currentPos}")
-            self.moveNorthWest(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            print(f"YOU CLICKED THE NORTHWEST BUTTON\T{self.currentPos}")
+            self.moveNorthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move South East
         elif (720 < x < 720 + buttonLength) and (182.5 < y < 182.5 + buttonWidth):
-            print(f"YOU CLICKED THE SOUTHEAST BUTTON\T{currentPos}")
-            self.moveSouthEast(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            print(f"YOU CLICKED THE SOUTHEAST BUTTON\T{self.currentPos}")
+            self.moveSouthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move South West
         elif (650 < x < 650 + buttonLength) and (182.5 < y < 182.5 + buttonWidth):
-            print(f"YOU CLICKED THE SOUTHWEST BUTTON\T{currentPos}")
-            self.moveSouthWest(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+            print(f"YOU CLICKED THE SOUTHWEST BUTTON\T{self.currentPos}")
+            self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
 
         '''
@@ -1066,29 +1057,98 @@ class Simulation():
         else:
             cls.drawObstaclesButton([], constants.RED)
 
+    def updatingDisplay(self):
+        self.clock.tick(30)     # 10 frames per second apparently
+        self.drawGrid()
+        currentPosX = self.bot.get_current_pos().x
+        currentPosY = self.bot.get_current_pos().y
+        direction = self.bot.get_current_pos().direction
+        # print(f"currentPosX: {currentPosX}, currentPosY: {currentPosY}")
+        self.currentPos = ((constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                        currentPosX) // 10, currentPosY // 10, direction)
+        # print(f"currentPos ======= {self.currentPos}")
+        self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
+                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
+        pygame.time.delay(100)
+
+    def parseCmd(self, cmd):
+        # print("\n\nParsing commands:\n\n")
+        # movement = []
+        # for cmd in commands:
+        self.updatingDisplay()
+        # print(f"command type:")
+        # print(f"{type(cmd)}")
+        if isinstance(cmd, StraightCommand):
+            if (cmd.dist // 10) >= 0:
+                for i in range(cmd.dist // 10):
+                    # movement.append(("N", 1))
+                    self.moveForward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                    # print("Forward!\n")
+                    self.updatingDisplay()
+                    pygame.display.update()
+            else:
+                for i in range(0 - (cmd.dist // 10)):
+                    # movement.append(("S", 1))
+                    self.moveBackward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                              constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                    # print("Reverse!\n")
+                    self.updatingDisplay()
+                    pygame.display.update()
+        elif isinstance(cmd, TurnCommand):
+            if cmd.type_of_turn == TypeOfTurn.MEDIUM:
+                # print("medium turn!")
+                if cmd.right and not cmd.left and not cmd.reverse:
+                    # print("forward right turn")
+                    self.turnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                           constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                elif cmd.left and not cmd.right and not cmd.reverse:
+                    # print("forward left turn")
+                    self.turnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                          constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                elif cmd.right and not cmd.left and cmd.reverse:
+                    # print("reverse right turn")
+                    self.reverseTurnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                                  constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                elif cmd.left and not cmd.right and cmd.reverse:
+                    # print("reverse left turn")
+                    self.reverseTurnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                                 constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+            elif cmd.type_of_turn == TypeOfTurn.SMALL:
+                if cmd.right and not cmd.left and not cmd.reverse:
+                    # print("Shift forward right!")
+                    self.moveNorthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                elif cmd.left and not cmd.right and not cmd.reverse:
+                    # print("Shift forward left")
+                    self.moveNorthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                elif cmd.right and not cmd.left and cmd.reverse:
+                    # print("Shift backward right")
+                    self.moveSouthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                elif cmd.left and not cmd.right and cmd.reverse:
+                    # print("Shift backward left") 
+                    self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+            # print("turning!\n")
+        elif isinstance(cmd, ScanCommand):
+            self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
+                        constants.SCALING_FACTOR, constants.RED, constants.ORANGE, constants.PINK)
+        else: 
+            print("error!")
+        pygame.display.update()
+
+    
+
     def runSimulation(self, bot):
         self.bot = deepcopy(bot)
         self.clock = pygame.time.Clock()
+        self.obstacles = self.bot.hamiltonian.grid.obstacles
         while True:
-            self.drawGrid()
-            # print(bot.getCurrentPos())
-            # if set == 1:
-            currentPosX = self.bot.get_current_pos().x
-            currentPosY = self.bot.get_current_pos().y
-            direction = self.bot.get_current_pos().direction
-            print(f"currentPosX: {currentPosX}, currentPosY: {currentPosY}")
-            # set = 1
-            # currentPos = (currentPosX, currentPosY, direction)
-            currentPos = ((constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                          currentPosX) // 10, currentPosY // 10, direction)
-            print(f"currentPos ======= {currentPos}")
-            self.drawRobot(currentPos, constants.GRID_CELL_LENGTH *
-                           constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
-            self.clock.tick(10)     # 10 frames per second apparently
-            # self.screen.blit(bg, (0, 0))
+            self.updatingDisplay()
             x, y = pygame.mouse.get_pos()
             self.draw(x, y)
-            # self.drawObstaclesButton()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -1098,13 +1158,14 @@ class Simulation():
                         print(
                             "START BUTTON IS CLICKED!!! I REPEAT, START BUTTON IS CLICKED!!!")
                         '''insert run algo function'''
-                        # grid, obstacles = app.initGrid()
-                        # app.runAlgo(grid, obstacles)
+                        self.bot.hamiltonian.plan_path()
+                        for cmd in self.bot.hamiltonian.commands:
+                            self.parseCmd(cmd)
                     elif (650 < x < 650 + constants.BUTTON_LENGTH) and (450 < y < 450 + constants.BUTTON_WIDTH):
                         # print("*****Setting obstacles*****")
                         # self.obstacles = self.createObstacles(
                         #     constants.GRID_LENGTH // constants.GRID_CELL_LENGTH)
-                        self.obstacles = self.bot.hamiltonian.grid.obstacles
+                        # self.obstacles = self.bot.hamiltonian.grid.obstacles
                         print("*****Drawing obstacles*****")
                         self.drawObstaclesButton(self.obstacles, constants.RED)
                     elif (650 < x < 650 + constants.BUTTON_LENGTH) and (400 < y < 400 + constants.BUTTON_WIDTH):
@@ -1112,8 +1173,7 @@ class Simulation():
                     elif (650 < x < 720 + constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) and (115 < y < 185 + constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR):
                         self.movement(
                             x, y,
-                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, 25,
-                            currentPos)
+                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, 25,)
 
                 elif event.type == pygame.KEYDOWN:
                     keys = pygame.key.get_pressed()
@@ -1121,39 +1181,39 @@ class Simulation():
                     if keys[pygame.K_UP]:
                         if keys[pygame.K_UP] and keys[pygame.K_RIGHT]:
                         # if event.key == pygame.K_UP and event.key == pygame.K_RIGHT:
-                            self.turnRight(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                            self.turnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                         elif keys[pygame.K_UP] and keys[pygame.K_LEFT]:
                         # elif event.key == pygame.K_UP and event.key == pygame.K_LEFT:
-                            self.turnLeft(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                            self.turnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                           constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                         else:
-                            self.moveForward(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                            self.moveForward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                              constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     # elif event.key == pygame.K_DOWN:
                     if keys[pygame.K_DOWN]:
                         if keys[pygame.K_DOWN] and keys[pygame.K_RIGHT]:
                         # if event.key == pygame.K_DOWN and event.key == pygame.K_RIGHT:
-                            self.reverseTurnRight(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                            self.reverseTurnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                                   constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                         elif keys[pygame.K_DOWN] and keys[pygame.K_LEFT]:
                         # elif event.key == pygame.K_DOWN and event.key == pygame.K_LEFT:
-                            self.reverseTurnLeft(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                            self.reverseTurnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                                  constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                         else:
-                            self.moveBackward(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                            self.moveBackward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     elif event.key == pygame.K_e:
-                        self.moveNorthEast(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                        self.moveNorthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     elif event.key == pygame.K_q:
-                        self.moveNorthWest(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                        self.moveNorthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     elif event.key == pygame.K_d:
-                        self.moveSouthEast(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                        self.moveSouthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     elif event.key == pygame.K_a:
-                        self.moveSouthWest(currentPos, constants.GRID_LENGTH * constants.SCALING_FACTOR,
+                        self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     
                     # elif (x < constants.GRID_LENGTH * constants.SCALING_FACTOR) and (y < constants.GRID_LENGTH * constants.SCALING_FACTOR):
