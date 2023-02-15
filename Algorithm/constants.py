@@ -1,7 +1,7 @@
 import socket
 
 # PyGame settings
-# SCALING_FACTOR = 3
+SCALING_FACTOR = 3
 FRAMES = 50
 WINDOW_SIZE = 800, 650
 
