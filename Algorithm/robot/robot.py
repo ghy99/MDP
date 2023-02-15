@@ -39,6 +39,9 @@ class Robot:
     def get_current_pos(self):
         return self.pos
 
+    def __str__(self):
+        print(f"robot is at {self.pos}")
+
     def setCurrentPos(self, x, y, direction):
         self.pos.x = constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - (x * 10)
         self.pos.y = y * 10

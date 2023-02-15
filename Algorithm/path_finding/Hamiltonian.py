@@ -56,6 +56,10 @@ class Hamiltonian:
             for obstacle in path:
                 targets.append(obstacle.target_position.xy())
 
+            # print("Targets ", targets)
+            # print("Path ", path)
+            # print()
+
             dist = 0
             multiplier = 1
             for i in range(len(targets)-1):

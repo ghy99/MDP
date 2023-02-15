@@ -47,7 +47,7 @@ class ModifiedAStar:
 
         # Check turns
         # SOME HEURISTIC VALUE (need to account for turns travelling more also!)
-        turn_penalty = 40
+        turn_penalty = 100  # will be adjusted on type of turn. 90 degree turn is lower cost than small turn
         turn_commands = [  # type of turn, Left, Right, Reverse
             TurnCommand(TypeOfTurn.SMALL, True, False,
                         False),  # L SMALL turn, forward
@@ -76,8 +76,13 @@ class ModifiedAStar:
             after, p = self.check_valid_command(c, pos)
 
             if after:
+                if c.get_type_of_turn == TypeOfTurn.SMALL:
+                    turn_penalty = 60
+                elif c.get_type_of_turn == TypeOfTurn.MEDIUM:
+                    turn_penalty = 40
                 neighbours.append((after, p, turn_penalty, c))
-
+        # print("neighbours are:")
+        # print(neighbours)
         return neighbours
 
     def check_valid_command(self, command: Command, p: RobotPosition):
@@ -105,32 +110,49 @@ class ModifiedAStar:
             # if positive means the new position is on top of old position, else otherwise
             diff_in_y = p_c.y - p.y
 
-            for x in range(0, abs(diff_in_x//10)):
-                temp = p_c.copy()
-
-                if diff_in_x > 0:  # go to the left!
-                    temp.x -= (x+1)*10
-                else:
-                    temp.x += (x+1)*10
-
-                if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                        *temp.xy())):
-                    # print("Fail x: ", p_c.x, p_c.y, p_c.direction)
-                    return None, None
-
-            for y in range(0, abs(diff_in_y//10)):
-                temp = p.copy()
-
-                if diff_in_y > 0:  # go down!
+            if diff_in_y > 0:
+                for y in range(0, abs(diff_in_y//10)):
+                    temp = p.copy()
                     temp.y += (y+1)*10
-                else:
-                    temp.y -= (y+1)*10
+                    if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
+                            *temp.xy())):
+                        return None, None
+            else:
+                for y in range(0, abs(diff_in_y//10)):
+                    temp = p_c.copy()
+                    temp.y += (y+1)*10
+                    if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
+                            *temp.xy())):
+                        return None, None
 
-                if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                        *temp.xy())):
-                    # print("Fail y: ", p_c.x, p_c.y, p_c.direction)
-                    return None, None
-
+            if diff_in_x < 0 and diff_in_y < 0:
+                for x in range(0, abs(diff_in_x//10)):
+                    temp = p.copy()
+                    temp.x -= (x+1)*10
+                    if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
+                            *temp.xy())):
+                        return None, None
+            elif diff_in_x > 0 and diff_in_y < 0:
+                for x in range(0, abs(diff_in_x//10)):
+                    temp = p.copy()
+                    temp.x += (x+1)*10
+                    if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
+                            *temp.xy())):
+                        return None, None
+            elif diff_in_x > 0 and diff_in_y > 0:
+                for x in range(0, abs(diff_in_x//10)):
+                    temp = p_c.copy()
+                    temp.x -= (x+1)*10
+                    if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
+                            *temp.xy())):
+                        return None, None
+            else:
+                for x in range(0, abs(diff_in_x//10)):
+                    temp = p_c.copy()
+                    temp.x += (x+1)*10
+                    if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
+                            *temp.xy())):
+                        return None, None
         command.apply_on_pos(p)
         if self.grid.check_valid_position(p) and (
                 after := self.grid.get_grid_cell_corresponding_to_coordinate(*p.xy())):
