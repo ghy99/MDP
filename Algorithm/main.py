@@ -40,30 +40,30 @@ class Main:
         # app.init()
         # app.execute()
 
-    def run_minimal(self, also_run_simulator):
+    def run_minimal(self, also_run_simulator, dummydata):
         # Create a client to connect to the RPi.
 
-        print(constants.PC_HOST)
-        if self.client is None:
-            print(f"Attempting to connect to {constants.RPI_HOST}:{constants.RPI_PORT}")
-            self.client = RPiClient(constants.RPI_HOST, constants.RPI_PORT)
-            #     Wait to connect to RPi.
-            while True:
-                try:
-                    self.client.connect()
-                    break
-                except OSError:
-                    pass
-                except KeyboardInterrupt:
-                    self.client.close()
-                    sys.exit(1)
-            print("Connected to RPi!\n")
-
-        # Wait for message from RPI
-        print("Waiting to receive data from RPi...")
-        d = self.client.receive_message()
+        # print(constants.PC_HOST)
+        # if self.client is None:
+        #     print(f"Attempting to connect to {constants.RPI_HOST}:{constants.RPI_PORT}")
+        #     self.client = RPiClient(constants.RPI_HOST, constants.RPI_PORT)
+        #     #     Wait to connect to RPi.
+        #     while True:
+        #         try:
+        #             self.client.connect()
+        #             break
+        #         except OSError:
+        #             pass
+        #         except KeyboardInterrupt:
+        #             self.client.close()
+        #             sys.exit(1)
+        #     print("Connected to RPi!\n")
+        #
+        # # Wait for message from RPI
+        # print("Waiting to receive data from RPi...")
+        # d = self.client.receive_message()
         print("Decoding data from RPi:")
-        d = d.decode('utf-8')
+        d = dummydata.decode('utf-8')
         to_return = []
         if d[0:4] == 'ALG:':
             d = d[4:]
@@ -91,7 +91,7 @@ class Main:
                         temp.append(int(d_split[y]))
                 to_return.append(temp)
                 print(to_return)
-                self.decision(self.client, to_return, also_run_simulator)
+            self.decision(self.client, to_return, also_run_simulator)
         else:
             # this would be strings such as NONE, DONE, BULLSEYE
             print(d)
@@ -122,10 +122,10 @@ class Main:
             print("Sending list of commands to RPi...")
             self.commands = app.robot.convert_all_commands()
             print(self.commands)
-            if len(self.commands) != 0:
-                client.send_message(self.commands)
-            else:
-                print("ERROR!! NO COMMANDS TO SEND TO RPI")
+            # if len(self.commands) != 0:
+            #     client.send_message(self.commands)
+            # else:
+            #     print("ERROR!! NO COMMANDS TO SEND TO RPI")
 
         elif isinstance(data[0], str):
             # means its NONE
@@ -218,8 +218,9 @@ class Main:
 
     def run_rpi(self):
         while True:
-            # x = 'ALG:10,17,S,0;17,17,W,1;2,16,S,2;16,4,S,3;13,1,W,4;6,6,N,5;9,11,W,6;3,3,E,7;'.encode('utf-8')
-            self.run_minimal(False)
+            x = 'ALG:10,17,S,0;17,17,W,1;2,16,S,2;16,4,S,3;13,1,W,4;6,6,N,5;9,11,W,6;3,3,E,7;'.encode('utf-8')
+            self.run_minimal(False,x)
+            break
             # time.sleep(5)
 
 
