@@ -79,9 +79,9 @@ class Grid:
         #     return False
 
         if (pos.y < constants.GRID_CELL_LENGTH or
-            pos.y > constants.GRID_LENGTH - constants.GRID_CELL_LENGTH) or \
+            pos.y >= constants.GRID_LENGTH - constants.GRID_CELL_LENGTH) or \
                 (pos.x < constants.GRID_CELL_LENGTH or
-                 pos.x > constants.GRID_LENGTH - constants.GRID_CELL_LENGTH):
+                 pos.x >= constants.GRID_LENGTH - constants.GRID_CELL_LENGTH):
             return False
         return True
 
