@@ -39,9 +39,9 @@ class Obstacle:
         Checks whether a given position is within the safety boundary of this obstacle.
         If yes, means it can potentially hit the obstacle. We should avoid being inside the boundary
         """
-        if self.position.x - constants.OBSTACLE_SAFETY_WIDTH <= position.x <= self.position.x + \
-                constants.OBSTACLE_SAFETY_WIDTH and \
-                self.position.y - constants.OBSTACLE_SAFETY_WIDTH <= position.y <= self.position.y + constants.OBSTACLE_SAFETY_WIDTH:
+        if self.position.x - constants.OBSTACLE_SAFETY_WIDTH < position.x < self.position.x + \
+                constants.OBSTACLE_SAFETY_WIDTH*2 and \
+                self.position.y - constants.OBSTACLE_SAFETY_WIDTH < position.y < self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2:
             return True
         return False
 
