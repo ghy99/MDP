@@ -306,7 +306,7 @@ class Simulation():
         xSteps = 2
         ySteps = 3
         if self.currentPos[2] == Direction.TOP:
-            if (0 <= (self.currentPos[0] - ySteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xSteps) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - xSteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] + ySteps) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x > self.currentPos[0] - 3) and (y > self.currentPos[1] + 1):
@@ -331,9 +331,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - ySteps, self.currentPos[1] + xSteps, Direction.RIGHT)
+                    self.currentPos[0] - xSteps, self.currentPos[1] + ySteps, Direction.RIGHT)
         elif self.currentPos[2] == Direction.RIGHT:
-            if (0 <= (self.currentPos[0] + xSteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] + ySteps) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] + ySteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xSteps) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
                 #         if (x > self.currentPos[0] + 1) and (y < self.currentPos[1] + 3):
@@ -358,9 +358,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xSteps, self.currentPos[1] + ySteps, Direction.BOTTOM)
+                    self.currentPos[0] + ySteps, self.currentPos[1] + xSteps, Direction.BOTTOM)
         elif self.currentPos[2] == Direction.BOTTOM:
-            if (0 <= (self.currentPos[0] + ySteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xSteps) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] + xSteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] - ySteps) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] + 3) and (y < self.currentPos[1] - 1):
@@ -385,9 +385,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + ySteps, self.currentPos[1] - xSteps, Direction.LEFT)
+                    self.currentPos[0] + xSteps, self.currentPos[1] - ySteps, Direction.LEFT)
         elif self.currentPos[2] == Direction.LEFT:
-            if (0 <= (self.currentPos[0] - xSteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] - ySteps) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - ySteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xSteps) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] - 1) and (y > self.currentPos[1] - 3):
@@ -412,13 +412,13 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xSteps, self.currentPos[1] - ySteps, Direction.TOP)
+                    self.currentPos[0] - ySteps, self.currentPos[1] - xSteps, Direction.TOP)
 
     def turnLeft(self, gridSize, cellSize):
         xStep = 2
         yStep = 3
         if self.currentPos[2] == Direction.TOP:
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] - 3) and (y < self.currentPos[1] - 1):
@@ -443,9 +443,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, Direction.LEFT)
+                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, Direction.LEFT)
         elif self.currentPos[2] == Direction.RIGHT:
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
                 #         if (x < self.currentPos[0] - 1) and (y < self.currentPos[1] + 3):
@@ -470,9 +470,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, Direction.TOP)
+                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, Direction.TOP)
         elif self.currentPos[2] == Direction.BOTTOM:
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x < self.currentPos[0] + 3) and (y > self.currentPos[1] + 1):
@@ -497,9 +497,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, Direction.RIGHT)
+                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, Direction.RIGHT)
         elif self.currentPos[2] == Direction.LEFT:
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
                 #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] + 1) and (y > self.currentPos[1] - 3):
@@ -524,13 +524,13 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] - yStep, Direction.BOTTOM)
+                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, Direction.BOTTOM)
 
     def reverseTurnRight(self, gridSize, cellSize):
         xStep = 3
         yStep = 2
         if self.currentPos[2] == Direction.TOP:
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
                 #         if (x < self.currentPos[0] + 2) and (y > self.currentPos[1] + 1):
@@ -555,9 +555,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, Direction.LEFT)
+                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, Direction.LEFT)
         elif self.currentPos[2] == Direction.RIGHT:
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] + 1) and (y > self.currentPos[1] - 2):
@@ -582,9 +582,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] - yStep, Direction.TOP)
+                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, Direction.TOP)
         elif self.currentPos[2] == Direction.BOTTOM:
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] - 2) and (y < self.currentPos[1] - 1):
@@ -609,9 +609,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, Direction.RIGHT)
+                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, Direction.RIGHT)
         elif self.currentPos[2] == Direction.LEFT:
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x < self.currentPos[0] - 1) and (y < self.currentPos[1] + 2):
@@ -636,13 +636,13 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, Direction.BOTTOM)
+                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, Direction.BOTTOM)
 
     def reverseTurnLeft(self, gridSize, cellSize):
         xStep = 3
         yStep = 2
         if self.currentPos[2] == Direction.TOP:
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
                 #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] + 2) and (y < self.currentPos[1] - 1):
@@ -667,9 +667,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, Direction.RIGHT)
+                    self.currentPos[0] + xStep, self.currentPos[1] - yStep, Direction.RIGHT)
         elif self.currentPos[2] == Direction.RIGHT:
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] - 1) and (y > self.currentPos[1] - 2):
@@ -694,9 +694,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, Direction.BOTTOM)
+                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, Direction.BOTTOM)
         elif self.currentPos[2] == Direction.BOTTOM:
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
                 #         if (x > self.currentPos[0] - 2) and (y > self.currentPos[1] + 1):
@@ -721,9 +721,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, Direction.LEFT)
+                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, Direction.LEFT)
         elif self.currentPos[2] == Direction.LEFT:
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x > self.currentPos[0] + 1) and (y < self.currentPos[1] + 2):
@@ -748,7 +748,7 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, Direction.TOP)
+                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, Direction.TOP)
 
     def moveNorthEast(self, gridSize, cellSize):
         xStep = 4
