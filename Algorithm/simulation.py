@@ -306,7 +306,7 @@ class Simulation():
         xSteps = 2
         ySteps = 3
         if self.currentPos[2] == Direction.TOP:
-            if (0 <= (self.currentPos[0] - xSteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] + ySteps) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + constants.TURN_MED_RIGHT_TOP_FORWARD[0] // 10) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x > self.currentPos[0] - 3) and (y > self.currentPos[1] + 1):
@@ -331,9 +331,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xSteps, self.currentPos[1] + ySteps, Direction.RIGHT)
+                    self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_TOP_FORWARD[0] // 10), Direction.RIGHT)
         elif self.currentPos[2] == Direction.RIGHT:
-            if (0 <= (self.currentPos[0] + ySteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xSteps) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_RIGHT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + constants.TURN_MED_RIGHT_RIGHT_FORWARD[0] // 10) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
                 #         if (x > self.currentPos[0] + 1) and (y < self.currentPos[1] + 3):
@@ -358,9 +358,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + ySteps, self.currentPos[1] + xSteps, Direction.BOTTOM)
+                    self.currentPos[0] - (constants.TURN_MED_RIGHT_RIGHT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_RIGHT_FORWARD[0] // 10), Direction.BOTTOM)
         elif self.currentPos[2] == Direction.BOTTOM:
-            if (0 <= (self.currentPos[0] + xSteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] - ySteps) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_BOTTOM_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] - (constants.TURN_MED_RIGHT_RIGHT_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] + 3) and (y < self.currentPos[1] - 1):
@@ -385,9 +385,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xSteps, self.currentPos[1] - ySteps, Direction.LEFT)
+                    self.currentPos[0] - (constants.TURN_MED_RIGHT_BOTTOM_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_BOTTOM_FORWARD[0] // 10), Direction.LEFT)
         elif self.currentPos[2] == Direction.LEFT:
-            if (0 <= (self.currentPos[0] - ySteps) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xSteps) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_LEFT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_LEFT_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] - 1) and (y > self.currentPos[1] - 3):
@@ -412,13 +412,13 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - ySteps, self.currentPos[1] - xSteps, Direction.TOP)
+                    self.currentPos[0] - (constants.TURN_MED_RIGHT_LEFT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_LEFT_FORWARD[0] // 10), Direction.TOP)
 
     def turnLeft(self, gridSize, cellSize):
         xStep = 2
         yStep = 3
         if self.currentPos[2] == Direction.TOP:
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] - 3) and (y < self.currentPos[1] - 1):
@@ -443,9 +443,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, Direction.LEFT)
+                    self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_FORWARD[0] // 10), Direction.LEFT)
         elif self.currentPos[2] == Direction.RIGHT:
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_RIGHT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_RIGHT_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
                 #         if (x < self.currentPos[0] - 1) and (y < self.currentPos[1] + 3):
@@ -470,9 +470,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, Direction.TOP)
+                    self.currentPos[0] - (constants.TURN_MED_LEFT_RIGHT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_RIGHT_FORWARD[0] // 10), Direction.TOP)
         elif self.currentPos[2] == Direction.BOTTOM:
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_BOTTOM_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_BOTTOM_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x < self.currentPos[0] + 3) and (y > self.currentPos[1] + 1):
@@ -497,9 +497,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, Direction.RIGHT)
+                    self.currentPos[0] - (constants.TURN_MED_LEFT_BOTTOM_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_BOTTOM_FORWARD[0] // 10), Direction.RIGHT)
         elif self.currentPos[2] == Direction.LEFT:
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_LEFT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_LEFT_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
                 #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] + 1) and (y > self.currentPos[1] - 3):
@@ -524,13 +524,13 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, Direction.BOTTOM)
+                    self.currentPos[0] - (constants.TURN_MED_LEFT_LEFT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_LEFT_FORWARD[0] // 10), Direction.BOTTOM)
 
     def reverseTurnRight(self, gridSize, cellSize):
         xStep = 3
         yStep = 2
         if self.currentPos[2] == Direction.TOP:
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_TOP_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
                 #         if (x < self.currentPos[0] + 2) and (y > self.currentPos[1] + 1):
@@ -555,9 +555,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, Direction.LEFT)
+                    self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_TOP_REVERSE[0] // 10), Direction.LEFT)
         elif self.currentPos[2] == Direction.RIGHT:
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_RIGHT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_RIGHT_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] + 1) and (y > self.currentPos[1] - 2):
@@ -582,9 +582,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, Direction.TOP)
+                    self.currentPos[0] - (constants.TURN_MED_RIGHT_RIGHT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_RIGHT_REVERSE[0] // 10), Direction.TOP)
         elif self.currentPos[2] == Direction.BOTTOM:
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_BOTTOM_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_BOTTOM_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] - 2) and (y < self.currentPos[1] - 1):
@@ -609,9 +609,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, Direction.RIGHT)
+                    self.currentPos[0] - (constants.TURN_MED_RIGHT_BOTTOM_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_BOTTOM_REVERSE[0] // 10), Direction.RIGHT)
         elif self.currentPos[2] == Direction.LEFT:
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_LEFT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_LEFT_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x < self.currentPos[0] - 1) and (y < self.currentPos[1] + 2):
@@ -636,13 +636,13 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, Direction.BOTTOM)
+                    self.currentPos[0] - (constants.TURN_MED_RIGHT_LEFT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_LEFT_REVERSE[0] // 10), Direction.BOTTOM)
 
     def reverseTurnLeft(self, gridSize, cellSize):
         xStep = 3
         yStep = 2
         if self.currentPos[2] == Direction.TOP:
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
                 #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] + 2) and (y < self.currentPos[1] - 1):
@@ -667,9 +667,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] - yStep, Direction.RIGHT)
+                    self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_REVERSE[0] // 10), Direction.RIGHT)
         elif self.currentPos[2] == Direction.RIGHT:
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_RIGHT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_RIGHT_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] - 1) and (y > self.currentPos[1] - 2):
@@ -694,9 +694,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, Direction.BOTTOM)
+                    self.currentPos[0] - (constants.TURN_MED_LEFT_RIGHT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_RIGHT_REVERSE[0] // 10), Direction.BOTTOM)
         elif self.currentPos[2] == Direction.BOTTOM:
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_BOTTOM_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_BOTTOM_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
                 #         if (x > self.currentPos[0] - 2) and (y > self.currentPos[1] + 1):
@@ -721,9 +721,9 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, Direction.LEFT)
+                    self.currentPos[0] - (constants.TURN_MED_LEFT_BOTTOM_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_BOTTOM_REVERSE[0] // 10), Direction.LEFT)
         elif self.currentPos[2] == Direction.LEFT:
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_LEFT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_LEFT_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x > self.currentPos[0] + 1) and (y < self.currentPos[1] + 2):
@@ -748,7 +748,7 @@ class Simulation():
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, Direction.TOP)
+                    self.currentPos[0] - (constants.TURN_MED_LEFT_LEFT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_LEFT_REVERSE[0] // 10), Direction.TOP)
 
     def moveNorthEast(self, gridSize, cellSize):
         xStep = 4
@@ -761,11 +761,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_RIGHT_TOP_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_RIGHT_TOP_FORWARD[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_RIGHT_TOP_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_TOP_FORWARD[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.RIGHT:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -774,11 +774,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_RIGHT_RIGHT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_RIGHT_RIGHT_FORWARD[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_RIGHT_RIGHT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_RIGHT_FORWARD[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.BOTTOM:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -787,11 +787,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_RIGHT_BOTTOM_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_RIGHT_BOTTOM_FORWARD[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] - yStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_RIGHT_BOTTOM_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_BOTTOM_FORWARD[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.LEFT:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -800,11 +800,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_RIGHT_LEFT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_RIGHT_LEFT_FORWARD[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_RIGHT_LEFT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_LEFT_FORWARD[0] // 10), self.currentPos[2])
 
     def moveNorthWest(self, gridSize, cellSize):
         xStep = 4
@@ -817,11 +817,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_LEFT_TOP_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_LEFT_TOP_FORWARD[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_LEFT_TOP_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_TOP_FORWARD[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.RIGHT:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -830,11 +830,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_LEFT_RIGHT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_LEFT_RIGHT_FORWARD[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_LEFT_RIGHT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_RIGHT_FORWARD[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.BOTTOM:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -843,11 +843,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_LEFT_BOTTOM_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_LEFT_BOTTOM_FORWARD[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_LEFT_BOTTOM_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_BOTTOM_FORWARD[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.LEFT:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -856,11 +856,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_LEFT_LEFT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_LEFT_LEFT_FORWARD[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_LEFT_LEFT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_LEFT_FORWARD[0] // 10), self.currentPos[2])
 
     def moveSouthEast(self, gridSize, cellSize):
         xStep = 4
@@ -873,11 +873,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_RIGHT_TOP_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_RIGHT_TOP_REVERSE[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] + yStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_RIGHT_TOP_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_TOP_REVERSE[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.RIGHT:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -886,11 +886,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_RIGHT_RIGHT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_RIGHT_RIGHT_REVERSE[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] - xStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_RIGHT_RIGHT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_RIGHT_REVERSE[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.BOTTOM:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -899,11 +899,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_RIGHT_BOTTOM_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_RIGHT_BOTTOM_REVERSE[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] - yStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_RIGHT_BOTTOM_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_BOTTOM_REVERSE[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.LEFT:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -912,11 +912,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_RIGHT_LEFT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_RIGHT_LEFT_REVERSE[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] + xStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_RIGHT_LEFT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_LEFT_REVERSE[0] // 10), self.currentPos[2])
 
     def moveSouthWest(self, gridSize, cellSize):
         xStep = 4
@@ -929,11 +929,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] + xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_LEFT_TOP_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_LEFT_TOP_REVERSE[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + xStep, self.currentPos[1] - yStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_LEFT_TOP_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_TOP_REVERSE[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.RIGHT:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -942,11 +942,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] - yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] - xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_LEFT_RIGHT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_LEFT_RIGHT_REVERSE[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - yStep, self.currentPos[1] - xStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_LEFT_RIGHT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_RIGHT_REVERSE[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.BOTTOM:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -955,11 +955,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] - xStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + yStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_LEFT_BOTTOM_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_LEFT_BOTTOM_REVERSE[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] - xStep, self.currentPos[1] + yStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_LEFT_BOTTOM_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_BOTTOM_REVERSE[0] // 10), self.currentPos[2])
         elif self.currentPos[2] == Direction.LEFT:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -968,11 +968,11 @@ class Simulation():
             #         if (self.currentPos[0] - 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
-            if (0 <= (self.currentPos[0] + yStep) * cellSize < gridSize) and (0 <= (self.currentPos[1] + xStep) * cellSize < gridSize):
+            if (0 <= (self.currentPos[0] - (constants.TURN_SMALL_LEFT_LEFT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_SMALL_LEFT_LEFT_REVERSE[0] // 10)) * cellSize < gridSize):
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
                                constants.GREEN, constants.GREEN)
                 self.bot.setCurrentPos(
-                    self.currentPos[0] + yStep, self.currentPos[1] + xStep, self.currentPos[2])
+                    self.currentPos[0] - (constants.TURN_SMALL_LEFT_LEFT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_LEFT_REVERSE[0] // 10), self.currentPos[2])
 
     def movement(self, x, y, buttonLength, buttonWidth):
         # move North
