@@ -25,7 +25,6 @@ class Main:
     def parse_obstacle_data(self, data) -> List[Obstacle]:
         # [[x, y, orient, index], [x, y, orient, index]]
         obs = []
-        # [[x, y, orient, index], [x, y, orient, index]]
         for obstacle_params in data:
             obs.append(Obstacle(Position(obstacle_params[0],
                                          obstacle_params[1],
@@ -140,6 +139,8 @@ class Main:
             # app.init()
             # populates the Hamiltonian object with all the commands necessary to reach the objects
             app.execute()
+            if also_run_simulator:
+                app.simulate()
             # Send the list of commands over.
             obs_priority = app.robot.hamiltonian.get_simple_hamiltonian()
             print(obs_priority)
@@ -244,7 +245,7 @@ class Main:
         while True:
             x = 'ALG:10,17,S,0;17,17,W,1;2,16,S,2;16,4,S,3;13,1,W,4;6,6,N,5;9,11,W,6;3,3,E,7;'.encode(
                 'utf-8')
-            self.run_minimal(False, x)
+            self.run_minimal(True, x)
             break
             # time.sleep(5)
 
@@ -276,9 +277,8 @@ if __name__ == '__main__':
     """
     # sim()
     initialize()
-    # # test()
-    main = Main()
-    main.run_simulator()
+    # main = Main()
+    # main.run_simulator()
 
 # if __name__ == "__main__":
 #     bot = Robot()

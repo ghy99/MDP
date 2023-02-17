@@ -1065,11 +1065,11 @@ class Simulation():
         direction = self.bot.get_current_pos().direction
         # print(f"currentPosX: {currentPosX}, currentPosY: {currentPosY}")
         self.currentPos = ((constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                        currentPosX) // 10, currentPosY // 10, direction)
+                            currentPosX) // 10, currentPosY // 10, direction)
         # print(f"currentPos ======= {self.currentPos}")
         self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
-                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
-        pygame.time.delay(100)
+                       constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
+        pygame.time.delay(750)
 
     def parseCmd(self, cmd):
         # print("\n\nParsing commands:\n\n")
@@ -1083,7 +1083,7 @@ class Simulation():
                 for i in range(cmd.dist // 10):
                     # movement.append(("N", 1))
                     self.moveForward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                     constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     # print("Forward!\n")
                     self.updatingDisplay()
                     pygame.display.update()
@@ -1091,7 +1091,7 @@ class Simulation():
                 for i in range(0 - (cmd.dist // 10)):
                     # movement.append(("S", 1))
                     self.moveBackward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                              constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                      constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     # print("Reverse!\n")
                     self.updatingDisplay()
                     pygame.display.update()
@@ -1101,45 +1101,43 @@ class Simulation():
                 if cmd.right and not cmd.left and not cmd.reverse:
                     # print("forward right turn")
                     self.turnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                           constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                   constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.left and not cmd.right and not cmd.reverse:
                     # print("forward left turn")
                     self.turnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                          constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                  constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.right and not cmd.left and cmd.reverse:
                     # print("reverse right turn")
                     self.reverseTurnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                                  constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                          constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.left and not cmd.right and cmd.reverse:
                     # print("reverse left turn")
                     self.reverseTurnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                                 constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                         constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
             elif cmd.type_of_turn == TypeOfTurn.SMALL:
                 if cmd.right and not cmd.left and not cmd.reverse:
                     # print("Shift forward right!")
                     self.moveNorthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                       constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.left and not cmd.right and not cmd.reverse:
                     # print("Shift forward left")
                     self.moveNorthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                       constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.right and not cmd.left and cmd.reverse:
                     # print("Shift backward right")
                     self.moveSouthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                       constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.left and not cmd.right and cmd.reverse:
-                    # print("Shift backward left") 
+                    # print("Shift backward left")
                     self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
-                               constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                                       constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
             # print("turning!\n")
         elif isinstance(cmd, ScanCommand):
             self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
-                        constants.SCALING_FACTOR, constants.RED, constants.ORANGE, constants.PINK)
-        else: 
+                           constants.SCALING_FACTOR, constants.RED, constants.ORANGE, constants.PINK)
+        else:
             print("error!")
         pygame.display.update()
-
-    
 
     def runSimulation(self, bot):
         self.bot = deepcopy(bot)
@@ -1180,11 +1178,11 @@ class Simulation():
                     # if event.key == pygame.K_UP:
                     if keys[pygame.K_UP]:
                         if keys[pygame.K_UP] and keys[pygame.K_RIGHT]:
-                        # if event.key == pygame.K_UP and event.key == pygame.K_RIGHT:
+                            # if event.key == pygame.K_UP and event.key == pygame.K_RIGHT:
                             self.turnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                         elif keys[pygame.K_UP] and keys[pygame.K_LEFT]:
-                        # elif event.key == pygame.K_UP and event.key == pygame.K_LEFT:
+                            # elif event.key == pygame.K_UP and event.key == pygame.K_LEFT:
                             self.turnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                           constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                         else:
@@ -1193,11 +1191,11 @@ class Simulation():
                     # elif event.key == pygame.K_DOWN:
                     if keys[pygame.K_DOWN]:
                         if keys[pygame.K_DOWN] and keys[pygame.K_RIGHT]:
-                        # if event.key == pygame.K_DOWN and event.key == pygame.K_RIGHT:
+                            # if event.key == pygame.K_DOWN and event.key == pygame.K_RIGHT:
                             self.reverseTurnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                                   constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                         elif keys[pygame.K_DOWN] and keys[pygame.K_LEFT]:
-                        # elif event.key == pygame.K_DOWN and event.key == pygame.K_LEFT:
+                            # elif event.key == pygame.K_DOWN and event.key == pygame.K_LEFT:
                             self.reverseTurnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                                  constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                         else:
@@ -1215,7 +1213,7 @@ class Simulation():
                     elif event.key == pygame.K_a:
                         self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
-                    
+
                     # elif (x < constants.GRID_LENGTH * constants.SCALING_FACTOR) and (y < constants.GRID_LENGTH * constants.SCALING_FACTOR):
                     #     ''' Each cell is 10x10 multiplied by scaling factor of 3 = 30x30px
                     #         if i want to get grid cell, take coordinate // (10 * 3) '''

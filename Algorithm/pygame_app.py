@@ -10,6 +10,7 @@ from Grid.grid import Grid
 from Grid.obstacle import Obstacle
 from robot.robot import Robot
 from Misc.positioning import Position
+from simulation import Simulation
 
 
 class AlgoApp(ABC):
@@ -17,6 +18,7 @@ class AlgoApp(ABC):
         self.grid = Grid(obstacles)
         self.robot = Robot(self.grid)
         self.direction = Direction.TOP
+        self.simulation = Simulation()
         self.obstacles = obstacles
         self.index = 0
 
@@ -242,6 +244,7 @@ class AlgoMinimal(AlgoApp):
     """
     Minimal app to just calculate a path and then send the commands over.
     """
+
     def __init__(self, obstacles):
         # We run it as a server.
         super().__init__(obstacles)
@@ -255,3 +258,6 @@ class AlgoMinimal(AlgoApp):
         self.robot.hamiltonian.plan_path()
         print("Done!")
 
+    def simulate(self):
+        # Calculate path
+        self.simulation.runSimulation(self.robot)
