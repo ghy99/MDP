@@ -138,9 +138,10 @@ class Main:
             app = AlgoMinimal(obstacles)
             # app.init()
             # populates the Hamiltonian object with all the commands necessary to reach the objects
-            app.execute()
             if also_run_simulator:
                 app.simulate()
+            else:
+                app.execute()
             # Send the list of commands over.
             obs_priority = app.robot.hamiltonian.get_simple_hamiltonian()
             print(obs_priority)
@@ -243,7 +244,9 @@ class Main:
 
     def run_rpi(self):
         while True:
-            x = 'ALG:10,17,S,0;17,17,W,1;2,16,S,2;16,4,S,3;13,1,W,4;6,6,N,5;9,11,W,6;3,3,E,7;'.encode(
+            # x = 'ALG:10,17,S,0;17,17,W,1;2,16,S,2;16,4,S,3;13,1,W,4;6,6,N,5;9,11,W,6;3,3,E,7;'.encode(
+            #     'utf-8')
+            x = 'ALG:2,17,S,0;16,17,W,1;10,11,S,2;4,6,N,3;9,2,E,4;17,5,W,5;'.encode(
                 'utf-8')
             self.run_minimal(True, x)
             break
@@ -253,6 +256,8 @@ class Main:
 def initialize():
     algo = Main()
     algo.run_rpi()
+    # o = Obstacle(Position(160, 170, Direction.LEFT), 0)
+    # print(o.get_robot_target_pos())
 
 
 def sim():
