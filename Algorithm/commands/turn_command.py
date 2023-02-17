@@ -91,25 +91,6 @@ class TurnCommand(Command):
                     curr_pos.y -= 20
                     curr_pos.direction = Direction.RIGHT
 
-            # else:
-            #     match curr_pos.direction:
-            #         case Direction.TOP:
-            #             curr_pos.x -= 30  # TO CHANGE ARBITRARY VALUE
-            #             curr_pos.y += 30  # TO CHANGE ARBITRARY VALUE
-            #             curr_pos.direction = Direction.LEFT
-            #         case Direction.LEFT:
-            #             curr_pos.x -= 30
-            #             curr_pos.y -= 30
-            #             curr_pos.direction = Direction.BOTTOM
-            #         case Direction.RIGHT:
-            #             curr_pos.x += 30
-            #             curr_pos.y += 30
-            #             curr_pos.direction = Direction.TOP
-            #         case Direction.BOTTOM:
-            #             curr_pos.x += 30
-            #             curr_pos.y -= 30
-            #             curr_pos.direction = Direction.RIGHT
-
         # turn right and forward
         if self.right and not self.left and not self.reverse:
             if self.type_of_turn == TypeOfTurn.SMALL:
@@ -142,31 +123,13 @@ class TurnCommand(Command):
                     curr_pos.x -= 30
                     curr_pos.y -= 20
                     curr_pos.direction = Direction.LEFT
-            # else:
-            #     match curr_pos.direction:
-            #         case Direction.TOP:
-            #             curr_pos.x += 30  # TO CHANGE ARBITRARY VALUE
-            #             curr_pos.y += 30  # TO CHANGE ARBITRARY VALUE
-            #             curr_pos.direction = Direction.RIGHT
-            #         case Direction.LEFT:
-            #             curr_pos.x -= 30
-            #             curr_pos.y += 30
-            #             curr_pos.direction = Direction.TOP
-            #         case Direction.RIGHT:
-            #             curr_pos.x += 30
-            #             curr_pos.y -= 30
-            #             curr_pos.direction = Direction.BOTTOM
-            #         case Direction.BOTTOM:
-            #             curr_pos.x -= 30
-            #             curr_pos.y -= 30
-            #             curr_pos.direction = Direction.LEFT
 
         # turn front wheels left and reverse
         if self.left and not self.right and self.reverse:
             if self.type_of_turn == TypeOfTurn.SMALL:
                 if curr_pos.direction == Direction.TOP:
-                    curr_pos.x -= 10  # TO CHANGE ARBITRARY VALUE
-                    curr_pos.y -= 40  # TO CHANGE ARBITRARY VALUE
+                    curr_pos.x -= 10
+                    curr_pos.y -= 40
                 elif curr_pos.direction == Direction.LEFT:
                     curr_pos.x += 40
                     curr_pos.y -= 10
@@ -193,23 +156,6 @@ class TurnCommand(Command):
                     curr_pos.x += 30
                     curr_pos.y += 20
                     curr_pos.direction = Direction.LEFT
-            # else:
-            #     if curr_pos.direction == Direction.TOP:
-            #             curr_pos.x -= 30  # TO CHANGE ARBITRARY VALUE
-            #             curr_pos.y -= 30  # TO CHANGE ARBITRARY VALUE
-            #             curr_pos.direction = Direction.RIGHT
-            #         case Direction.LEFT:
-            #             curr_pos.x += 30
-            #             curr_pos.y -= 30
-            #             curr_pos.direction = Direction.TOP
-            #         case Direction.RIGHT:
-            #             curr_pos.x -= 30
-            #             curr_pos.y += 30
-            #             curr_pos.direction = Direction.BOTTOM
-            #         case Direction.BOTTOM:
-            #             curr_pos.x += 30
-            #             curr_pos.y += 30
-            #             curr_pos.direction = Direction.LEFT
 
         # turn front wheels right and reverse
         if self.right and not self.left and self.reverse:
@@ -228,39 +174,21 @@ class TurnCommand(Command):
                     curr_pos.y += 40
             elif self.type_of_turn == TypeOfTurn.MEDIUM:
                 if curr_pos.direction == Direction.TOP:
-                    curr_pos.x += 30  # 20
-                    curr_pos.y -= 20  # 30
+                    curr_pos.x += 30
+                    curr_pos.y -= 20
                     curr_pos.direction = Direction.LEFT
                 elif curr_pos.direction == Direction.LEFT:
-                    curr_pos.x += 20  # 30
-                    curr_pos.y += 30  # 20
+                    curr_pos.x += 20
+                    curr_pos.y += 30
                     curr_pos.direction = Direction.BOTTOM
                 elif curr_pos.direction == Direction.RIGHT:
-                    curr_pos.x -= 20  # 30
-                    curr_pos.y -= 30  # 20
+                    curr_pos.x -= 20
+                    curr_pos.y -= 30
                     curr_pos.direction = Direction.TOP
                 elif curr_pos.direction == Direction.BOTTOM:
-                    curr_pos.x -= 30  # 20
-                    curr_pos.y += 20  # 30
+                    curr_pos.x -= 30
+                    curr_pos.y += 20
                     curr_pos.direction = Direction.RIGHT
-            # else:
-            #     match curr_pos.direction:
-            #         case Direction.TOP:
-            #             curr_pos.x += 30  # TO CHANGE ARBITRARY VALUE
-            #             curr_pos.y -= 30  # TO CHANGE ARBITRARY VALUE
-            #             curr_pos.direction = Direction.LEFT
-            #         case Direction.LEFT:
-            #             curr_pos.x += 30
-            #             curr_pos.y += 30
-            #             curr_pos.direction = Direction.BOTTOM
-            #         case Direction.RIGHT:
-            #             curr_pos.x -= 30
-            #             curr_pos.y -= 30
-            #             curr_pos.direction = Direction.TOP
-            #         case Direction.BOTTOM:
-            #             curr_pos.x -= 30
-            #             curr_pos.y += 30
-            #             curr_pos.direction = Direction.RIGHT
 
         return self
 
