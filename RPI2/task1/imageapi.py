@@ -7,6 +7,9 @@ import queue
 import numpy as np
 import cv2
 
+#to test send id to bluetooth
+from bluetoothapi import BluetoothAPI
+
 class ImageAPI:
     HOST = '192.168.17.15'
     PORT = '50000'
@@ -15,7 +18,7 @@ class ImageAPI:
     def __init__(self):
         self.client = None
         self.camera = Picamera2()
-        config = self.camera.create_preview_configuration(main={"size":(640,640)})
+        config = self.camera.create_preview_configuration(main={"size":(720,720)})
         self.camera.configure(config)
         self.camera.start()
 
@@ -99,9 +102,8 @@ if __name__ == '__main__':
             image = ic.rpiTakePicture()
             imageID = ic.sendPictureToServer(image)
             print("Image ID:", imageID)
-            while (imageID == b"N"):
+            if imageID == "N":
                 print("no detection result")
-                imageID = ic.image()
         elif command == "exit":
             ic.camera.close()
             print("exiting")
@@ -109,3 +111,33 @@ if __name__ == '__main__':
         elif command == "end":
             ic.sendEmptyImage()
             print()
+
+#to test send image id to android
+# if __name__ == '__main__':
+#     ic = ImageAPI()
+#     bt = BluetoothAPI()
+#     time.sleep(2)
+#     bt.connect()
+#     while True:
+#         bt.connect()
+#         command = input("Execute Image Capturing: ")
+#         if command == "yes":
+#             image = ic.rpiTakePicture()
+#             imageID = ic.sendPictureToServer(image)
+#             print("Image ID:", imageID)
+#             while (imageID == b"N"):
+#                 print("no detection result")
+#                 imageID = ic.image()
+#             bMsg= "TARGET,1,"+imageID
+#             print("[Main] Sending ",bMsg," to Android")
+#             failed=bt.write(bMsg.encode('utf-8'))
+#             if failed:
+#                         print("[Bluetooth] Attempting to reconnect bluetooth")
+#                         bt.reconnect_android(bt)
+#         elif command == "exit":
+#             ic.camera.close()
+#             print("exiting")
+#             exit()
+#         elif command == "end":
+#             ic.sendEmptyImage()
+#             print()
