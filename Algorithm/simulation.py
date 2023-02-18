@@ -1069,7 +1069,7 @@ class Simulation():
         # print(f"currentPos ======= {self.currentPos}")
         self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
-        pygame.time.delay(150)
+        pygame.time.delay(550)
 
     def parseCmd(self, cmd):
         # print("\n\nParsing commands:\n\n")
