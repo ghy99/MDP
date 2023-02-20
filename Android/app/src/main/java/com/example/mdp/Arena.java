@@ -361,6 +361,10 @@ public class Arena extends AppCompatActivity {
             }
         });
 
+        /*
+         * TODO: Find out why obstacles get buggy after changing orientation
+         */
+
         obstacle1.setOnTouchListener(new View.OnTouchListener() {
             int x = 0;
             int y = 0;

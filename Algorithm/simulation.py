@@ -1062,13 +1062,15 @@ class Simulation():
 
     def drawShortestPath(self, bot):
         # print(self.obstacles)
-        halfAGridCell = (constants.GRID_CELL_LENGTH // 2) * constants.SCALING_FACTOR
+        halfAGridCell = (constants.GRID_CELL_LENGTH // 2) * \
+            constants.SCALING_FACTOR
         obstacleList = []
         y = ((constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
-                 self.currentPos[1]) // constants.GRID_CELL_LENGTH)
-            # x = i.position.x // constants.GRID_CELL_LENGTH
+              self.currentPos[1]) // constants.GRID_CELL_LENGTH)
+        # x = i.position.x // constants.GRID_CELL_LENGTH
         x = self.currentPos[0] // constants.GRID_CELL_LENGTH
-        obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell, (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
+        obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell,
+                            (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
         obstacleInOrder = self.bot.hamiltonian.compute_simple_hamiltonian_path()
         print(f"Obstacles in order: {obstacleInOrder}")
         for obstacle in obstacleInOrder:
@@ -1077,12 +1079,15 @@ class Simulation():
                  obstacle.position.y) // constants.GRID_CELL_LENGTH
             # x = i.position.x // constants.GRID_CELL_LENGTH
             x = obstacle.position.x // constants.GRID_CELL_LENGTH
-            obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell, (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
-        print(f"Obstacle list:\n{obstacleList}\n")        
+            obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell,
+                                (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
+        print(f"Obstacle list:\n{obstacleList}\n")
         for i in range(1, len(obstacleList)):
-            print((obstacleList[i - 1][0], obstacleList[i - 1][1]), (obstacleList[i][0], obstacleList[i][1]))
+            print((obstacleList[i - 1][0], obstacleList[i - 1]
+                  [1]), (obstacleList[i][0], obstacleList[i][1]))
             self.updatingDisplay()
-            pygame.draw.lines(self.screen, constants.ORANGE, True, [(obstacleList[i - 1][0], obstacleList[i - 1][1]), (obstacleList[i][0], obstacleList[i][1])], 3)
+            pygame.draw.lines(self.screen, constants.ORANGE, True, [
+                              (obstacleList[i - 1][0], obstacleList[i - 1][1]), (obstacleList[i][0], obstacleList[i][1])], 3)
             pygame.display.update()
 
     def updatingDisplay(self):
@@ -1097,7 +1102,7 @@ class Simulation():
         # print(f"currentPos ======= {self.currentPos}")
         self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
-        pygame.time.delay(550)
+        pygame.time.delay(250)
 
     def parseCmd(self, cmd):
         self.updatingDisplay()
