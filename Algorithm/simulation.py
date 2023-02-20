@@ -1051,11 +1051,39 @@ class Simulation():
         # reset grid button
         cls.drawButtons(650, 400, constants.GREY, 'RESET', constants.BLACK,
                         constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
+        # Draw shortest path button
+        cls.drawButtons(650, 550, constants.GREY, 'DRAW', constants.BLACK,
+                        constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
 
         if len(cls.obstacles) != 0:
             cls.drawObstaclesButton(cls.obstacles, constants.RED)
         else:
             cls.drawObstaclesButton([], constants.RED)
+
+    def drawShortestPath(self, bot):
+        # print(self.obstacles)
+        halfAGridCell = (constants.GRID_CELL_LENGTH // 2) * constants.SCALING_FACTOR
+        obstacleList = []
+        y = ((constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                 self.currentPos[1]) // constants.GRID_CELL_LENGTH)
+            # x = i.position.x // constants.GRID_CELL_LENGTH
+        x = self.currentPos[0] // constants.GRID_CELL_LENGTH
+        obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell, (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
+        obstacleInOrder = self.bot.hamiltonian.compute_simple_hamiltonian_path()
+        print(f"Obstacles in order: {obstacleInOrder}")
+        for obstacle in obstacleInOrder:
+            print(obstacle)
+            y = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
+                 obstacle.position.y) // constants.GRID_CELL_LENGTH
+            # x = i.position.x // constants.GRID_CELL_LENGTH
+            x = obstacle.position.x // constants.GRID_CELL_LENGTH
+            obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell, (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
+        print(f"Obstacle list:\n{obstacleList}\n")        
+        for i in range(1, len(obstacleList)):
+            print((obstacleList[i - 1][0], obstacleList[i - 1][1]), (obstacleList[i][0], obstacleList[i][1]))
+            self.updatingDisplay()
+            pygame.draw.lines(self.screen, constants.ORANGE, True, [(obstacleList[i - 1][0], obstacleList[i - 1][1]), (obstacleList[i][0], obstacleList[i][1])], 3)
+            pygame.display.update()
 
     def updatingDisplay(self):
         self.clock.tick(30)     # 10 frames per second apparently
@@ -1072,66 +1100,47 @@ class Simulation():
         pygame.time.delay(550)
 
     def parseCmd(self, cmd):
-        # print("\n\nParsing commands:\n\n")
-        # movement = []
-        # for cmd in commands:
         self.updatingDisplay()
-        # print(f"command type:")
-        # print(f"{type(cmd)}")
         if isinstance(cmd, StraightCommand):
             if (cmd.dist // 10) >= 0:
                 for i in range(cmd.dist // 10):
-                    # movement.append(("N", 1))
                     self.moveForward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                      constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
-                    # print("Forward!\n")
                     self.updatingDisplay()
                     pygame.display.update()
             else:
                 for i in range(0 - (cmd.dist // 10)):
-                    # movement.append(("S", 1))
                     self.moveBackward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                       constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
-                    # print("Reverse!\n")
                     self.updatingDisplay()
                     pygame.display.update()
         elif isinstance(cmd, TurnCommand):
             if cmd.type_of_turn == TypeOfTurn.MEDIUM:
-                # print("medium turn!")
                 if cmd.right and not cmd.left and not cmd.reverse:
-                    # print("forward right turn")
                     self.turnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                    constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.left and not cmd.right and not cmd.reverse:
-                    # print("forward left turn")
                     self.turnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                   constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.right and not cmd.left and cmd.reverse:
-                    # print("reverse right turn")
                     self.reverseTurnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                           constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.left and not cmd.right and cmd.reverse:
-                    # print("reverse left turn")
                     self.reverseTurnLeft(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                          constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
             elif cmd.type_of_turn == TypeOfTurn.SMALL:
                 if cmd.right and not cmd.left and not cmd.reverse:
-                    # print("Shift forward right!")
                     self.moveNorthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                        constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.left and not cmd.right and not cmd.reverse:
-                    # print("Shift forward left")
                     self.moveNorthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                        constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.right and not cmd.left and cmd.reverse:
-                    # print("Shift backward right")
                     self.moveSouthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                        constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 elif cmd.left and not cmd.right and cmd.reverse:
-                    # print("Shift backward left")
                     self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                        constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
-            # print("turning!\n")
         elif isinstance(cmd, ScanCommand):
             self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                            constants.SCALING_FACTOR, constants.RED, constants.ORANGE, constants.PINK)
@@ -1172,6 +1181,8 @@ class Simulation():
                         self.movement(
                             x, y,
                             constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, 25,)
+                    elif (650 < x < 650 + constants.BUTTON_LENGTH) and (550 < y < 560 + constants.BUTTON_WIDTH):
+                        self.drawShortestPath(bot)
 
                 elif event.type == pygame.KEYDOWN:
                     keys = pygame.key.get_pressed()
