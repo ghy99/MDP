@@ -1103,7 +1103,7 @@ class Simulation():
         self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
         self.drawObstaclesButton(self.obstacles, constants.RED)
-        pygame.time.delay(250)
+        pygame.time.delay(750)
 
     def parseCmd(self, cmd):
         self.updatingDisplay()
