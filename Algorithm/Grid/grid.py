@@ -12,6 +12,7 @@ class Grid:
     def __init__(self, obstacles: List[Obstacle]):
         self.obstacles = obstacles
         self.gridcells = self.generate_grid()
+        self.gridcells2 = self.generate_grid2()
 
     def generate_grid(self):
         """
@@ -24,6 +25,26 @@ class Grid:
             row = deque()
             # 20 cells per side of square with each being 10cm
             for j in range(constants.NO_OF_GRID_CELLS_PER_SIDE):
+                x = constants.GRID_CELL_LENGTH * j  # 0, 10, ... , 190
+                y = constants.GRID_CELL_LENGTH * i  # 0, 10, ... , 190
+                new_cell = GridCell(
+                    Position(x, y), not self.check_valid_position(Position(x, y)))
+                row.append(new_cell)
+            # grid[0] will refer to last row, grid[19] refer to first row (from the bottom)
+            grid.appendleft(row)
+        return grid
+
+    def generate_grid2(self):
+        """
+        Generate the grid cells that make up this grid.
+        Cells are in 5's as we consider you are in the cell if you reach the middle of the cell
+        All grids that fall within safety distance of obstacle will be marked as occupied
+        """
+        grid = deque()
+        for i in range(constants.TASK2_LENGTH):
+            row = deque()
+            # 20 cells per side of square with each being 10cm
+            for j in range(constants.TASK2_WIDTH):
                 x = constants.GRID_CELL_LENGTH * j  # 0, 10, ... , 190
                 y = constants.GRID_CELL_LENGTH * i  # 0, 10, ... , 190
                 new_cell = GridCell(
