@@ -1106,7 +1106,6 @@ class Simulation():
         pygame.time.delay(750)
 
     def parseCmd(self, cmd):
-        self.updatingDisplay()
         if isinstance(cmd, StraightCommand):
             if (cmd.dist // 10) >= 0:
                 for i in range(cmd.dist // 10):
@@ -1121,6 +1120,7 @@ class Simulation():
                     self.updatingDisplay()
                     pygame.display.update()
         elif isinstance(cmd, TurnCommand):
+            self.updatingDisplay()
             if cmd.type_of_turn == TypeOfTurn.MEDIUM:
                 if cmd.right and not cmd.left and not cmd.reverse:
                     self.turnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
@@ -1152,6 +1152,7 @@ class Simulation():
                            constants.SCALING_FACTOR, constants.RED, constants.ORANGE, constants.PINK)
         else:
             print("error!")
+        self.updatingDisplay()
         pygame.display.update()
 
     def runSimulation(self, bot):
@@ -1174,6 +1175,7 @@ class Simulation():
                         self.bot.hamiltonian.plan_path()
                         for cmd in self.bot.hamiltonian.commands:
                             self.parseCmd(cmd)
+                            pygame.display.update()
                     elif (650 < x < 650 + constants.BUTTON_LENGTH) and (450 < y < 450 + constants.BUTTON_WIDTH):
                         # print("*****Setting obstacles*****")
                         # self.obstacles = self.createObstacles(
