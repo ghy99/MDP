@@ -1567,7 +1567,7 @@ public class Arena extends AppCompatActivity {
      * TODO: Decide what to do here also
      */
     private void setSaveButton() {
-        savedPreset = savedObstacles();
+        // savedPreset = savedObstacles();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
                 .append("ALG:")

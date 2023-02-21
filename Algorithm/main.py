@@ -257,7 +257,7 @@ class Main:
             e = 'ALG:0,18,E,0;18,19,S,1;18,0,W,2;5,0,E,3;10,10,E,4;9,10,W,5;'.encode(
                 'utf-8')
             # its warping bro
-            self.run_minimal(True, c)
+            self.run_minimal(True, a)
             break
             # time.sleep(5)
 

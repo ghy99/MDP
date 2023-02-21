@@ -20,9 +20,11 @@ ROBOT_LENGTH = 20
 # ROBOT_AVERAGE_TURN_RADIUS = (ROBOT_X_TURN_RADIUS+ROBOT_Y_TURN_RADIUS)/2
 ROBOT_TURN_RADIUS = 30
 ROBOT_SPEED_PER_SECOND = 100  # should be 33.3
-ROBOT_S_FACTOR = ROBOT_LENGTH / ROBOT_TURN_RADIUS  # Please read briefing notes from Imperial
+# Please read briefing notes from Imperial
+ROBOT_S_FACTOR = ROBOT_LENGTH / ROBOT_TURN_RADIUS
 ROBOT_SAFETY_DISTANCE = 10
-ROBOT_SCAN_TIME = 0.25  # Time provided for scanning an obstacle image in seconds.
+# Time provided for scanning an obstacle image in seconds.
+ROBOT_SCAN_TIME = 0.25
 
 # Grid Attributes
 GRID_LENGTH = 200
@@ -30,6 +32,10 @@ GRID_CELL_LENGTH = 10
 GRID_START_BOX_LENGTH = 30
 NO_OF_GRID_CELLS_PER_SIDE = GRID_LENGTH // GRID_CELL_LENGTH
 OFFSET = GRID_CELL_LENGTH // 2
+
+# Task 2 30x10 grid
+TASK2_LENGTH = 30
+TASK2_WIDTH = 10
 
 BUTTON_LENGTH = 100
 BUTTON_WIDTH = 30
