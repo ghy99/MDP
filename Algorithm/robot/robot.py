@@ -47,6 +47,13 @@ class Robot:
         self.pos.y = y * 10
         self.pos.direction = direction
 
+    def setCurrentPosTask2(self, x, y, direction):
+        print(f"before: {self.pos}")
+        self.pos.x = constants.TASK2_LENGTH - constants.GRID_CELL_LENGTH - (x * 10)
+        self.pos.y = y * 10
+        self.pos.direction = direction
+        print(f"after: {self.pos}")
+
     def start_algo_from_position(self, grid):
         self.pos = self.get_current_pos()
         self._start_copy = self.pos.copy()

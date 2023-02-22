@@ -6,6 +6,8 @@ from Grid.grid import Grid
 from Grid.obstacle import Obstacle
 from Misc.positioning import Position
 from Misc.direction import Direction
+from TaskTwoSimulation import Simulation
+import constants
 
 # tmp = [[50, 50, Direction.TOP], [90, 90, Direction.BOTTOM],
 #        [40, 180, Direction.LEFT], [120, 150, Direction.RIGHT]]
@@ -31,14 +33,42 @@ from Misc.direction import Direction
 #     'utf-8')
 # initialize()
 
-tmp = [[50, 50, Direction.TOP]]
+# tmp = [[50, 50, Direction.TOP]]
+# obstacles = []
+# i = 0
+# for x, y, direction in tmp:
+#     position: Position = Position(x, y, direction)
+#     obstacle: Obstacle = Obstacle(position, i)
+#     i += 1
+#     obstacles.append(obstacle)
+
+# grid = Grid(obstacles)
+# print(grid.gridcells2)
+
+obstacleX = 70
+obstacleY = constants.TASK2_LENGTH - constants.GRID_CELL_LENGTH - 20
+distance1 = 0
+distance2 = 0
+while distance1 < 60 or distance1 > 150:
+    distance1 = int(input("First obstacle distance from robot (60-150): "))
+while distance2 < 60 or distance2 > 150:
+    distance2 = int(input("Second obstacle distance from first obstacle (60-150): "))
+world1 = [
+    [70, distance1, Direction.BOTTOM],
+    [70, distance1 + distance2 + constants.GRID_CELL_LENGTH, Direction.BOTTOM]
+]
 obstacles = []
 i = 0
-for x, y, direction in tmp:
+for x, y, direction in world1:
     position: Position = Position(x, y, direction)
     obstacle: Obstacle = Obstacle(position, i)
     i += 1
     obstacles.append(obstacle)
-
 grid = Grid(obstacles)
-print(grid.gridcells2)
+bot = Robot(grid)
+direction = bot.get_current_pos().direction
+currentPos = (obstacleY // 10, obstacleX // 10, direction)
+print(f"CURRENT POS: {currentPos}")
+bot.setCurrentPosTask2(currentPos[0], currentPos[1], bot.get_current_pos().direction)
+sim = Simulation()
+sim.runTask2Simulation(bot)

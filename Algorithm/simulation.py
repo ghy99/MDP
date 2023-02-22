@@ -1040,11 +1040,11 @@ class Simulation():
         cls.drawButtons(650, 500, constants.GREEN, 'START!', constants.BLACK,
                         constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
         # current cursor coordinates, change to robot
-        cls.drawButtons(0, 600, constants.BLACK,
-                        f"({x}, {y})", constants.WHITE, constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
-        # supposedly current direction object is facing
-        cls.drawButtons(150, 600, constants.BLACK, f"Direction: North",
-                        constants.WHITE, constants.BUTTON_LENGTH * 2, constants.BUTTON_WIDTH)
+        # cls.drawButtons(0, 600, constants.BLACK,
+        #                 f"({x}, {y})", constants.WHITE, constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
+        # # supposedly current direction object is facing
+        # cls.drawButtons(150, 600, constants.BLACK, f"Direction: North",
+        #                 constants.WHITE, constants.BUTTON_LENGTH * 2, constants.BUTTON_WIDTH)
         # set obstacles, asking for input from cmd prompt
         cls.drawButtons(650, 450, constants.GREEN, 'SET', constants.BLACK,
                         constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)

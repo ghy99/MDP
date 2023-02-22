@@ -41,10 +41,10 @@ class Grid:
         All grids that fall within safety distance of obstacle will be marked as occupied
         """
         grid = deque()
-        for i in range(constants.TASK2_LENGTH):
+        for i in range(constants.TASK2_LENGTH // constants.GRID_CELL_LENGTH):
             row = deque()
             # 20 cells per side of square with each being 10cm
-            for j in range(constants.TASK2_WIDTH):
+            for j in range(constants.TASK2_WIDTH // constants.GRID_CELL_LENGTH):
                 x = constants.GRID_CELL_LENGTH * j  # 0, 10, ... , 190
                 y = constants.GRID_CELL_LENGTH * i  # 0, 10, ... , 190
                 new_cell = GridCell(
