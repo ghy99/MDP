@@ -1,9 +1,9 @@
 import math
-from Misc.type_of_turn import TypeOfTurn
-import constants as constants
-from Misc.direction import Direction
-from Misc.positioning import Position, RobotPosition
+from misc.type_of_turn import TypeOfTurn
+from misc.direction import Direction
+from misc.positioning import Position, RobotPosition
 from commands.command import Command
+import constants as constants
 
 
 class TurnCommand(Command):

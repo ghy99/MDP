@@ -1,9 +1,8 @@
 import pygame
 import sys
-from copy import deepcopy
 import constants
-# import app
-from Misc.direction import Direction
+from copy import deepcopy
+from misc.direction import Direction
 
 
 class Simulation():

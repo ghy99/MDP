@@ -1,7 +1,7 @@
 import pygame
 import constants
-from Misc.direction import Direction
-from Misc.positioning import Position, RobotPosition
+from misc.direction import Direction
+from misc.positioning import Position, RobotPosition
 
 
 class Obstacle:

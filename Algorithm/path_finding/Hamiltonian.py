@@ -1,15 +1,15 @@
 import itertools
 import math
-from collections import deque
-from typing import Tuple
-
 import constants as constants
-from Grid.grid import Grid
+
+from typing import Tuple
+from collections import deque
 from commands.scan_obstacle_command import ScanCommand
 from commands.go_straight_command import StraightCommand
-from Misc.direction import Direction
-from Grid.obstacle import Obstacle
-from path_finding.modified_astar import ModifiedAStar
+from misc.direction import Direction
+from grid.grid import Grid
+from grid.obstacle import Obstacle
+from path_finding.modified_a_star import ModifiedAStar
 
 
 class Hamiltonian:
@@ -153,6 +153,8 @@ class Hamiltonian:
         self.compress_paths()
 
         print()
+        print("-" * 40)
         for command in self.commands:
             print(f'{command}')
         print("-" * 40)
+        print()

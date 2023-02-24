@@ -1,13 +1,12 @@
 import pygame
 import datetime
-import Misc.timer as timer
+import misc.timer as timer
 import constants as constants
-from Misc.direction import Direction
 from commands.go_straight_command import StraightCommand
 from commands.command import Command
-from Misc.positioning import RobotPosition
-from path_finding.Hamiltonian import Hamiltonian
-
+from misc.direction import Direction
+from misc.positioning import RobotPosition
+from path_finding.hamiltonian import Hamiltonian
 from commands.turn_command import TurnCommand
 
 
@@ -43,12 +42,14 @@ class Robot:
         print(f"robot is at {self.pos}")
 
     def setCurrentPos(self, x, y, direction):
-        self.pos.x = constants.GRID_LENGTH - constants.GRID_CELL_LENGTH - (x * 10)
+        self.pos.x = constants.GRID_LENGTH - \
+            constants.GRID_CELL_LENGTH - (x * 10)
         self.pos.y = y * 10
         self.pos.direction = direction
 
     def setCurrentPosTask2(self, x, y, direction):
-        self.pos.x = constants.TASK2_LENGTH - constants.GRID_CELL_LENGTH - (x * 10)
+        self.pos.x = constants.TASK2_LENGTH - \
+            constants.GRID_CELL_LENGTH - (x * 10)
         self.pos.y = y * 10
         self.pos.direction = direction
 

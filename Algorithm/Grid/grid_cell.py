@@ -1,5 +1,5 @@
 import constants as constants
-from Misc.positioning import Position
+from misc.positioning import Position
 
 
 class GridCell:

@@ -1,8 +1,8 @@
-# MDP-Android
+# MDP-RPI
 
-> Android app for MDP
+> RPI app for MDP
 
-## 🎤 Communication Protocol
+<!-- ## 🎤 Communication Protocol
 
 > Replace paremeters inside [ ]
 
@@ -28,9 +28,9 @@ Update Obstacle ID
 
 ```
 TARGET,[obstacleNo],[obstacleID]
-```
+``` -->
 
-## 📂 Project Folder Structure
+<!-- ## 📂 Project Folder Structure
 
 #### Top Level Directory Layout
 
@@ -47,4 +47,4 @@ TARGET,[obstacleNo],[obstacleID]
 ├── gradlew.bat
 ├── README.md
 └── settings.gradle
-```
+``` -->
