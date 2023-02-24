@@ -361,15 +361,12 @@ public class Arena extends AppCompatActivity {
             }
         });
 
-        /*
-         * TODO: Find out why obstacles get buggy after changing orientation
-         */
-
         obstacle1.setOnTouchListener(new View.OnTouchListener() {
             int x = 0;
             int y = 0;
             int dx = 0;
             int dy = 0;
+            int orientation;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -380,6 +377,8 @@ public class Arena extends AppCompatActivity {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        orientation = (int) obstacle1.getRotation();
+                        obstacle1.setRotation(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         dx = (int) event.getX() - x;
@@ -396,6 +395,7 @@ public class Arena extends AppCompatActivity {
                         Log.d(TAG, "obstacle1 is at " + snapToX + "," + snapToY);
                         obstacle1.setX(snapToX);
                         obstacle1.setY(snapToY);
+                        obstacle1.setRotation(orientation % 360);
                         break;
                     default:
                         break;
@@ -409,16 +409,20 @@ public class Arena extends AppCompatActivity {
             int y = 0;
             int dx = 0;
             int dy = 0;
+            int orientation;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!canSetObstacles) {
                     return false;
                 }
+                Log.d(TAG, "obstacle2 " + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        orientation = (int) obstacle2.getRotation();
+                        obstacle2.setRotation(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         dx = (int) event.getX() - x;
@@ -435,6 +439,7 @@ public class Arena extends AppCompatActivity {
                         Log.d(TAG, "obstacle2 is at " + snapToX + "," + snapToY);
                         obstacle2.setX(snapToX);
                         obstacle2.setY(snapToY);
+                        obstacle2.setRotation(orientation % 360);
                         break;
                     default:
                         break;
@@ -448,16 +453,20 @@ public class Arena extends AppCompatActivity {
             int y = 0;
             int dx = 0;
             int dy = 0;
+            int orientation;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!canSetObstacles) {
                     return false;
                 }
+                Log.d(TAG, "obstacle3 " + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        orientation = (int) obstacle3.getRotation();
+                        obstacle3.setRotation(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         dx = (int) event.getX() - x;
@@ -474,6 +483,7 @@ public class Arena extends AppCompatActivity {
                         Log.d(TAG, "obstacle3 is at " + snapToX + "," + snapToY);
                         obstacle3.setX(snapToX);
                         obstacle3.setY(snapToY);
+                        obstacle3.setRotation(orientation % 360);
                         break;
                     default:
                         break;
@@ -487,16 +497,20 @@ public class Arena extends AppCompatActivity {
             int y = 0;
             int dx = 0;
             int dy = 0;
+            int orientation;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!canSetObstacles) {
                     return false;
                 }
+                Log.d(TAG, "obstacle4 " + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        orientation = (int) obstacle4.getRotation();
+                        obstacle4.setRotation(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         dx = (int) event.getX() - x;
@@ -513,6 +527,7 @@ public class Arena extends AppCompatActivity {
                         Log.d(TAG, "obstacle4 is at " + snapToX + "," + snapToY);
                         obstacle4.setX(snapToX);
                         obstacle4.setY(snapToY);
+                        obstacle4.setRotation(orientation % 360);
                         break;
                     default:
                         break;
@@ -526,16 +541,20 @@ public class Arena extends AppCompatActivity {
             int y = 0;
             int dx = 0;
             int dy = 0;
+            int orientation;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!canSetObstacles) {
                     return false;
                 }
+                Log.d(TAG, "obstacle5 " + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        orientation = (int) obstacle5.getRotation();
+                        obstacle5.setRotation(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         dx = (int) event.getX() - x;
@@ -552,6 +571,7 @@ public class Arena extends AppCompatActivity {
                         Log.d(TAG, "obstacle5 is at " + snapToX + "," + snapToY);
                         obstacle5.setX(snapToX);
                         obstacle5.setY(snapToY);
+                        obstacle5.setRotation(orientation % 360);
                         break;
                     default:
                         break;
@@ -565,16 +585,20 @@ public class Arena extends AppCompatActivity {
             int y = 0;
             int dx = 0;
             int dy = 0;
+            int orientation;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!canSetObstacles) {
                     return false;
                 }
+                Log.d(TAG, "obstacle6 " + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        orientation = (int) obstacle6.getRotation();
+                        obstacle6.setRotation(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         dx = (int) event.getX() - x;
@@ -591,6 +615,7 @@ public class Arena extends AppCompatActivity {
                         Log.d(TAG, "obstacle6 is at " + snapToX + "," + snapToY);
                         obstacle6.setX(snapToX);
                         obstacle6.setY(snapToY);
+                        obstacle6.setRotation(orientation % 360);
                         break;
                     default:
                         break;
@@ -604,16 +629,20 @@ public class Arena extends AppCompatActivity {
             int y = 0;
             int dx = 0;
             int dy = 0;
+            int orientation;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!canSetObstacles) {
                     return false;
                 }
+                Log.d(TAG, "obstacle7 " + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        orientation = (int) obstacle7.getRotation();
+                        obstacle7.setRotation(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         dx = (int) event.getX() - x;
@@ -630,6 +659,7 @@ public class Arena extends AppCompatActivity {
                         Log.d(TAG, "obstacle7 is at " + snapToX + "," + snapToY);
                         obstacle7.setX(snapToX);
                         obstacle7.setY(snapToY);
+                        obstacle7.setRotation(orientation % 360);
                         break;
                     default:
                         break;
@@ -643,16 +673,20 @@ public class Arena extends AppCompatActivity {
             int y = 0;
             int dx = 0;
             int dy = 0;
+            int orientation;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!canSetObstacles) {
                     return false;
                 }
+                Log.d(TAG, "obstacle8 " + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         x = (int) event.getX();
                         y = (int) event.getY();
+                        orientation = (int) obstacle8.getRotation();
+                        obstacle8.setRotation(0);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         dx = (int) event.getX() - x;
@@ -669,6 +703,7 @@ public class Arena extends AppCompatActivity {
                         Log.d(TAG, "obstacle8 is at " + snapToX + "," + snapToY);
                         obstacle8.setX(snapToX);
                         obstacle8.setY(snapToY);
+                        obstacle8.setRotation(orientation % 360);
                         break;
                     default:
                         break;
@@ -707,7 +742,6 @@ public class Arena extends AppCompatActivity {
             Log.d(TAG, "forward");
 
             // Bluetooth message
-            // TODO: Check why w
             if (BluetoothService.BluetoothConnectionStatus) {
                 // byte[] bytes = "STM:w100n".getBytes(Charset.defaultCharset());
                 byte[] bytes = "STM:n".getBytes(Charset.defaultCharset());
@@ -777,12 +811,12 @@ public class Arena extends AppCompatActivity {
         statusWindow = findViewById(R.id.statusWindowText);
 
         // Events
-        IRButton.setOnClickListener(view -> sendObstaclesEvent());
+        IRButton.setOnClickListener(view -> beginIRTask());
         SPButton.setOnClickListener(view -> beginSPTask());
         resetButton.setOnClickListener(view -> setResetButton());
         preset1Button.setOnClickListener(view -> setPreset1Button());
         setButton.setOnClickListener(view -> toggleSetMode());
-        saveButton.setOnClickListener(view -> setSaveButton());
+        saveButton.setOnClickListener(view -> sendObstacles());
         timerButton.setOnClickListener(view -> stopTimerButton());
 
         // Initialize car to bottom left
@@ -1139,21 +1173,7 @@ public class Arena extends AppCompatActivity {
         updateStatusWindow("Ready");
     }
 
-    /*
-     * TODO: Decide what to do with this string builder LOL
-     */
-    private void sendObstaclesEvent() {
-        // StringBuilder stringBuilder = new StringBuilder();
-        // stringBuilder
-        // .append("ALG:")
-        // .append(getObstacleString(obstacle1) + "0;")
-        // .append(getObstacleString(obstacle2) + "1;")
-        // .append(getObstacleString(obstacle3) + "2;")
-        // .append(getObstacleString(obstacle4) + "3;")
-        // .append(getObstacleString(obstacle5) + "4;")
-        // .append(getObstacleString(obstacle6) + "5;")
-        // .append(getObstacleString(obstacle7) + "6;")
-        // .append(getObstacleString(obstacle8) + "7;");
+    private void beginIRTask() {
         String IRstart = "ALG:START";
 
         if (BluetoothService.BluetoothConnectionStatus) {
@@ -1563,11 +1583,7 @@ public class Arena extends AppCompatActivity {
         }
     }
 
-    /*
-     * TODO: Decide what to do here also
-     */
-    private void setSaveButton() {
-        // savedPreset = savedObstacles();
+    private void sendObstacles() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
                 .append("ALG:")
@@ -1582,7 +1598,6 @@ public class Arena extends AppCompatActivity {
         Log.d(TAG, stringBuilder.toString());
 
         if (BluetoothService.BluetoothConnectionStatus) {
-            // Toast.makeText(this, stringBuilder.toString(), Toast.LENGTH_LONG).show();
             byte[] bytes = stringBuilder.toString().getBytes(Charset.defaultCharset());
             BluetoothService.write(bytes);
             Toast.makeText(Arena.this, "Obstacles sent", Toast.LENGTH_LONG).show();
@@ -1782,6 +1797,7 @@ public class Arena extends AppCompatActivity {
                     // updateRobotPosition(Integer.parseInt(x), Integer.parseInt(y), direction_int);
                     updateRobotPosition(Integer.parseInt(x), adjusted_y, direction_int);
                     break;
+
                 // update obstacle ID (format - TARGET,obstacle_number,target_ID)
                 case Helper.TARGET:
                     int obstacleNumber = Character.getNumericValue(message.charAt(7));
@@ -1795,6 +1811,7 @@ public class Arena extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                     break;
+
                 // update status window
                 case Helper.STATUS:
                     String msg;
@@ -1811,6 +1828,7 @@ public class Arena extends AppCompatActivity {
                         updateStatusWindow(msg);
                     }
                     break;
+
                 // plot obstacles
                 case Helper.PLOT:
                     String receivedmsg = message.substring(message.indexOf(",") + 1); // string after PLOT,
@@ -1818,39 +1836,43 @@ public class Arena extends AppCompatActivity {
                     Log.d(TAG, "Obstacle data is " + Arrays.toString(obstaclesPreset));
                     setObstacles(obstaclesPreset);
                     break;
-                case Helper.MOVE:
+
+                // commands from RPI
+                case Helper.COMMANDS:
                     String moveCommand = message.substring(message.indexOf(',') + 1); // substring after MOVE (w10n)
-                    // Forward and Reverse commands
+
+                    // forward and reverse commands
                     if (moveCommand.length() > 2) {
                         // Split moveCommand (eg w10n) into direction (w) + interval (how many 10s) +
                         // 'n'
                         String moveDirection = moveCommand.substring(0, 1); // w
-                        Log.d("this", moveDirection);
-                        String moveInterval = moveCommand.substring(1, moveCommand.length() - 1); // doesn't take n, we
-                                                                                                  // can leave that out
-                                                                                                  // of any
-                                                                                                  // consideration
-                        int intervals = Integer.parseInt(moveInterval) / 10; // intervals = how many units of 10s we
-                                                                             // have to move (10 = 1 grid block)
+                        String moveInterval = moveCommand.substring(1, moveCommand.length() - 1);
+                        // doesn't take n, we
+                        // can leave that out
+                        // of any
+                        // consideration
+                        int intervals = Integer.parseInt(moveInterval) / 10;
+                        // intervals = how many units of 10s we
+                        // have to move (10 = 1 grid block)
+
                         switch (moveDirection) {
                             case "w":
                                 for (int i = 0; i < intervals; i++) {
                                     forwardButtonCommand();
-                                    // sleepFor(500);
                                 }
                                 break;
                             case "s":
                                 for (int i = 0; i < intervals; i++) {
                                     reverseButtonCommand();
-                                    // sleepFor(500);
                                 }
                                 break;
                             default:
-                                Log.d("Move command", "Direction is not valid");
+                                Log.d(TAG, "Direction is not valid");
                                 break;
                         }
                     }
 
+                    // turn commands
                     else {
                         switch (moveCommand) {
                             case "ln": // forward left (w, w, w, a, w, w, w)
@@ -1862,7 +1884,7 @@ public class Arena extends AppCompatActivity {
                                 forwardButtonCommand();
                                 forwardButtonCommand();
                                 break;
-                            case "rn": // forward right (w,w, w, d, w, w,w)
+                            case "rn": // forward right (w, w, w, d, w, w, w)
                                 forwardButtonCommand();
                                 forwardButtonCommand();
                                 forwardButtonCommand();
@@ -1901,7 +1923,7 @@ public class Arena extends AppCompatActivity {
                         }
                     }
                 default:
-                    // for outer "ROBOT/TARGET/STATUS/MOVE cases
+                    // for out of "ROBOT/TARGET/STATUS/COMMAND" cases
                     break;
             }
 

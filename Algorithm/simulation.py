@@ -1,14 +1,14 @@
 import pygame
 import sys
-from copy import deepcopy
 import constants
+import time
+from copy import deepcopy
 from commands.go_straight_command import StraightCommand
 from commands.turn_command import TurnCommand
 from commands.scan_obstacle_command import ScanCommand
-# import app
-from Misc.direction import Direction
-from Misc.type_of_turn import TypeOfTurn
-import time
+from misc.direction import Direction
+from misc.type_of_turn import TypeOfTurn
+
 
 class Simulation():
     def __init__(self):
@@ -79,18 +79,17 @@ class Simulation():
             for y in range(0, constants.GRID_LENGTH * constants.SCALING_FACTOR, constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR):
                 if (x > (constants.GRID_LENGTH - 5 * constants.GRID_CELL_LENGTH) * constants.SCALING_FACTOR) and (y < 4 * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR):
                     rect = pygame.Rect(
-                            y, 
-                            x, 
-                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, 
-                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                        y,
+                        x,
+                        constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR,
+                        constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                     cls.screen.fill(constants.ORANGE, rect)
                     pygame.draw.rect(cls.screen, constants.ORANGE, rect, 2)
 
                 rect = pygame.Rect(y, x, constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR,
                                    constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 pygame.draw.rect(cls.screen, constants.WHITE, rect, 2)
-                
-                
+
     ''' How to add texts?? '''
     def drawButtons(cls, xpos, ypos, bgcolor, text, textColor, length, width):
         startButton = pygame.Rect(xpos, ypos, length, width)
@@ -1043,14 +1042,14 @@ class Simulation():
     def updateTime(self, startTime, currentTime):
         if not startTime:
             return
-        rect = pygame.Rect(620, 350, 
-                            constants.BUTTON_LENGTH * 2, constants.BUTTON_WIDTH)
+        rect = pygame.Rect(620, 350,
+                           constants.BUTTON_LENGTH * 2, constants.BUTTON_WIDTH)
         self.screen.fill(constants.BLACK, rect)
         pygame.draw.rect(self.screen, constants.BLACK, rect, 2)
         self.drawButtons(650, 350, constants.BLACK,
-                        f"({(currentTime - startTime):.2f} Seconds)", constants.WHITE, constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
+                         f"({(currentTime - startTime):.2f} Seconds)", constants.WHITE, constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
 
-    def updatingDisplay(self, start = None):
+    def updatingDisplay(self, start=None):
         self.clock.tick(30)     # 10 frames per second apparently
         self.drawGrid()
         currentPosX = self.bot.get_current_pos().x
@@ -1116,8 +1115,6 @@ class Simulation():
         self.updatingDisplay(start)
         pygame.display.update()
 
-    
-
     def runSimulation(self, bot):
         self.bot = deepcopy(bot)
         self.clock = pygame.time.Clock()
@@ -1144,7 +1141,7 @@ class Simulation():
                             # self.updateTime(start, time.time())
                             # print(f"time - start: {time.time()} - {start} = {time.time() - start}")
                             pygame.display.update()
-                            
+
                     elif (650 < x < 650 + constants.BUTTON_LENGTH) and (450 < y < 450 + constants.BUTTON_WIDTH):
                         # print("*****Setting obstacles*****")
                         # self.obstacles = self.createObstacles(

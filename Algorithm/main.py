@@ -1,19 +1,16 @@
-import sys
-import time
-from typing import List
 import socket
-import constants
-from Misc.positioning import Position
-from Misc.direction import Direction
-from Grid.grid import Grid
+from typing import List
+from misc.positioning import Position
+from misc.direction import Direction
+from grid.grid import Grid
 from robot.robot import Robot
 from simulation import Simulation
-from ConnectionToRpi.rpi_client import RPiClient
-from ConnectionToRpi.rpi_server import RPiServer
-from Grid.obstacle import Obstacle
+from connection_to_rpi.rpi_client import RPiClient
+from connection_to_rpi.rpi_server import RPiServer
+from grid.obstacle import Obstacle
 from commands.go_straight_command import StraightCommand
 from commands.scan_obstacle_command import ScanCommand
-from pygame_app import AlgoMinimal
+from app import AlgoMinimal
 
 
 class Main:
@@ -48,7 +45,7 @@ class Main:
             obstacle: Obstacle = Obstacle(position, i)
             i += 1
             obstacles.append(obstacle)
-        grid = Grid(obstacles)
+        grid = grid(obstacles)
         bot = Robot(grid)
         sim = Simulation()
         sim.runSimulation(bot)
@@ -301,8 +298,8 @@ if __name__ == '__main__':
 #     # algo = Astar(self.getCurrentPos(), self.grid)
 # #     bot.callAlgo()
 # # self.algo = Astar()
-#     # grid, obstacles = app.initGrid()
-#     # a = astarclass.Astar(constants.INITPOS, obstacles, grid, constants.GRID_LENGTH//constants.GRID_CELL_LENGTH)
+#     # grid, obstacles = app.initgrid()
+#     # a = astarclass.Astar(constants.INITPOS, obstacles, grid, constants.grid_LENGTH//constants.grid_CELL_LENGTH)
 #     # a.runAlgo(grid, obstacles)
 #     sim = Simulation()
 #     sim.runSimulation(bot)

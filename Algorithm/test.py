@@ -2,10 +2,10 @@ from main import Main
 from main import initialize
 from path_finding.Hamiltonian import Hamiltonian
 from robot.robot import Robot
-from Grid.grid import Grid
-from Grid.obstacle import Obstacle
-from Misc.positioning import Position
-from Misc.direction import Direction
+from grid.grid import Grid
+from grid.obstacle import Obstacle
+from misc.positioning import Position
+from misc.direction import Direction
 from TaskTwoSimulation import Simulation
 import constants
 
@@ -52,7 +52,8 @@ distance2 = 0
 while distance1 < 60 or distance1 > 150:
     distance1 = int(input("First obstacle distance from robot (60-150): "))
 while distance2 < 60 or distance2 > 150:
-    distance2 = int(input("Second obstacle distance from first obstacle (60-150): "))
+    distance2 = int(
+        input("Second obstacle distance from first obstacle (60-150): "))
 world1 = [
     [70, distance1, Direction.BOTTOM],
     [70, distance1 + distance2 + constants.GRID_CELL_LENGTH, Direction.BOTTOM]

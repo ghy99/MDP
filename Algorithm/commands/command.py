@@ -3,11 +3,15 @@ from abc import ABC, abstractmethod
 
 import constants as constants
 
+
 class Command(ABC):
     def __init__(self, time):
-        self.time = time  # Time in seconds in which this command is carried out.
+        # Time in seconds in which this command is carried out.
+        self.time = time
+
         # the number of frames to update per second
-        self.ticks = math.ceil(time * constants.FRAMES)  # Number of frame ticks that this command will take.
+        # Number of frame ticks that this command will take.
+        self.ticks = math.ceil(time * constants.FRAMES)
         self.total_ticks = self.ticks  # Keep track of total ticks.
 
     def tick(self):

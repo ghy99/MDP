@@ -1,11 +1,11 @@
-from collections import deque
-from typing import List
-import constants as constants
-from Grid.grid_cell import GridCell
-from Grid.obstacle import Obstacle
-from Misc.positioning import Position
 import math
 import pygame
+import constants as constants
+from collections import deque
+from typing import List
+from grid.grid_cell import GridCell
+from grid.obstacle import Obstacle
+from misc.positioning import Position
 
 
 class GridTwo:

@@ -1,7 +1,7 @@
 import constants as constants
-from Misc.direction import Direction
 from commands.command import Command
-from Misc.positioning import Position
+from misc.direction import Direction
+from misc.positioning import Position
 
 
 class StraightCommand(Command):

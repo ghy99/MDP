@@ -3,14 +3,14 @@ from queue import PriorityQueue
 from typing import List, Tuple
 
 import constants as constants
-from Misc.direction import Direction
-from Misc.type_of_turn import TypeOfTurn
+from misc.direction import Direction
+from misc.type_of_turn import TypeOfTurn
+from misc.positioning import RobotPosition
 from commands.command import Command
 from commands.go_straight_command import StraightCommand
 from commands.turn_command import TurnCommand
-from Grid.grid import Grid
-from Grid.grid_cell import GridCell
-from Misc.positioning import RobotPosition
+from grid.grid import Grid
+from grid.grid_cell import GridCell
 
 
 class ModifiedAStar:
@@ -48,7 +48,8 @@ class ModifiedAStar:
 
         # Check turns
         # SOME HEURISTIC VALUE (need to account for turns travelling more also!)
-        turn_penalty = 100  # will be adjusted on type of turn. 90 degree turn is lower cost than small turn
+        # will be adjusted on type of turn. 90 degree turn is lower cost than small turn
+        turn_penalty = 100
         turn_commands = [  # type of turn, Left, Right, Reverse
             TurnCommand(TypeOfTurn.SMALL, True, False,
                         False),  # L SMALL turn, forward
@@ -236,8 +237,6 @@ class ModifiedAStar:
                                 *temp.xy())):
                             return None, None
 
-
-
             # if diff_in_y > 0:
             #     for y in range(0, abs(diff_in_y//10)):
             #         temp = p.copy()
@@ -355,8 +354,8 @@ class ModifiedAStar:
                 if new_node not in backtrack or new_cost < cost[new_node]:
                     offset += 1
                     priority = new_cost + \
-                               self.distance_heuristic(
-                                   new_pos) + self.direction_heuristic(new_pos)
+                        self.distance_heuristic(
+                            new_pos) + self.direction_heuristic(new_pos)
 
                     frontier.put((priority, offset, (new_node, new_pos)))
                     backtrack[new_node] = (current_node, c)

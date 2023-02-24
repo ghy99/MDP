@@ -8,7 +8,7 @@ public class Helper {
   protected static final String TARGET = "TARGET";
   protected static final String STATUS = "STATUS";
   protected static final String PLOT = "PLOT";
-  protected static final String MOVE = "MOVE";
+  protected static final String COMMANDS = "COMMANDS";
 
   protected static Map<String, Integer> resources = new HashMap<String, Integer>() {
     {
