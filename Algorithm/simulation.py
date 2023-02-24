@@ -90,7 +90,6 @@ class Simulation():
                                    constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 pygame.draw.rect(cls.screen, constants.WHITE, rect, 2)
 
-    ''' How to add texts?? '''
     def drawButtons(cls, xpos, ypos, bgcolor, text, textColor, length, width):
         startButton = pygame.Rect(xpos, ypos, length, width)
         pygame.draw.rect(cls.screen, bgcolor, startButton)
@@ -293,8 +292,6 @@ class Simulation():
                     self.currentPos[0], self.currentPos[1] + steps, self.currentPos[2])
 
     def turnRight(self, gridSize, cellSize):
-        xSteps = 2
-        ySteps = 3
         if self.currentPos[2] == Direction.TOP:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + constants.TURN_MED_RIGHT_TOP_FORWARD[0] // 10) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
@@ -405,8 +402,6 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_RIGHT_LEFT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_LEFT_FORWARD[0] // 10), Direction.TOP)
 
     def turnLeft(self, gridSize, cellSize):
-        xStep = 2
-        yStep = 3
         if self.currentPos[2] == Direction.TOP:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
@@ -999,8 +994,8 @@ class Simulation():
         cls.drawButtons(650, 500, constants.GREEN, 'START!', constants.BLACK,
                         constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
         # set obstacles, asking for input from cmd prompt
-        cls.drawButtons(650, 450, constants.GREEN, 'SET', constants.BLACK,
-                        constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
+        # cls.drawButtons(650, 450, constants.GREEN, 'SET', constants.BLACK,
+        #                 constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
         # reset grid button
         cls.drawButtons(650, 400, constants.GREY, 'RESET', constants.BLACK,
                         constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
@@ -1014,7 +1009,6 @@ class Simulation():
             cls.drawObstaclesButton([], constants.RED)
 
     def drawShortestPath(self, bot):
-        # print(self.obstacles)
         halfAGridCell = (constants.GRID_CELL_LENGTH // 2) * \
             constants.SCALING_FACTOR
         obstacleList = []
@@ -1055,10 +1049,8 @@ class Simulation():
         currentPosX = self.bot.get_current_pos().x
         currentPosY = self.bot.get_current_pos().y
         direction = self.bot.get_current_pos().direction
-        # print(f"currentPosX: {currentPosX}, currentPosY: {currentPosY}")
         self.currentPos = ((constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
                             currentPosX) // 10, currentPosY // 10, direction)
-        # print(f"currentPos ======= {self.currentPos}")
         self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
         self.drawObstaclesButton(self.obstacles, constants.RED)
@@ -1138,17 +1130,10 @@ class Simulation():
                         self.updateTime(start, start)
                         for cmd in self.bot.hamiltonian.commands:
                             self.parseCmd(cmd, start)
-                            # self.updateTime(start, time.time())
-                            # print(f"time - start: {time.time()} - {start} = {time.time() - start}")
                             pygame.display.update()
-
-                    elif (650 < x < 650 + constants.BUTTON_LENGTH) and (450 < y < 450 + constants.BUTTON_WIDTH):
-                        # print("*****Setting obstacles*****")
-                        # self.obstacles = self.createObstacles(
-                        #     constants.GRID_LENGTH // constants.GRID_CELL_LENGTH)
-                        # self.obstacles = self.bot.hamiltonian.grid.obstacles
-                        print("*****Drawing obstacles*****")
-                        self.drawObstaclesButton(self.obstacles, constants.RED)
+                    # elif (650 < x < 650 + constants.BUTTON_LENGTH) and (450 < y < 450 + constants.BUTTON_WIDTH):
+                    #     print("*****Drawing obstacles*****")
+                    #     self.drawObstaclesButton(self.obstacles, constants.RED)
                     elif (650 < x < 650 + constants.BUTTON_LENGTH) and (400 < y < 400 + constants.BUTTON_WIDTH):
                         self.reset(bot)
                     elif (650 < x < 720 + constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) and (115 < y < 185 + constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR):
@@ -1198,9 +1183,4 @@ class Simulation():
                     elif event.key == pygame.K_a:
                         self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
-
-                    # elif (x < constants.GRID_LENGTH * constants.SCALING_FACTOR) and (y < constants.GRID_LENGTH * constants.SCALING_FACTOR):
-                    #     ''' Each cell is 10x10 multiplied by scaling factor of 3 = 30x30px
-                    #         if i want to get grid cell, take coordinate // (10 * 3) '''
-                    #     self.selectObstacles(x // (10 * 3), y // ( 10 * 3), constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, constants.GREY)
             pygame.display.update()
