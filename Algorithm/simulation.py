@@ -8,7 +8,7 @@ from commands.scan_obstacle_command import ScanCommand
 # import app
 from Misc.direction import Direction
 from Misc.type_of_turn import TypeOfTurn
-
+import time
 
 class Simulation():
     def __init__(self):
@@ -94,10 +94,20 @@ class Simulation():
     def drawGrid(cls):
         for x in range(0, constants.GRID_LENGTH * constants.SCALING_FACTOR, constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR):
             for y in range(0, constants.GRID_LENGTH * constants.SCALING_FACTOR, constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR):
+                if (x > (constants.GRID_LENGTH - 5 * constants.GRID_CELL_LENGTH) * constants.SCALING_FACTOR) and (y < 4 * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR):
+                    rect = pygame.Rect(
+                            y, 
+                            x, 
+                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR, 
+                            constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+                    cls.screen.fill(constants.ORANGE, rect)
+                    pygame.draw.rect(cls.screen, constants.ORANGE, rect, 2)
+
                 rect = pygame.Rect(y, x, constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR,
                                    constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
                 pygame.draw.rect(cls.screen, constants.WHITE, rect, 2)
-
+                
+                
     ''' How to add texts?? '''
     def drawButtons(cls, xpos, ypos, bgcolor, text, textColor, length, width):
         startButton = pygame.Rect(xpos, ypos, length, width)
@@ -1040,8 +1050,8 @@ class Simulation():
         cls.drawButtons(650, 500, constants.GREEN, 'START!', constants.BLACK,
                         constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
         # current cursor coordinates, change to robot
-        # cls.drawButtons(0, 600, constants.BLACK,
-        #                 f"({x}, {y})", constants.WHITE, constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
+        # cls.drawButtons(650, 350, constants.BLACK,
+        #                 f"(0.0)", constants.WHITE, constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
         # # supposedly current direction object is facing
         # cls.drawButtons(150, 600, constants.BLACK, f"Direction: North",
         #                 constants.WHITE, constants.BUTTON_LENGTH * 2, constants.BUTTON_WIDTH)
@@ -1072,7 +1082,7 @@ class Simulation():
         obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell,
                             (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
         obstacleInOrder = self.bot.hamiltonian.compute_simple_hamiltonian_path()
-        print(f"Obstacles in order: {obstacleInOrder}")
+        # print(f"Obstacles in order: {obstacleInOrder}")
         for obstacle in obstacleInOrder:
             print(obstacle)
             y = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
@@ -1081,7 +1091,7 @@ class Simulation():
             x = obstacle.position.x // constants.GRID_CELL_LENGTH
             obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell,
                                 (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
-        print(f"Obstacle list:\n{obstacleList}\n")
+        # print(f"Obstacle list:\n{obstacleList}\n")
         for i in range(1, len(obstacleList)):
             print((obstacleList[i - 1][0], obstacleList[i - 1]
                   [1]), (obstacleList[i][0], obstacleList[i][1]))
@@ -1090,7 +1100,17 @@ class Simulation():
                               (obstacleList[i - 1][0], obstacleList[i - 1][1]), (obstacleList[i][0], obstacleList[i][1])], 3)
             pygame.display.update()
 
-    def updatingDisplay(self):
+    def updateTime(self, startTime, currentTime):
+        if not startTime:
+            return
+        rect = pygame.Rect(620, 350, 
+                            constants.BUTTON_LENGTH * 2, constants.BUTTON_WIDTH)
+        self.screen.fill(constants.BLACK, rect)
+        pygame.draw.rect(self.screen, constants.BLACK, rect, 2)
+        self.drawButtons(650, 350, constants.BLACK,
+                        f"({(currentTime - startTime):.2f} Seconds)", constants.WHITE, constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
+
+    def updatingDisplay(self, start = None):
         self.clock.tick(30)     # 10 frames per second apparently
         self.drawGrid()
         currentPosX = self.bot.get_current_pos().x
@@ -1104,23 +1124,24 @@ class Simulation():
                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
         self.drawObstaclesButton(self.obstacles, constants.RED)
         pygame.time.delay(750)
+        self.updateTime(start, time.time())
 
-    def parseCmd(self, cmd):
+    def parseCmd(self, cmd, start):
         if isinstance(cmd, StraightCommand):
             if (cmd.dist // 10) >= 0:
                 for i in range(cmd.dist // 10):
                     self.moveForward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                      constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
-                    self.updatingDisplay()
+                    self.updatingDisplay(start)
                     pygame.display.update()
             else:
                 for i in range(0 - (cmd.dist // 10)):
                     self.moveBackward(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                       constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
-                    self.updatingDisplay()
+                    self.updatingDisplay(start)
                     pygame.display.update()
         elif isinstance(cmd, TurnCommand):
-            self.updatingDisplay()
+            self.updatingDisplay(start)
             if cmd.type_of_turn == TypeOfTurn.MEDIUM:
                 if cmd.right and not cmd.left and not cmd.reverse:
                     self.turnRight(constants.GRID_LENGTH * constants.SCALING_FACTOR,
@@ -1152,13 +1173,16 @@ class Simulation():
                            constants.SCALING_FACTOR, constants.RED, constants.ORANGE, constants.PINK)
         else:
             print("error!")
-        self.updatingDisplay()
+        self.updatingDisplay(start)
         pygame.display.update()
+
+    
 
     def runSimulation(self, bot):
         self.bot = deepcopy(bot)
         self.clock = pygame.time.Clock()
         self.obstacles = self.bot.hamiltonian.grid.obstacles
+        start = None
         while True:
             self.updatingDisplay()
             x, y = pygame.mouse.get_pos()
@@ -1173,9 +1197,14 @@ class Simulation():
                             "START BUTTON IS CLICKED!!! I REPEAT, START BUTTON IS CLICKED!!!")
                         '''insert run algo function'''
                         self.bot.hamiltonian.plan_path()
+                        start = time.time()
+                        self.updateTime(start, start)
                         for cmd in self.bot.hamiltonian.commands:
-                            self.parseCmd(cmd)
+                            self.parseCmd(cmd, start)
+                            # self.updateTime(start, time.time())
+                            # print(f"time - start: {time.time()} - {start} = {time.time() - start}")
                             pygame.display.update()
+                            
                     elif (650 < x < 650 + constants.BUTTON_LENGTH) and (450 < y < 450 + constants.BUTTON_WIDTH):
                         # print("*****Setting obstacles*****")
                         # self.obstacles = self.createObstacles(
