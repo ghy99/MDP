@@ -7,12 +7,13 @@ from Misc.direction import Direction
 
 
 class Simulation():
-    def __init__(self):
+    def __init__(self, direction):
         pygame.init()
         self.running = True
+        self.direction = direction
         self.font = pygame.font.SysFont('Arial', 25)
         self.screen = pygame.display.set_mode(
-            (900, 950), pygame.RESIZABLE)
+            (900, 700), pygame.RESIZABLE)
         self.clock = None
         pygame.mouse.set_visible(1)
         pygame.display.set_caption("Vroom Vroom Simulation")
@@ -1127,7 +1128,7 @@ class Simulation():
             cls.drawObstacles([], constants.RED)
 
     def updatingTask2Display(self):
-        self.clock.tick(30)
+        self.clock.tick(100)
         self.drawGrid2(self.bot)
         currentPosX = self.bot.get_current_pos().x
         currentPosY = self.bot.get_current_pos().y
@@ -1137,7 +1138,7 @@ class Simulation():
         self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                        constants.TASK2_SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
         self.drawObstacles(self.obstacles, constants.RED)
-        pygame.time.delay(200)
+        pygame.time.delay(100)
 
     def left(self, movement):
         for i in range(3):
@@ -1329,9 +1330,10 @@ class Simulation():
         self.updatingTask2Display()
         pygame.display.update()
 
-    def task2Algo(self):
+    def task2Algo(self, direction):
         movement = {}
         movement['forward'] = 0
+        
         while True:
             temp = self.moveForward(constants.TASK2_LENGTH * constants.TASK2_SCALING_FACTOR,
                                     constants.TASK2_WIDTH * constants.TASK2_SCALING_FACTOR,
@@ -1343,10 +1345,7 @@ class Simulation():
             elif temp == -1:
                 break
 
-        obstacle1 = input("Arrow Direction: ")
-        while obstacle1 == "":
-            obstacle1 = input("Arrow Direction: ")
-
+        obstacle1 = direction[0]
         if obstacle1 == 'L':
             self.left(movement)
         elif obstacle1 == 'R':
@@ -1363,9 +1362,7 @@ class Simulation():
             elif temp == -1:
                 break
 
-        obstacle2 = input("Arrow Direction: ")
-        while obstacle2 == "":
-            obstacle2 = input("Arrow Direction: ")
+        obstacle2 = direction[1]
 
         if obstacle2 == 'L':
             self.secondleft(movement)
@@ -1389,7 +1386,8 @@ class Simulation():
                         print(
                             "START BUTTON IS CLICKED!!! I REPEAT, START BUTTON IS CLICKED!!!")
                         '''insert run algo function'''
-                        self.task2Algo()
+                        
+                        self.task2Algo(self.direction)
                     elif (650 < x < 650 + constants.BUTTON_LENGTH) and (450 < y < 450 + constants.BUTTON_WIDTH):
                         self.reset(bot)
 

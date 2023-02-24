@@ -14,9 +14,6 @@ class Simulation():
     def __init__(self):
         pygame.init()
         self.running = True
-        # window size = 800, 650
-        # self.obstacles = []
-        # self.obstacles = self.bot.hamiltonian.grid.obstacles
         self.font = pygame.font.SysFont('Arial', 25)
         self.screen = pygame.display.set_mode(
             (800, 650), pygame.RESIZABLE)
@@ -41,20 +38,6 @@ class Simulation():
         pygame.draw.rect(cls.screen, color, newRect, 2)
 
     def drawRobot(cls, robotPos, cellSize, directionColor, botColor, botAreaColor):
-        # print(robotPos)
-        # if robotPos[2] == Direction.TOP:
-        #     for x in range(robotPos[0] - 1, robotPos[0] + 2):
-        #         for y in range(robotPos[1] - 1, robotPos[1] + 1):
-        #             if (0 <= x * cellSize < constants.GRID_LENGTH * constants.SCALING_FACTOR) and (0 <= y * cellSize < constants.GRID_LENGTH * constants.SCALING_FACTOR):
-        #                 if robotPos[0] == x and robotPos[1] == y:
-        #                     cls.selectObstacles(robotPos[1], robotPos[0], cellSize, botColor)
-        #     pass
-        # elif robotPos[2] == Direction.RIGHT:
-        #     pass
-        # elif robotPos[2] == Direction.BOTTOM:
-        #     pass
-        # elif robotPos[2] == Direction.LEFT:
-        #     pass
         for x in range(robotPos[0] - 1, robotPos[0] + 2):
             for y in range(robotPos[1] - 1, robotPos[1] + 2):
                 if (0 <= x * cellSize < constants.GRID_LENGTH * constants.SCALING_FACTOR) and (0 <= y * cellSize < constants.GRID_LENGTH * constants.SCALING_FACTOR):
@@ -123,8 +106,6 @@ class Simulation():
 
     def drawObstaclesButton(cls, obstacles, color):
         size = constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR
-        # turningSize = ((constants.GRID_CELL_LENGTH *
-        #                constants.SCALING_FACTOR * 3) + 10) // 4
         for i in obstacles:
             y = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
                  i.position.y) // constants.GRID_CELL_LENGTH
@@ -537,8 +518,6 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_LEFT_LEFT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_LEFT_FORWARD[0] // 10), Direction.BOTTOM)
 
     def reverseTurnRight(self, gridSize, cellSize):
-        xStep = 3
-        yStep = 2
         if self.currentPos[2] == Direction.TOP:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_TOP_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
@@ -649,8 +628,6 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_RIGHT_LEFT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_LEFT_REVERSE[0] // 10), Direction.BOTTOM)
 
     def reverseTurnLeft(self, gridSize, cellSize):
-        xStep = 3
-        yStep = 2
         if self.currentPos[2] == Direction.TOP:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
@@ -761,8 +738,6 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_LEFT_LEFT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_LEFT_REVERSE[0] // 10), Direction.TOP)
 
     def moveNorthEast(self, gridSize, cellSize):
-        xStep = 4
-        yStep = 1
         if self.currentPos[2] == Direction.TOP:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -817,8 +792,6 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_SMALL_RIGHT_LEFT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_LEFT_FORWARD[0] // 10), self.currentPos[2])
 
     def moveNorthWest(self, gridSize, cellSize):
-        xStep = 4
-        yStep = 1
         if self.currentPos[2] == Direction.TOP:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -873,8 +846,6 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_SMALL_LEFT_LEFT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_LEFT_LEFT_FORWARD[0] // 10), self.currentPos[2])
 
     def moveSouthEast(self, gridSize, cellSize):
-        xStep = 4
-        yStep = 1
         if self.currentPos[2] == Direction.TOP:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -929,8 +900,6 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_SMALL_RIGHT_LEFT_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_SMALL_RIGHT_LEFT_REVERSE[0] // 10), self.currentPos[2])
 
     def moveSouthWest(self, gridSize, cellSize):
-        xStep = 4
-        yStep = 1
         if self.currentPos[2] == Direction.TOP:
             # for y in range(self.currentPos[1] - 1, self.currentPos[1] + 2):
             #     for obstacle in self.obstacles:
@@ -1011,50 +980,25 @@ class Simulation():
                                  constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move North East
         elif (720 < x < 720 + buttonLength) and (107.5 < y < 107.5 + buttonWidth):
-            print(f"YOU CLICKED THE NORTHEAST BUTTON\T{self.currentPos}")
             self.moveNorthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move North West
         elif (650 < x < 650 + buttonLength) and (107.5 < y < 107.5 + buttonWidth):
-            print(f"YOU CLICKED THE NORTHWEST BUTTON\T{self.currentPos}")
             self.moveNorthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move South East
         elif (720 < x < 720 + buttonLength) and (182.5 < y < 182.5 + buttonWidth):
-            print(f"YOU CLICKED THE SOUTHEAST BUTTON\T{self.currentPos}")
             self.moveSouthEast(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
         # move South West
         elif (650 < x < 650 + buttonLength) and (182.5 < y < 182.5 + buttonWidth):
-            print(f"YOU CLICKED THE SOUTHWEST BUTTON\T{self.currentPos}")
             self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
-
-        '''
-        cls.drawImage(img, 685, 110, constants.GREY, size, size)       # Forward N
-        cls.drawImage(img, 685, 180, constants.GREY, size, size)       # Backward S
-
-        cls.drawImage(img, 720, 132.5, constants.GREY, size, size)       # Forward E
-        cls.drawImage(img, 650, 132.5, constants.GREY, size, size)       # Forward W
-        cls.drawImage(img, 720, 160, constants.GREY, size, size)       # Backward E
-        cls.drawImage(img, 650, 160, constants.GREY, size, size)       # Backward W
-
-        cls.drawImage(img, 720, 107.5, constants.GREY, size, size)       # Slant Forward E
-        cls.drawImage(img, 650, 107.5, constants.GREY, size, size)       # Slant Forward W
-        cls.drawImage(img, 720, 182.5, constants.GREY, size, size)       # Slant Backward E
-        cls.drawImage(img, 650, 182.5, constants.GREY, size, size)       # Slant Backward W
-        '''
 
     def draw(cls, x, y):
         # start button
         cls.drawButtons(650, 500, constants.GREEN, 'START!', constants.BLACK,
                         constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
-        # current cursor coordinates, change to robot
-        # cls.drawButtons(650, 350, constants.BLACK,
-        #                 f"(0.0)", constants.WHITE, constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
-        # # supposedly current direction object is facing
-        # cls.drawButtons(150, 600, constants.BLACK, f"Direction: North",
-        #                 constants.WHITE, constants.BUTTON_LENGTH * 2, constants.BUTTON_WIDTH)
         # set obstacles, asking for input from cmd prompt
         cls.drawButtons(650, 450, constants.GREEN, 'SET', constants.BLACK,
                         constants.BUTTON_LENGTH, constants.BUTTON_WIDTH)
@@ -1077,26 +1021,22 @@ class Simulation():
         obstacleList = []
         y = ((constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
               self.currentPos[1]) // constants.GRID_CELL_LENGTH)
-        # x = i.position.x // constants.GRID_CELL_LENGTH
         x = self.currentPos[0] // constants.GRID_CELL_LENGTH
         obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell,
                             (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
         obstacleInOrder = self.bot.hamiltonian.compute_simple_hamiltonian_path()
-        # print(f"Obstacles in order: {obstacleInOrder}")
         for obstacle in obstacleInOrder:
             print(obstacle)
             y = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
                  obstacle.position.y) // constants.GRID_CELL_LENGTH
-            # x = i.position.x // constants.GRID_CELL_LENGTH
             x = obstacle.position.x // constants.GRID_CELL_LENGTH
             obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell,
                                 (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
-        # print(f"Obstacle list:\n{obstacleList}\n")
         for i in range(1, len(obstacleList)):
             print((obstacleList[i - 1][0], obstacleList[i - 1]
                   [1]), (obstacleList[i][0], obstacleList[i][1]))
             self.updatingDisplay()
-            pygame.draw.lines(self.screen, constants.ORANGE, True, [
+            pygame.draw.lines(self.screen, constants.RED, True, [
                               (obstacleList[i - 1][0], obstacleList[i - 1][1]), (obstacleList[i][0], obstacleList[i][1])], 3)
             pygame.display.update()
 
