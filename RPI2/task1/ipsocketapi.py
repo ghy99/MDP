@@ -72,14 +72,15 @@ if __name__ == '__main__':
     ipsocketapi.connect()
 
     #while True:
-    message = "ALG|10,6,S"
+    message = "ALG:0,18,E,0;18,19,S,1;18,0,W,2;5,0,E,3;10,10,E,4;9,10,W,5;"
     ipsocketapi.write(message.encode('utf-8'))
-    ipsocketapi.write('\n'.encode('utf-8'))
     while True:
         msg = input("write sth")
         if msg == 'r':
-           ipsocketapi.read()
+           algo=ipsocketapi.read()
+           n=5
+           instr=[algo[i:i+n]for i in range(0,len(algo),n)]
+           print(instr)
         else:
            ipsocketapi.write(msg.encode('utf-8'))
-           ipsocketapi.write('\n'.encode('utf-8'))
 
