@@ -110,14 +110,12 @@ public class Bluetooth extends AppCompatActivity {
         connectBtn = (Button) findViewById(R.id.connectBtn);
         IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(onAndOffWatcher, BTIntent);
-
         IntentFilter discoverIntent = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
         registerReceiver(scannerModeWatcher, discoverIntent);
         IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(scannerWatcher, discoverDevicesIntent);
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(pairingWatcher, filter);
-
         IntentFilter filter2 = new IntentFilter("ConnectionStatus");
         LocalBroadcastManager.getInstance(this).registerReceiver(connectionWatcher, filter2);
         Button scanButton = (Button) this.findViewById(R.id.scanButton);
