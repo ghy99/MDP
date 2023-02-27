@@ -41,7 +41,7 @@ class SerialAPI:
         print("[STM] Attempting to read...")
         message = None
         try:
-            message = self.serial_connection.read_until(b'AAAA')
+            message = self.serial_connection.read_until(b'A')
         except Exception as exception:
             print("[STM] Failed to read: "  + str(exception))
         else:
