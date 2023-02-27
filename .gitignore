@@ -1,3 +1,4 @@
 Algorithm/.venv/*
 Image-Rec/.venv/*
 __pycache__/
+.vscode
