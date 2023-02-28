@@ -117,8 +117,8 @@ class Multithreader:
                         #time.sleep(5)
                         msg=self.ipsocketapi.read()
                         print("[Main] Retrieve instruction from ipsocket")
-                        print("message from algo:"+ msg)+"send directly to STM"
-                        self.serialapi.write(msg.encode('utf-8'))
+                        print("message from algo:"+ msg.decode('utf-8'))+"send directly to STM"
+                        self.serialapi.write(msg)
                         count+=1
                         continue
                     elif (image_id != '00' and image_id !='N'): #if the message is valid, send results to android
@@ -138,7 +138,8 @@ class Multithreader:
                         print("Error faced but ignore")
                         imageProcess=False
                 except Exception as mistake:
-                    print("image recognition error:"+mistake)
+                    print("image recognition error:")
+                    print(mistake)
         
 
     #Function to read messages from the Android tablet
@@ -226,7 +227,7 @@ class Multithreader:
                         print("[Main] Obstacle ID:", obstacle_id)
                         self.obstacle_id = obstacle_id
                         print("[Main] Setting take picture now to be true")
-                        self.serialapi.write(r)
+                        self.serialapi.write(str(r))
                         takePictureNow = True
                         print("Going to take picture for" + obstacle_id)
                     else:

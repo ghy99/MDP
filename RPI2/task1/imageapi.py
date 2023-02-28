@@ -11,7 +11,8 @@ import cv2
 from bluetoothapi import BluetoothAPI
 
 class ImageAPI:
-    HOST = '192.168.17.15'
+    HOST = '192.168.17.15'#jie kai laptop
+    #HOST = '192.168.17.30'#sishi laptop
     PORT = '50000'
     READ_BUFFER_SIZE = 1024
 

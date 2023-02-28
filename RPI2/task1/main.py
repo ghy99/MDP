@@ -107,16 +107,18 @@ class Multithreader:
                 iMsg = image_id.encode('utf-8')
                 obs=str(obstacle_id)
                 try:
+                    #error correction
                     if (image_id =='N'and count==0): #if the message is invalid, send results to ipsocket
                         print("[Main] Sending the invalid message to ipsocket")
                         iError = (image_id+obs).encode('utf-8')
                         self.ipsocketapi.write(iError)
                         #time.sleep(5)
-                        msg=self.ipsocketapi.read()
-                        print("[Main] Retrieve instruction from ipsocket")
-                        print("message from algo:"+ msg)+"send directly to STM"
-                        self.serialapi.write(msg.encode('utf-8'))
-                        count+=1
+                        #msg is in bytes
+                        # msg=self.ipsocketapi.read()
+                        # print("[Main] Retrieve instruction from ipsocket")
+                        # print("message from algo:"+ msg.decode('utf-8'))+"send directly to STM"
+                        # self.serialapi.write(msg)
+                        # count+=1
                     elif (image_id != '00' and image_id !='N'): #if the message is valid, send results to android
                         print("[Bluetooth] Sending the image results to android")
                         bMsg = "TARGET,"+obs+","+str(image_id)
@@ -132,7 +134,8 @@ class Multithreader:
                     else:
                         print("bullseye")
                 except Exception as mistake:
-                    print("image recognition error:"+mistake)
+                    print("image recognition error:")
+                    print(mistake)
         
 
     #Function to read messages from the Android tablet
@@ -264,12 +267,11 @@ class Multithreader:
 
                     elif header == "P": #imageserver
                         obstacle_id = int(body[-1])-48
-                        print("[Main] Obstacle ID:", obstacle_id)
+                        print("[Main] Obstacle ID:", str(obstacle_id))
                         self.obstacle_id = obstacle_id
                         print("[Main] Setting take picture now to be true")
-                        self.serialapi.write(body)
                         takePictureNow = True
-                        print("Going to take picture for" + obstacle_id)
+                        print("Going to take picture for" + str(obstacle_id))
 
                     elif header == "S": #STM
                         print(f"[Main] STM processing started with {body}")

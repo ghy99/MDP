@@ -38,123 +38,76 @@ class Multithreader:
     #Function to take picture, send to the image server and handle result
     def read_image(self):
         global takePic
-        global queue
-        # count = 0 
-        # sender = imagezmq.ImageSender(connect_to="tcp://192.168.36.11:50000")
-        # rpi_name = socket.gethostname()
-        # picam = VideoStream(usePiCamera=True).start()
-        # print("[Main] Video stream started")
-        # time.sleep(1.0)
-        # while count < 2:
-        #     if takePic:
-        #         print("Taking Picture")
-        #         image = picam.read()
-        #         result = sender.send_image(rpi_name, image)
-        #         print("[Main] Received result:", result)
-        #         if b'38' in result:
-        #             print("Putting R result in the queue")
-        #             queue.append('R')
-        #             takePic = False
-        #             count+= 1
-        #         elif b'39' in result:
-        #             print("Putting L result in the queue")
-        #             queue.append('L')
-        #             takePic = False
-        #             count+=1
-        count=0
-        sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")
-        rpi_name = socket.gethostname()
-        cam = Picamera2()
-        config = cam.create_preview_configuration(main={"size":(720,720)})
-        cam.configure(config)
-        cam.start()
-        print("[Image] Start Taking Photo")
-        time.sleep(1.0)
-        while count < 2:
-            if takePic:
-                time.sleep(2)
-                image = cam.capture_array()
-                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-                print("[Image]Finished taking picture and sending photo...")
-                result = sender.send_image(rpi_name, image)
-                print("[Main] Received result:", result)
-                if b'38' in result:
-                    print("Putting R in Queue")
-                    queue.append('R')
-                    takePic = False
-                    count+= 1
-                elif b'39' in result:
-                    print("Putting L in Queue")
-                    queue.append('L')
-                    takePic = False
-                    count+=1
+        global running
+        global start
+        try:
+            #sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")#jie kai laptop
+            sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.30:50000")#sishi laptop
+            rpi_name = socket.gethostname()
+            cam = Picamera2()
+            config = cam.create_preview_configuration(main={"size":(720,720)})
+            cam.configure(config)
+            cam.start()
+            print("[Image] Start Taking Photo")
+            time.sleep(1.0)
+            result = ("38".encode('utf-8'))
+            while result!=b'N':
+                if takePic:
+                    time.sleep(2)
+                    image = cam.capture_array()
+                    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                    print("[Image]Finished taking picture and sending photo...")
+                    result = sender.send_image(rpi_name, image)
+                    print("[Main] Received result:", result)
+                    if b'38' in result:
+                        print("Sending R to STM")
+                        self.serialapi.write("R".encode("utf-8"))
+                        takePic = False
+                    elif b'39' in result:
+                        print("Sending L in STM")
+                        self.serialapi.write("L".encode("utf-8"))
+                        takePic = False
+                    elif b'00' in result:
+                        print("It is a bullseye!")
+                        continue
+                    else: 
+                        print("Unable to recognise!")
+                        continue
+        except Exception as error:
+            print("Image Recognition Error!")
+            print(error)
+
 
     #Function to read messages for bluetooth and stop the function after start is read
     def read_bluetooth(self):
         global takePic
-        global queue
-        while True:
+        global running
+        global start
+        while start:
             message = self.bluetoothapi.read()
             if message is not None and len(message) > 0:               
                 print("[Main] Message recieved from bluetooth", message)
                 try:
-                  if b'START' in message:
-                      #Take photo first
-                      takePic = True
+                  if b'GO' in message:
                       #Tell STM to move
-                      self.serialapi.write(("SF090").encode("utf-8"))
-                      self.serialapi.read()
-                      self.serialapi.write("SF090".encode("utf-8"))
-                      break
+                      self.serialapi.write(("GO").encode("utf-8"))
+                      #wait for stm acknowledgement
+                      ack = None
+                      while ack is None:
+                        ack = self.serialapi.read()
+                        print("Received from STM", ack)
+                        if  b'A' in ack:
+                            ack = "A"
+                            start=False
+                            break
                 except:
                       print("[ERROR] Invalid message from bluetooth")
-        message = self.serialapi.read()           
-        print("[Main] Message recieved from STM", message)
-        while len(queue) == 0:
-            print("[Main] Awaiting image from server")
-            time.sleep(0.5)
-        message = queue.pop()
-        if "L" in message:
-            print(f"[Main] Sending {message} to STM")
-            self.serialapi.write(str.encode(message))
-            print(f"[Main] Sent {message} to STM")
-            ack = None
-            while ack is None:
-                ack = self.serialapi.read()
-                print("Received from STM", ack)
-                if  b'A' not in ack:
-                    ack = None
-            ack = self.serialapi.read()
-            print(f"[Main] Received {ack} from STM (P)")
-
-        print("[Main] Starting to spam pictures")
-        takePic = True
-        while len(queue)==0:
-            print("[Main] Awaiting image from server")
-            time.sleep(0.5)
-        message = queue.pop()
-        ack = self.serialapi.read()
-        print(f"Read {ack} from stm (D2)")
-        print(f"[Main] Sending {message} to STM")
-        self.serialapi.write(str.encode("X100"))
-        self.serialapi.read()
-        message = message+"200"
-        self.serialapi.write(str.encode(message))
-        print(f"[Main] Sent {message} to STM")
-        # self.send_empty_image()
-        # print("[Main] Sent empty image")
-        ack = self.serialapi.read()
-        print(f"[Main] Received {ack} from STM")
+        while running and takePic==False:
+            smessage = self.serialapi.read()
+            if(smessage is not None and b'P'in smessage):
+                print("[Main] Message recieved from STM", message,"|Taking Pic Now")
+                self.read_image()
         exit()
-
-    #Function to send empty image to image server to stitch the image
-    # def send_empty_image(self):
-    #     print("[Image] Attempting to connect to Image Server...")
-    #     sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")
-    #     print('[Image] Telling Image to stitch..')
-    #     image = np.eye(640)
-    #     reply = sender.send_image("done", image)
-    #     print(f"[Image] Acknowledgement received {reply}")
                      
     #Clean up operation after we exit the programme
     def clean_up(self):
@@ -164,7 +117,8 @@ class Multithreader:
 if __name__ == "__main__":
     takePic = False
     readSTM = False
-    queue = []
+    running = True
+    start = True
     currentObs = 1
 
     #Running the programme
