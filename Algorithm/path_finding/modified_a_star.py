@@ -114,7 +114,8 @@ class ModifiedAStar:
             diff_in_y = p_c.y - p.y
 
             # additional check for medium turn
-            extraCheck = 1 if diff_in_x <= 30 and diff_in_y <= 30 else 0
+            # extraCheck = 1 if diff_in_x <= 30 and diff_in_y <= 30 else 0
+            extraCheck = 0
             # print(f"{p.x},{p.y} ; {command} - extraCheck: {extraCheck}")
 
             # displace to top right
@@ -124,11 +125,9 @@ class ModifiedAStar:
                         temp = p.copy()
                         temp.y += (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             # print(f"{p.x},{p.y} ; {command} - Position after not valid: ",
                             #       p_c.x, p_c.y, p_c.direction)
-                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p_c.copy()
@@ -294,26 +293,27 @@ class ModifiedAStar:
             # Otherwise, we check through all possible locations that we can
             # travel to from this node.
             neighbours = self.get_neighbours(current_position)
-            if (self.end.x == 70 and self.end.y == 50 and current_position.x == 10 and current_position.y == 30):
+            if (self.end.x == 20 and self.end.y == 120):
                 print(f"{current_position.x},{current_position.y}: ", neighbours)
             for new_node, new_pos, weight, c in neighbours:
                 # weight here stands for cost of moving forward or turning
 
                 # revisit = 10 if new_node in backtrack else 0
                 # revisit = -20 if new_node in backtrack else 0
-                # revisit = 0
+                revisit = 0
 
-                # if new_node in backtrack:
-                #     revisit = 20
+                if new_node in backtrack:
+                    revisit = 10
 
-                # new_cost = cost.get(current_node) + weight + revisit
-                new_cost = cost.get(current_node) + weight
+                new_cost = cost.get(current_node) + weight + revisit
+                # new_cost = cost.get(current_node) + weight
 
                 if new_cost < cost.get(new_node, 100000):
+                    # if new_node not in backtrack or new_cost < cost[new_node]:
                     offset += 1
                     priority = new_cost + \
-                               self.distance_heuristic(
-                                   new_pos) + self.direction_heuristic(new_pos)
+                        self.distance_heuristic(
+                            new_pos) + self.direction_heuristic(new_pos)
 
                     frontier.put((priority, offset, (new_node, new_pos)))
                     backtrack[new_node] = (current_node, c)

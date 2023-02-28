@@ -43,7 +43,7 @@ class Hamiltonian:
                     weight = 1
                 # if opposite direction
                 elif source_dir.value - dest_dir.value == -180 or source_dir.value - dest_dir.value == 180:
-                    weight = 2.0
+                    weight = 2
                 # if turn right or left
                 else:
                     weight = 1.4

@@ -134,11 +134,10 @@ class Main:
             app = AlgoMinimal(obstacles)
             app.init()
             # populates the Hamiltonian object with all the commands necessary to reach the objects
-            # if also_run_simulator:
-            #     app.simulate()
-            # else:
-            app.simulate()
-            app.execute()
+            if also_run_simulator:
+                app.simulate()
+            else:
+                app.execute()
             # Send the list of commands over.
             obs_priority = app.robot.hamiltonian.get_simple_hamiltonian()
             # print(obs_priority)
@@ -247,12 +246,12 @@ class Main:
         while True:
             # x = 'ALG:10,17,S,0;17,17,W,1;2,16,S,2;16,4,S,3;13,1,W,4;6,6,N,5;9,11,W,6;3,3,E,7;'.encode(
             #     'utf-8')
-            # a = 'ALG:2,17,S,0;16,17,W,1;10,11,S,2;4,6,N,3;9,2,E,4;17,5,W,5;'.encode(
-            #     'utf-8')
-            # b = 'ALG:4,18,E,0;18,18,S,1;13,13,E,2;15,1,N,3;9,2,W,4;0,8,E,5;7,7,N,6;'.encode(
-            #     'utf-8')
-            # c = 'ALG:2,8,N,0;0,17,E,1;14,15,S,2;6,2,N,3;19,4,W,4;10,5,W,5;17,19,S,6;9,18,W,7;'.encode(
-            #     'utf-8')
+            a = 'ALG:2,17,S,0;16,17,W,1;10,11,S,2;4,6,N,3;9,2,E,4;17,5,W,5;'.encode(
+                'utf-8')
+            b = 'ALG:4,18,E,0;18,18,S,1;13,13,E,2;15,1,N,3;9,2,W,4;0,14,E,5;7,7,N,6;'.encode(
+                'utf-8')
+            c = 'ALG:2,9,N,0;0,17,E,1;14,15,S,2;6,2,N,3;19,4,W,4;10,5,W,5;17,19,S,6;9,18,W,7;'.encode(
+                'utf-8')
             d = 'ALG:2,18,S,0;5,18,S,1;8,18,S,2;11,18,S,3;14,18,S,4;'.encode(
                 'utf-8')
             e = 'ALG:0,18,E,0;18,19,S,1;18,0,W,2;5,0,E,3;10,10,E,4;9,10,W,5;'.encode(
@@ -263,7 +262,7 @@ class Main:
                 'utf-8')
 
             # its warping bro
-            self.run_minimal(True, a)
+            self.run_minimal(False, c)
             break
             # time.sleep(5)
 
