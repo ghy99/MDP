@@ -70,7 +70,8 @@ bot = Robot(grid)
 direction = bot.get_current_pos().direction
 currentPos = (obstacleY // 10, obstacleX // 10, direction)
 print(f"CURRENT POS: {currentPos}")
-bot.setCurrentPosTask2(currentPos[0], currentPos[1], bot.get_current_pos().direction)
+bot.setCurrentPosTask2(
+    currentPos[0], currentPos[1], bot.get_current_pos().direction)
 direction = []
 obstacle1 = input("Arrow Direction: ")
 if obstacle1 == "":
