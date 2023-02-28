@@ -206,7 +206,7 @@ class TurnCommand(Command):
             if self.type_of_turn == TypeOfTurn.SMALL:
                 return "KB000"  # turn left small reverse!
             elif self.type_of_turn == TypeOfTurn.MEDIUM:
-                return "LB000"  # turn left medium reverse!
+                return "LB090"  # turn left medium reverse!
             elif self.type_of_turn == TypeOfTurn.LARGE:
                 return "LB180"  # turn left large reverse!
         elif self.right and not self.left and not self.reverse:
