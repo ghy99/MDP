@@ -43,10 +43,10 @@ class Hamiltonian:
                     weight = 1
                 # if opposite direction
                 elif source_dir.value - dest_dir.value == -180 or source_dir.value - dest_dir.value == 180:
-                    weight = 1.8
+                    weight = 2
                 # if turn right or left
                 else:
-                    weight = 1.2
+                    weight = 1.4
 
                 return weight
 
@@ -72,6 +72,8 @@ class Hamiltonian:
                 # Weight factor
                 if i == 0:
                     # From start to first obstacle
+                    # print(
+                    #     f"Checking multiplier: {self.robot.pos.get_dir()}, {path[i].target_position.x}, {path[i].target_position.y}, {path[i].target_position.get_dir()}")
                     multiplier = weight_factor(
                         self.robot.pos.get_dir(), path[i].target_position.get_dir())
                 else:
@@ -153,8 +155,8 @@ class Hamiltonian:
         self.compress_paths()
 
         print()
-        print("-" * 40)
+        print("-" * 60)
         for command in self.commands:
             print(f'{command}')
-        print("-" * 40)
+        print("-" * 60)
         print()
