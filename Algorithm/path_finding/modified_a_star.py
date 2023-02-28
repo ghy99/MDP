@@ -301,16 +301,16 @@ class ModifiedAStar:
 
                 # revisit = 10 if new_node in backtrack else 0
                 # revisit = -20 if new_node in backtrack else 0
-                # revisit = 0
+                revisit = 0
 
-                # if new_node in backtrack:
-                #     revisit = 10
+                if new_node in backtrack:
+                    revisit = 10
 
-                # new_cost = cost.get(current_node) + weight + revisit
-                new_cost = cost.get(current_node) + weight
+                new_cost = cost.get(current_node) + weight + revisit
+                # new_cost = cost.get(current_node) + weight
 
-                # if new_cost < cost.get(new_node, 100000):
-                if new_node not in backtrack or new_cost < cost[new_node]:
+                if new_cost < cost.get(new_node, 100000):
+                # if new_node not in backtrack or new_cost < cost[new_node]:
                     offset += 1
                     priority = new_cost + \
                         self.distance_heuristic(
