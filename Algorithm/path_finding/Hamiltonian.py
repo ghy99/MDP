@@ -43,12 +43,15 @@ class Hamiltonian:
                     weight = 1
                 # if opposite direction
                 elif source_dir.value - dest_dir.value == -180 or source_dir.value - dest_dir.value == 180:
-                    weight = 2
+                    weight = 2.5
                 # if turn right or left
                 else:
                     weight = 1.4
 
                 return weight
+
+            def manhattan_distance(x1, y1, x2, y2):
+                return abs(x1 - x2) + abs(y1 - y2)
 
             # Create all target points, including the start.
             targets = [self.robot.pos.xy()]
@@ -82,8 +85,17 @@ class Hamiltonian:
                         path[i-1].target_position.get_dir(), path[i].target_position.get_dir())
 
                 # dist += abs(targets[i][0] - targets[i + 1][0]) + abs(targets[i][1] - targets[i + 1][1])
-                dist += multiplier * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
-                                               ((targets[i][1] - targets[i + 1][1])**2))
+                dist += multiplier * (math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                                                ((targets[i][1] - targets[i + 1][1])**2)))
+                # dist += multiplier * (1 * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                #                                     ((targets[i][1] - targets[i + 1][1])**2)) + 2 * manhattan_distance(
+                #     targets[i][0], targets[i][1], targets[i +
+                #                                           1][0], targets[i + 1][1]
+                # ))
+                # dist += multiplier * (manhattan_distance(
+                #     targets[i][0], targets[i][1], targets[i +
+                #                                           1][0], targets[i + 1][1]
+                # ))
 
             # print("Path = ", targets, "\nTotal weighted Euclidean distance = ", dist)
             return dist

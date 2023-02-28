@@ -82,9 +82,9 @@ class ModifiedAStar:
             if after:
                 # print(f"{pos.x},{pos.y}: possible turns -> {c}")
                 if c.get_type_of_turn == TypeOfTurn.SMALL:
-                    turn_penalty = 60 if not self.yolo else 20
+                    turn_penalty = 100 if not self.yolo else 20
                 elif c.get_type_of_turn == TypeOfTurn.MEDIUM:
-                    turn_penalty = 40 if not self.yolo else 0
+                    turn_penalty = 20 if not self.yolo else 0
                 neighbours.append((after, p, turn_penalty, c))
 
         # print("neighbours are:")
@@ -310,7 +310,7 @@ class ModifiedAStar:
                 # new_cost = cost.get(current_node) + weight
 
                 if new_cost < cost.get(new_node, 100000):
-                # if new_node not in backtrack or new_cost < cost[new_node]:
+                    # if new_node not in backtrack or new_cost < cost[new_node]:
                     offset += 1
                     priority = new_cost + \
                         self.distance_heuristic(

@@ -77,6 +77,9 @@ class Obstacle:
                 diffX = abs(self.position.x - x)
                 diffY = abs(self.position.y - y)
 
+                # if (position.direction.value - self.position.direction.value) == 180 and (diffX == 1 or diffY == 1):
+                #     continue
+
                 if (diffY < constants.OBSTACLE_SAFETY_WIDTH + 1) and \
                         (diffX < constants.OBSTACLE_SAFETY_WIDTH + 1):
                     return True
@@ -190,7 +193,7 @@ class Obstacle:
         # cases where the obstacle is placed at the bottom of the field but not at the bottom left or right edge
         elif self.position.y == 0:
             if self.position.direction == Direction.TOP:
-                return RobotPosition(self.position.x,
+                return RobotPosition(self.position.x - 10,
                                      self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
                                      Direction.BOTTOM)
             elif self.position.direction == Direction.BOTTOM:
@@ -204,10 +207,9 @@ class Obstacle:
                 return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
                                      self.position.y + 10, Direction.LEFT)
 
-        # cases where obstacle is placed at top of the field but not at the top left or right edges
-        elif self.position.y == 190:
+        elif self.position.y == 10:
             if self.position.direction == Direction.TOP:
-                return RobotPosition(self.position.x,
+                return RobotPosition(self.position.x - 10,
                                      self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
                                      Direction.BOTTOM)
             elif self.position.direction == Direction.BOTTOM:
@@ -216,10 +218,43 @@ class Obstacle:
                                      Direction.TOP)
             elif self.position.direction == Direction.LEFT:
                 return RobotPosition(self.position.x - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
+                                     self.position.y, Direction.RIGHT)
+            else:
+                return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
+                                     self.position.y + 10, Direction.LEFT)
+
+        # cases where obstacle is placed at top of the field but not at the top left or right edges
+        elif self.position.y == 190:
+            if self.position.direction == Direction.TOP:
+                return RobotPosition(self.position.x,
+                                     self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
+                                     Direction.BOTTOM)
+            elif self.position.direction == Direction.BOTTOM:
+                return RobotPosition(self.position.x + 10,
+                                     self.position.y - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
+                                     Direction.TOP)
+            elif self.position.direction == Direction.LEFT:
+                return RobotPosition(self.position.x - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
                                      self.position.y - 10, Direction.RIGHT)
             else:
                 return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
                                      self.position.y - 10, Direction.LEFT)
+
+        if self.position.y == 180:
+            if self.position.direction == Direction.TOP:
+                return RobotPosition(self.position.x,
+                                     self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
+                                     Direction.BOTTOM)
+            elif self.position.direction == Direction.BOTTOM:
+                return RobotPosition(self.position.x + 10,
+                                     self.position.y - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
+                                     Direction.TOP)
+            elif self.position.direction == Direction.LEFT:
+                return RobotPosition(self.position.x - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
+                                     self.position.y - 10, Direction.RIGHT)
+            else:
+                return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
+                                     self.position.y, Direction.LEFT)
 
         # cases where obstacle is placed at left side of field but not at bottom or top left
         elif self.position.x == 0:
@@ -236,7 +271,22 @@ class Obstacle:
                                      self.position.y, Direction.RIGHT)
             else:
                 return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
-                                     self.position.y, Direction.LEFT)
+                                     self.position.y + 10, Direction.LEFT)
+        elif self.position.x == 10:
+            if self.position.direction == Direction.TOP:
+                return RobotPosition(self.position.x,
+                                     self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
+                                     Direction.BOTTOM)
+            elif self.position.direction == Direction.BOTTOM:
+                return RobotPosition(self.position.x + 10,
+                                     self.position.y - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
+                                     Direction.TOP)
+            elif self.position.direction == Direction.LEFT:
+                return RobotPosition(self.position.x - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
+                                     self.position.y, Direction.RIGHT)
+            else:
+                return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
+                                     self.position.y + 10, Direction.LEFT)
         # cases where obstacle is placed at right side of field but not at bottom or top right
         elif self.position.x == 190:
             if self.position.direction == Direction.TOP:
@@ -249,14 +299,13 @@ class Obstacle:
                                      Direction.TOP)
             elif self.position.direction == Direction.LEFT:
                 return RobotPosition(self.position.x - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
-                                     self.position.y, Direction.RIGHT)
+                                     self.position.y - 10, Direction.RIGHT)
             else:
                 return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
                                      self.position.y, Direction.LEFT)
-        # all other locations can be freely accessed via the 4 sides, no need to account for being close to the edges
-        else:
+        elif self.position.x == 180:
             if self.position.direction == Direction.TOP:
-                return RobotPosition(self.position.x,
+                return RobotPosition(self.position.x - 10,
                                      self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
                                      Direction.BOTTOM)
             elif self.position.direction == Direction.BOTTOM:
@@ -265,10 +314,26 @@ class Obstacle:
                                      Direction.TOP)
             elif self.position.direction == Direction.LEFT:
                 return RobotPosition(self.position.x - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
-                                     self.position.y, Direction.RIGHT)
+                                     self.position.y - 10, Direction.RIGHT)
             else:
                 return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
                                      self.position.y, Direction.LEFT)
+        # all other locations can be freely accessed via the 4 sides, no need to account for being close to the edges
+        else:
+            if self.position.direction == Direction.TOP:
+                return RobotPosition(self.position.x - 10,
+                                     self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
+                                     Direction.BOTTOM)
+            elif self.position.direction == Direction.BOTTOM:
+                return RobotPosition(self.position.x + 10,
+                                     self.position.y - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
+                                     Direction.TOP)
+            elif self.position.direction == Direction.LEFT:
+                return RobotPosition(self.position.x - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
+                                     self.position.y - 10, Direction.RIGHT)
+            else:
+                return RobotPosition(self.position.x + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
+                                     self.position.y + 10, Direction.LEFT)
 
     def draw_obstacles(self, screen):
         # Draw the obstacle onto the grid.
