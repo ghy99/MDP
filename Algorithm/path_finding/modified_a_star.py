@@ -364,7 +364,7 @@ class ModifiedAStar:
             # Otherwise, we check through all possible locations that we can
             # travel to from this node.
             neighbours = self.get_neighbours(current_position)
-            if (self.end.x == 70 and self.end.y == 50 and current_position.x == 10 and current_position.y == 10):
+            if (self.end.x == 70 and self.end.y == 50 and current_position.x == 10 and current_position.y == 30):
                 print(f"{current_position.x},{current_position.y}: ", neighbours)
             for new_node, new_pos, weight, c in neighbours:
                 # weight here stands for cost of moving forward or turning
