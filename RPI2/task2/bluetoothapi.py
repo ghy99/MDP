@@ -5,8 +5,8 @@ from psutil import process_iter
 from signal import SIGKILL
 
 class BluetoothAPI:
-    MAC_ADDRESS = 'B8:27:EB:C6:CE:C9'
-    TABLET_BlUETOOTH = 'CC:46:4E:E1:CC:A9'
+    MAC_ADDRESS = 'E4:5F:01:55:A6:C7'
+    TABLET_BlUETOOTH = '90:EE:C7:E7:D0:90'
     PORT_NUMBER = 1
     READ_BUFFER_SIZE = 5096
 

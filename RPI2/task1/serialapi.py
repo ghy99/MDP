@@ -33,6 +33,7 @@ class SerialAPI:
         
         try:
             self.serial_connection.write(message)
+            print("[STM] Successfully sent to STM")
         except Exception as exception:
             print("[STM] Failed to send: " + str(exception))
     

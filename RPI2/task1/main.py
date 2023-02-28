@@ -103,32 +103,36 @@ class Multithreader:
                 print("[Main] Sending Image to Server")
                 image_id = self.imageClientapi.sendPictureToServer(takenPicture)
                 image_id = str(image_id)
-                print("[Main] Image ID:", image_id)
-                #
+                print("[Main] Image ID received from server:", image_id)
                 iMsg = image_id.encode('utf-8')
-                iError = (image_id+obstacle_id).encode('utf-8')
-                while (image_id =='N'and count==0): #if the message is invalid, send results to ipsocket
-                    print("[Main] Sending the invalid message to ipsocket")
-                    self.ipsocketapi.write(iError)
-                    #time.sleep(5)
-                    msg=self.ipsocketapi.read()
-                    print("[Main] Retrieve instruction from ipsocket")
-                    print("message from algo:"+ msg)+"send directly to STM"
-                    self.serialapi.write(msg.encode('utf-8'))
-                    count+=1
-                #after recognise image
-                reccedImages.append(image_id)
-                obstacleCounter -=1
-                
-                if (image_id != '00' and image_id =='N'): #if the message is valid, send results to android
-                    print("[Bluetooth] Sending the image results to android")
-                    bMsg = "TARGET,"+str(obstacle_id)+","+str(image_id)
-                    print("[Bluetooth] Message sent to android:",bMsg)
-                    # bMsg = self.convert_to_dict('B', bMsg)
-                    # self.write_message_queue.put(bMsg)
-                    #tell android immediately
-                    self.bluetoothapi.write(bMsg)
-                print(f"[Main] Number of obstacles left {obstacleCounter}")
+                obs=str(obstacle_id)
+                try:
+                    if (image_id =='N'and count==0): #if the message is invalid, send results to ipsocket
+                        print("[Main] Sending the invalid message to ipsocket")
+                        iError = (image_id+obs).encode('utf-8')
+                        self.ipsocketapi.write(iError)
+                        #time.sleep(5)
+                        msg=self.ipsocketapi.read()
+                        print("[Main] Retrieve instruction from ipsocket")
+                        print("message from algo:"+ msg)+"send directly to STM"
+                        self.serialapi.write(msg.encode('utf-8'))
+                        count+=1
+                    elif (image_id != '00' and image_id !='N'): #if the message is valid, send results to android
+                        print("[Bluetooth] Sending the image results to android")
+                        bMsg = "TARGET,"+obs+","+str(image_id)
+                        print("[Bluetooth] Message sent to android:",bMsg)
+                        # bMsg = self.convert_to_dict('B', bMsg)
+                        # self.write_message_queue.put(bMsg)
+                        #tell android immediately
+                        self.bluetoothapi.write(bMsg)
+                        #after recognise image
+                        reccedImages.append(image_id)
+                        obstacleCounter -=1
+                        print(f"[Main] Number of obstacles left {obstacleCounter}")
+                    else:
+                        print("bullseye")
+                except Exception as mistake:
+                    print("image recognition error:"+mistake)
         
 
     #Function to read messages from the Android tablet
@@ -139,7 +143,8 @@ class Multithreader:
         global bluetoothOn
         global firstTime
         global firstMessage
-
+        if self.bluetoothapi.check_connection is None:
+            self.reconnect_android()
         while running and bluetoothOn:
             message = self.bluetoothapi.read()
             if message is not None and len(message) > 0:               
@@ -150,19 +155,22 @@ class Multithreader:
                       #message = firstMessage.decode('utf-8')
                       print("[Main] Starting to dequeue")
                       self.write()
-                    #   print("[Main] Message to be sent to STM:",message)
-                    #   #separate into individual instructions for STM
-                    #   print("[Main] Going to process")
+
                   elif b'ALG' in message:
                       obstacles = message.decode('utf-8').split(';')
-                      for k in obstacles:
-                          if len(k)<5:
-                              obstacles.remove(k)
+                      print(obstacles)
+                      x=0
+                      while x<len(obstacles):
+                          if len(obstacles[x])<4:
+                              obstacles.remove(obstacles[x])
+                          else:
+                              x+=1
                       #get rid of empty obstacles
-                      filteredObstacles= ";".join(obstacles)                   
+                      filteredObstacles= ";".join(obstacles)     
+                      filteredObstacles= filteredObstacles+";"            
                       numObstacle = len(obstacles)
                       obstacleCounter=len(obstacles)
-                      print(f"[Main] The number of obstacles is {obstacleCounter}")
+                      print(f"[Main] The total number of obstacles is {obstacleCounter}")
                       #message = self.convert_to_dict('I', filteredObstacles.encode('utf-8')) #Forwarding entire string to algo
                       #self.write_message_queue.put(message)
                       print("Sending filtered obstacles directly to algo:" + filteredObstacles)
@@ -176,24 +184,26 @@ class Multithreader:
         global running
         global firstMessage
 
-        while running and writeOn and firstTime == False:
+        while running and firstTime:
             message = self.ipsocketapi.read()
             if message is not None and len(message) > 0:
                 n=5
                 instr=[message[i:i+n]for i in range(0,len(message),n)]
                 for r in instr:
+                    #if scan instruction, queue scan instruction with header "P"
                     if b'P' in r :
                         image_message = self.convert_to_dict('P', r)
                         print("[Main] Queued ", image_message, "to image server")
                         self.write_message_queue.put(image_message)
-
+                    #else queue instructions to STM with header "S"
                     else:
-                    #message = message.decode()
                         print("[Main] Queueing message to be sent to STM:",r)
                         stm_message = self.convert_to_dict('S', r)
                         print("[Main] Queued ", stm_message, "to STM")
                         self.write_message_queue.put(stm_message)
-                        and_message = self.convert_to_dict('B', r) 
+                        andr = "COMMAND,"+ (r.decode('utf-8'))
+                        andr = andr.encode('utf-8')
+                        and_message = self.convert_to_dict('B',andr) 
                         print("[Main] Queued", and_message, "to Android")
                         self.write_message_queue.put(and_message)
             else:
@@ -231,55 +241,56 @@ class Multithreader:
         global running
         global writeOn
         global firstTime
-        while running and writeOn:
+        global takePictureNow
+        while running and writeOn and firstTime == False:
             try:
                 if self.write_message_queue.empty():
                     continue
-                
-                message = self.write_message_queue.get()
-                print(message)
-                header = message["header"]
-                body = message["body"]
-                if header == "B": #Android
-                    print("[Main] Sending ",body," to Android")
-                    failed = self.bluetoothapi.write(body)
-                    if failed:
-                        print("[Bluetooth] Attempting to reconnect bluetooth")
-                        self.reconnect_android(self)
+                if takePictureNow==False:
+                    message = self.write_message_queue.get()
+                    print(message)
+                    header = message["header"]
+                    body = message["body"]
+                    if header == "B": #Android
+                        print("[Main] Sending ",body," to Android")
+                        failed = self.bluetoothapi.write(body)
+                        if failed:
+                            print("[Bluetooth] Attempting to reconnect bluetooth")
+                            self.reconnect_android(self)
 
-                elif header == "I": #Algo
-                    print("[Main] Sending", body, "to IpSocket")
-                    self.ipsocketapi.write(body)
+                    elif header == "I": #Algo
+                        print("[Main] Sending", body, "to IpSocket")
+                        self.ipsocketapi.write(body)
 
-                elif header == "P": #imageserver
-                    obstacle_id = int(body[-1])-48
-                    print("[Main] Obstacle ID:", obstacle_id)
-                    self.obstacle_id = obstacle_id
-                    print("[Main] Setting take picture now to be true")
-                    global takePictureNow
-                    takePictureNow = True
-                    print("Continuing with algo")
-
-                elif header == "S": #STM
-                    print(f"[Main] STM processing started with {body}")
-                    try:
+                    elif header == "P": #imageserver
+                        obstacle_id = int(body[-1])-48
+                        print("[Main] Obstacle ID:", obstacle_id)
+                        self.obstacle_id = obstacle_id
+                        print("[Main] Setting take picture now to be true")
                         self.serialapi.write(body)
-                        print("[Main] Sending ",body," to STM")
-                        ack = None
-                        while ack is None:
-                            ack = self.serialapi.read()
-                            print("Received from STM", ack)
-                            if  b'A' not in ack:
-                                ack = None
-                    except Exception as wrong: 
-                          #to show what is being sent
-                          print("Sending STM", body)
-                          print(wrong)
-                          
-                else:
-                    print("[Main] Invalid header " + str(header))
-                
-                print("[Main] Message sent")
+                        takePictureNow = True
+                        print("Going to take picture for" + obstacle_id)
+
+                    elif header == "S": #STM
+                        print(f"[Main] STM processing started with {body}")
+                        try:
+                            print("[Main] Sending ",body," to STM")
+                            self.serialapi.write(body)
+                            ack = None
+                            while ack is None:
+                                ack = self.serialapi.read()
+                                print("Received from STM", ack)
+                                if  b'A' not in ack:
+                                    ack = None
+                        except Exception as wrong: 
+                            #to show what is being sent
+                            print("Sending STM", body)
+                            print(wrong)
+                            
+                    else:
+                        print("[Main] Invalid header " + str(header))
+                    
+                    print("[Main] Message sent")
             except Exception as exception:
                 print("[Main] Error occurred in write: " + str(exception))
                 time.sleep(1)

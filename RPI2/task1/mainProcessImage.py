@@ -19,7 +19,7 @@ class Multithreader:
     def __init__(self):
         self.bluetoothapi = BluetoothAPI()
         self.ipsocketapi = IPSocketAPI()
-        #self.serialapi = SerialAPI()
+        self.serialapi = SerialAPI()
         self.imageClientapi = ImageAPI()
         self.write_message_queue = multiprocessing.Queue()
         self.obstacle_id = None
@@ -28,8 +28,9 @@ class Multithreader:
     def initialize_processes(self):
         global takePictureNow
         global imageQueue
+        global imageProcess
         print("[Main] Attempting to initialize multithreader...")
-        #self.serialapi.connect()
+        self.serialapi.connect()
         #Connect the different components
         self.ipsocketapi.connect()
         self.bluetoothapi.connect()
@@ -58,10 +59,11 @@ class Multithreader:
     def takePicture(self):
         global running
         global takePictureNow
+        global imageProcess
         global imageQueue
 
         while running:
-            if takePictureNow == True:
+            if takePictureNow == True and imageProcess == True:
                 obstacle_id = self.obstacle_id
                 print(f"[Image] Taking the picture for {obstacle_id}")
                 takenPicture = self.imageClientapi.rpiTakePicture()
@@ -93,7 +95,8 @@ class Multithreader:
         global obstacleCounter
         global reccedImages
         global running
-        while running:
+        global imageProcess
+        while running and imageProcess==True:
             if not imageQueue.empty():
                 print(f"[Main] Current Queue: {imageQueue}")
                 currentQ = imageQueue.get()
@@ -115,8 +118,9 @@ class Multithreader:
                         msg=self.ipsocketapi.read()
                         print("[Main] Retrieve instruction from ipsocket")
                         print("message from algo:"+ msg)+"send directly to STM"
-                        #self.serialapi.write(msg.encode('utf-8'))
+                        self.serialapi.write(msg.encode('utf-8'))
                         count+=1
+                        continue
                     elif (image_id != '00' and image_id !='N'): #if the message is valid, send results to android
                         print("[Bluetooth] Sending the image results to android")
                         bMsg = "TARGET,"+obs+","+str(image_id)
@@ -126,11 +130,13 @@ class Multithreader:
                         #tell android immediately
                         self.bluetoothapi.write(bMsg)
                         #after recognise image
+                        imageProcess=False
                         reccedImages.append(image_id)
                         obstacleCounter -=1
                         print(f"[Main] Number of obstacles left {obstacleCounter}")
                     else:
-                        print("bullseye")
+                        print("Error faced but ignore")
+                        imageProcess=False
                 except Exception as mistake:
                     print("image recognition error:"+mistake)
         
@@ -207,6 +213,39 @@ class Multithreader:
                         self.write_message_queue.put(and_message)
             else:
                 print("[Main] Invalid command", message ,"read from Algo")
+        while running and firstTime==False:
+            message = self.ipsocketapi.read()
+            #send error correction instruction to STM
+            if message is not None and len(message) > 0:
+                n=5
+                instr=[message[i:i+n]for i in range(0,len(message),n)]
+                for r in instr:
+                    if b'P' in r :
+                        r=r.decode('utf-8')
+                        obstacle_id = int(r[-1])-48
+                        print("[Main] Obstacle ID:", obstacle_id)
+                        self.obstacle_id = obstacle_id
+                        print("[Main] Setting take picture now to be true")
+                        self.serialapi.write(r)
+                        takePictureNow = True
+                        print("Going to take picture for" + obstacle_id)
+                    else:
+                        try:
+                            print("[Error Correction] Sending ",r," to STM")
+                            self.serialapi.write(r)
+                            andmsg= "COMMAND,".encode('utf-8')+r
+                            self.bluetoothapi.write(andmsg)
+                            ack = None
+                            while ack is None:
+                                ack = self.serialapi.read()
+                                print("Received from STM", ack)
+                                if  b'A' not in ack:
+                                    ack = None
+                        except Exception as wrong: 
+                            #to show what is being sent
+                            print("[Error Correction Error] Sending STM",r)
+                            print(wrong)
+        
 
     #Protocol to reconnect with Android tablet
     def reconnect_android(self):
@@ -241,7 +280,8 @@ class Multithreader:
         global writeOn
         global firstTime
         global takePictureNow
-        while running and writeOn and firstTime == False:
+        global imageProcess
+        while running and writeOn and firstTime == False and imageProcess==False:
             try:
                 if self.write_message_queue.empty():
                     continue
@@ -266,7 +306,7 @@ class Multithreader:
                         print("[Main] Obstacle ID:", obstacle_id)
                         self.obstacle_id = obstacle_id
                         print("[Main] Setting take picture now to be true")
-                        #self.serialapi.write(body)
+                        self.serialapi.write(body)
                         takePictureNow = True
                         print("Going to take picture for" + obstacle_id)
 
@@ -274,14 +314,13 @@ class Multithreader:
                         print(f"[Main] STM processing started with {body}")
                         try:
                             print("[Main] Sending ",body," to STM")
-                            #self.serialapi.write(body)
+                            self.serialapi.write(body)
                             ack = None
-                            print("Received from STM")
-                            # while ack is None:
-                            #     ack = self.serialapi.read()
-                            #     print("Received from STM", ack)
-                            #     if  b'A' not in ack:
-                            #         ack = None
+                            while ack is None:
+                                ack = self.serialapi.read()
+                                print("Received from STM", ack)
+                                if  b'A' not in ack:
+                                    ack = None
                         except Exception as wrong: 
                             #to show what is being sent
                             print("Sending STM", body)
@@ -307,6 +346,7 @@ class Multithreader:
 if __name__ == "__main__":
     #Defining global variables
     takePictureNow = False
+    imageProcess = False
     imageQueue = queue.Queue(6)
     obstacleCounter = None
     numObstacle = None
