@@ -128,12 +128,8 @@ class Main:
         # Obstacle list
         if isinstance(data[0], list):
             obstacles = self.parse_obstacle_data(data)
-            # if also_run_simulator:
-            #     app = AlgoSimulator(obstacles)
-            #     app.init()
-            #     app.execute()
             app = AlgoMinimal(obstacles)
-            # app.init()
+            app.init()
             # populates the Hamiltonian object with all the commands necessary to reach the objects
             if also_run_simulator:
                 app.simulate()
@@ -141,10 +137,11 @@ class Main:
                 app.execute()
             # Send the list of commands over.
             obs_priority = app.robot.hamiltonian.get_simple_hamiltonian()
-            print(obs_priority)
+            # print(obs_priority)
             print("Sending list of commands to RPi...")
             self.commands = app.robot.convert_all_commands()
             print(self.commands)
+
             # if len(self.commands) != 0:
             #     client.send_message(self.commands)
             # else:
@@ -253,8 +250,9 @@ class Main:
                 'utf-8')
             e = 'ALG:0,18,E,0;18,19,S,1;18,0,W,2;5,0,E,3;10,10,E,4;9,10,W,5;'.encode(
                 'utf-8')
-            # its warping bro
-            self.run_minimal(True, a)
+            f = 'ALG:6,6,N,0;16,4,W,1;9,10,W,2;2,16,S,3;8,17,E,4;17,17,S,5;'.encode(
+                'utf-8')
+            self.run_minimal(False, c)
             break
             # time.sleep(5)
 
