@@ -14,7 +14,7 @@ from grid.grid_cell import GridCell
 
 
 class ModifiedAStar:
-    def __init__(self, grid, brain, start: RobotPosition, end: RobotPosition):
+    def __init__(self, grid, brain, start: RobotPosition, end: RobotPosition, yolo):
         # We use a copy of the grid rather than use a reference
         # to the exact grid.
         self.grid: Grid = grid.copy()
@@ -22,6 +22,7 @@ class ModifiedAStar:
 
         self.start = start  # starting robot position (with direction)
         self.end = end  # target ending position (with direction)
+        self.yolo = yolo
 
     def get_neighbours(self, pos: RobotPosition) -> List[Tuple[Tuple, RobotPosition, int, Command]]:
         """
@@ -81,9 +82,9 @@ class ModifiedAStar:
             if after:
                 # print(f"{pos.x},{pos.y}: possible turns -> {c}")
                 if c.get_type_of_turn == TypeOfTurn.SMALL:
-                    turn_penalty = 60
+                    turn_penalty = 60 if not self.yolo else 20
                 elif c.get_type_of_turn == TypeOfTurn.MEDIUM:
-                    turn_penalty = 40
+                    turn_penalty = 40 if not self.yolo else 0
                 neighbours.append((after, p, turn_penalty, c))
 
         # print("neighbours are:")
@@ -104,7 +105,7 @@ class ModifiedAStar:
             command.apply_on_pos(p_c)
 
             # make sure that the final position is a valid one
-            if not (self.grid.check_valid_position(p_c)):
+            if not (self.grid.check_valid_position(p_c, self.yolo)):
                 # print("Not valid position: ", p_c.x, p_c.y, p_c.direction)
                 return None, None
 
@@ -125,7 +126,7 @@ class ModifiedAStar:
                         temp = p.copy()
                         temp.y += (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             # print(f"{p.x},{p.y} ; {command} - Position after not valid: ",
                             #       p_c.x, p_c.y, p_c.direction)
                             return None, None
@@ -133,20 +134,20 @@ class ModifiedAStar:
                         temp = p_c.copy()
                         temp.x -= (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                 else:  # rest of the directions
                     for y in range(0, abs(diff_in_y // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.y -= (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p.copy()
                         temp.x += (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
             # displace to top left
             elif diff_in_x < 0 and diff_in_y > 0:
@@ -155,26 +156,26 @@ class ModifiedAStar:
                         temp = p.copy()
                         temp.y += (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.x += (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                 else:
                     for y in range(0, abs(diff_in_y // 10) + extraCheck + 1):
                         temp = p_c.copy()
                         temp.y -= (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p.copy()
                         temp.x -= (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
             # displace to bottom left
             elif diff_in_x < 0 and diff_in_y < 0:
@@ -183,26 +184,26 @@ class ModifiedAStar:
                         temp = p_c.copy()
                         temp.y += (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p.copy()
                         temp.x -= (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                 else:
                     for y in range(0, abs(diff_in_y // 10) + extraCheck):
                         temp = p.copy()
                         temp.y -= (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.x += (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
             else:  # diff_in_x > 0 , diff_in_y < 0
                 if p.direction == Direction.RIGHT or p.direction == Direction.LEFT:
@@ -210,26 +211,26 @@ class ModifiedAStar:
                         temp = p_c.copy()
                         temp.y += (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p.copy()
                         temp.x += (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                 else:
                     for y in range(0, abs(diff_in_y // 10) + extraCheck):
                         temp = p.copy()
                         temp.y -= (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.x -= (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp)):
+                                temp, self.yolo)):
                             return None, None
 
         command.apply_on_pos(p)
@@ -293,8 +294,8 @@ class ModifiedAStar:
             # Otherwise, we check through all possible locations that we can
             # travel to from this node.
             neighbours = self.get_neighbours(current_position)
-            if (self.end.x == 20 and self.end.y == 120):
-                print(f"{current_position.x},{current_position.y}: ", neighbours)
+            # if (self.end.x == 20 and self.end.y == 120):
+            #     print(f"{current_position.x},{current_position.y}: ", neighbours)
             for new_node, new_pos, weight, c in neighbours:
                 # weight here stands for cost of moving forward or turning
 
@@ -309,7 +310,7 @@ class ModifiedAStar:
                 # new_cost = cost.get(current_node) + weight
 
                 if new_cost < cost.get(new_node, 100000):
-                    # if new_node not in backtrack or new_cost < cost[new_node]:
+                # if new_node not in backtrack or new_cost < cost[new_node]:
                     offset += 1
                     priority = new_cost + \
                         self.distance_heuristic(
