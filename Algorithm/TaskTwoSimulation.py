@@ -1333,34 +1333,39 @@ class Simulation():
         movement = {}
         movement['forward'] = 0
         
-        while True:
+        while True: # while ultrasonic dont detect wall
             temp = self.moveForward(constants.TASK2_LENGTH * constants.TASK2_SCALING_FACTOR,
                                     constants.TASK2_WIDTH * constants.TASK2_SCALING_FACTOR,
                                     constants.GRID_CELL_LENGTH * constants.TASK2_SCALING_FACTOR)
-            if temp == 1:
+            if temp == 1: # if not wall
                 movement['forward'] += 1
                 self.updatingTask2Display()
                 pygame.display.update()
-            elif temp == -1:
+            elif temp == -1: # if wall
                 break
 
+        # get arrow direction
         obstacle1 = direction[0]
         if obstacle1 == 'L':
             self.left(movement)
         elif obstacle1 == 'R':
             self.right(movement)
 
-        while True:
+        # robot routes around the first obstacle
+
+        while True: # while not wall move forward
             temp = self.moveForward(constants.TASK2_LENGTH * constants.TASK2_SCALING_FACTOR,
                                     constants.TASK2_WIDTH * constants.TASK2_SCALING_FACTOR,
                                     constants.GRID_CELL_LENGTH * constants.TASK2_SCALING_FACTOR)
-            if temp == 1:
+            if temp == 1: # if not wall
                 movement['forward'] += 1
                 self.updatingTask2Display()
                 pygame.display.update()
-            elif temp == -1:
+            elif temp == -1: #if wall
                 break
 
+
+        # get second direction
         obstacle2 = direction[1]
 
         if obstacle2 == 'L':

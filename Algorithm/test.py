@@ -1,6 +1,6 @@
 from main import Main
 from main import initialize
-from path_finding.Hamiltonian import Hamiltonian
+from path_finding.hamiltonian import Hamiltonian
 from robot.robot import Robot
 from grid.grid import Grid
 from grid.obstacle import Obstacle

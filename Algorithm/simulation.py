@@ -237,7 +237,7 @@ class Simulation():
             #              obstacle.position.x) // constants.GRID_CELL_LENGTH
             #         j = (obstacle.position.y -
             #              constants.GRID_CELL_LENGTH) // constants.GRID_CELL_LENGTH
-            #         if (currentPos[0] + 2 == i) and (y == j):
+            #         if (self.currentPos[0] + 2 == i) and (y == j):
             #             print(f"COLLISION!")
             #             return
             if (0 <= (self.currentPos[0] + steps) * cellSize < gridSize) and (0 <= self.currentPos[1] * cellSize < gridSize):
@@ -294,7 +294,7 @@ class Simulation():
     def turnRight(self, gridSize, cellSize):
         if self.currentPos[2] == Direction.TOP:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + constants.TURN_MED_RIGHT_TOP_FORWARD[0] // 10) * cellSize < gridSize):
-                # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
+                # for x in range(self.currentPos[0] - 3, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x > self.currentPos[0] - 3) and (y > self.currentPos[1] + 1):
                 #             continue
@@ -307,12 +307,12 @@ class Simulation():
                 #                 if (x == i) and (y == j):
                 #                     print(f"COLLISION!")
                 #                     return
-                #         if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
-                #             newRect = pygame.Rect(
-                #                 y * cellSize, x * cellSize, cellSize, cellSize)
-                #             self.screen.fill(constants.GREEN, newRect)
-                #             pygame.draw.rect(
-                #                 self.screen, constants.GREEN, newRect, 2)
+                #             if (0 <= x * cellSize < gridSize) and (0 <= y * cellSize < gridSize):
+                #                 newRect = pygame.Rect(
+                #                     y * cellSize, x * cellSize, cellSize, cellSize)
+                #                 self.screen.fill(constants.GREEN, newRect)
+                #                 pygame.draw.rect(
+                #                     self.screen, constants.GREEN, newRect, 2)
                 # if (0 <= (self.currentPos[0] - 4) * cellSize < gridSize) and (0 <= (self.currentPos[1] + 3) * cellSize < gridSize):
                 print(f"TURNING RIGHT\t{self.currentPos}")
                 self.drawRobot(self.currentPos, cellSize, constants.GREEN,
@@ -322,7 +322,7 @@ class Simulation():
         elif self.currentPos[2] == Direction.RIGHT:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_RIGHT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + constants.TURN_MED_RIGHT_RIGHT_FORWARD[0] // 10) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
-                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 4):
                 #         if (x > self.currentPos[0] + 1) and (y < self.currentPos[1] + 3):
                 #             continue
                 #         else:
@@ -348,7 +348,7 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_RIGHT_RIGHT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_RIGHT_FORWARD[0] // 10), Direction.BOTTOM)
         elif self.currentPos[2] == Direction.BOTTOM:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_BOTTOM_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] - (constants.TURN_MED_RIGHT_RIGHT_FORWARD[0] // 10)) * cellSize < gridSize):
-                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 4):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] + 3) and (y < self.currentPos[1] - 1):
                 #             continue
@@ -376,7 +376,7 @@ class Simulation():
         elif self.currentPos[2] == Direction.LEFT:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_LEFT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_LEFT_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
-                #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
+                #     for y in range(self.currentPos[1] - 3, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] - 1) and (y > self.currentPos[1] - 3):
                 #             continue
                 #         else:
@@ -404,7 +404,7 @@ class Simulation():
     def turnLeft(self, gridSize, cellSize):
         if self.currentPos[2] == Direction.TOP:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_FORWARD[0] // 10)) * cellSize < gridSize):
-                # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
+                # for x in range(self.currentPos[0] - 3, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] - 3) and (y < self.currentPos[1] - 1):
                 #             continue
@@ -432,7 +432,7 @@ class Simulation():
         elif self.currentPos[2] == Direction.RIGHT:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_RIGHT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_RIGHT_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
-                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 4):
                 #         if (x < self.currentPos[0] - 1) and (y < self.currentPos[1] + 3):
                 #             continue
                 #         else:
@@ -458,7 +458,7 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_LEFT_RIGHT_FORWARD[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_RIGHT_FORWARD[0] // 10), Direction.TOP)
         elif self.currentPos[2] == Direction.BOTTOM:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_BOTTOM_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_BOTTOM_FORWARD[0] // 10)) * cellSize < gridSize):
-                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 4):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x < self.currentPos[0] + 3) and (y > self.currentPos[1] + 1):
                 #             continue
@@ -486,7 +486,7 @@ class Simulation():
         elif self.currentPos[2] == Direction.LEFT:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_LEFT_FORWARD[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_LEFT_FORWARD[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
-                #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
+                #     for y in range(self.currentPos[1] - 3, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] + 1) and (y > self.currentPos[1] - 3):
                 #             continue
                 #         else:
@@ -515,7 +515,7 @@ class Simulation():
         if self.currentPos[2] == Direction.TOP:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_TOP_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
-                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 4):
                 #         if (x < self.currentPos[0] + 2) and (y > self.currentPos[1] + 1):
                 #             continue
                 #         else:
@@ -541,7 +541,7 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_RIGHT_TOP_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_TOP_REVERSE[0] // 10), Direction.LEFT)
         elif self.currentPos[2] == Direction.RIGHT:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_RIGHT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_RIGHT_REVERSE[0] // 10)) * cellSize < gridSize):
-                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 4):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] + 1) and (y > self.currentPos[1] - 2):
                 #             continue
@@ -569,7 +569,7 @@ class Simulation():
         elif self.currentPos[2] == Direction.BOTTOM:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_BOTTOM_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_BOTTOM_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
-                #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
+                #     for y in range(self.currentPos[1] - 3, self.currentPos[1] + 2):
                 #         if (x > self.currentPos[0] - 2) and (y < self.currentPos[1] - 1):
                 #             continue
                 #         else:
@@ -595,7 +595,7 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_RIGHT_BOTTOM_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_RIGHT_BOTTOM_REVERSE[0] // 10), Direction.RIGHT)
         elif self.currentPos[2] == Direction.LEFT:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_RIGHT_LEFT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_RIGHT_LEFT_REVERSE[0] // 10)) * cellSize < gridSize):
-                # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
+                # for x in range(self.currentPos[0] - 3, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x < self.currentPos[0] - 1) and (y < self.currentPos[1] + 2):
                 #             continue
@@ -625,7 +625,7 @@ class Simulation():
         if self.currentPos[2] == Direction.TOP:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 5):
-                #     for y in range(self.currentPos[1] - 5, self.currentPos[1] + 2):
+                #     for y in range(self.currentPos[1] - 3, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] + 2) and (y < self.currentPos[1] - 1):
                 #             continue
                 #         else:
@@ -651,7 +651,7 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_LEFT_TOP_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_TOP_REVERSE[0] // 10), Direction.RIGHT)
         elif self.currentPos[2] == Direction.RIGHT:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_RIGHT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_RIGHT_REVERSE[0] // 10)) * cellSize < gridSize):
-                # for x in range(self.currentPos[0] - 5, self.currentPos[0] + 2):
+                # for x in range(self.currentPos[0] - 3, self.currentPos[0] + 2):
                 #     for y in range(self.currentPos[1] - 4, self.currentPos[1] + 2):
                 #         if (x < self.currentPos[0] - 1) and (y > self.currentPos[1] - 2):
                 #             continue
@@ -679,7 +679,7 @@ class Simulation():
         elif self.currentPos[2] == Direction.BOTTOM:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_BOTTOM_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_BOTTOM_REVERSE[0] // 10)) * cellSize < gridSize):
                 # for x in range(self.currentPos[0] - 4, self.currentPos[0] + 2):
-                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 6):
+                #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 4):
                 #         if (x > self.currentPos[0] - 2) and (y > self.currentPos[1] + 1):
                 #             continue
                 #         else:
@@ -705,7 +705,7 @@ class Simulation():
                     self.currentPos[0] - (constants.TURN_MED_LEFT_BOTTOM_REVERSE[1] // 10), self.currentPos[1] + (constants.TURN_MED_LEFT_BOTTOM_REVERSE[0] // 10), Direction.LEFT)
         elif self.currentPos[2] == Direction.LEFT:
             if (0 <= (self.currentPos[0] - (constants.TURN_MED_LEFT_LEFT_REVERSE[1] // 10)) * cellSize < gridSize) and (0 <= (self.currentPos[1] + (constants.TURN_MED_LEFT_LEFT_REVERSE[0] // 10)) * cellSize < gridSize):
-                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 6):
+                # for x in range(self.currentPos[0] - 1, self.currentPos[0] + 4):
                 #     for y in range(self.currentPos[1] - 1, self.currentPos[1] + 5):
                 #         if (x > self.currentPos[0] + 1) and (y < self.currentPos[1] + 2):
                 #             continue
@@ -1054,7 +1054,7 @@ class Simulation():
         self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
         self.drawObstaclesButton(self.obstacles, constants.RED)
-        pygame.time.delay(750)
+        pygame.time.delay(50)
         self.updateTime(start, time.time())
 
     def parseCmd(self, cmd, start):
