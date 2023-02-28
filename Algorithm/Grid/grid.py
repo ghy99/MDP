@@ -92,12 +92,12 @@ class Grid:
             ]
         )
 
-    def check_valid_position(self, pos: Position):
+    def check_valid_position(self, pos: Position, yolo=False):
         """
         Check if a current position can be here.
         """
         # Check if position is inside any obstacle.
-        if any(obstacle.check_within_boundary(pos) for obstacle in self.obstacles):
+        if any(obstacle.check_within_boundary(pos, yolo) for obstacle in self.obstacles):
             return False
 
         # Check if position too close to the border.

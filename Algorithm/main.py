@@ -262,7 +262,7 @@ class Main:
                 'utf-8')
 
             # its warping bro
-            self.run_minimal(False, c)
+            self.run_minimal(True, c)
             break
             # time.sleep(5)
 

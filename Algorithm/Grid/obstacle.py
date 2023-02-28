@@ -34,7 +34,7 @@ class Obstacle:
 
     __repr__ = __str__
 
-    def check_within_boundary(self, position):
+    def check_within_boundary(self, position, yolo):
         """
         Checks whether a given position is within the safety boundary of this obstacle.
         If yes, means it can potentially hit the obstacle. We should avoid being inside the boundary
@@ -71,8 +71,8 @@ class Obstacle:
         # print(f"Checking {position.x},{position.y}:", x_range, y_range)
         for x in x_range:
             for y in y_range:
-                # if not (position.x == x or position.y == y):
-                #     continue
+                if yolo and not (position.x == x or position.y == y):
+                    continue
 
                 diffX = abs(self.position.x - x)
                 diffY = abs(self.position.y - y)

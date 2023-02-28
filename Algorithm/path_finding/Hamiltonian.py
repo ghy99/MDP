@@ -142,8 +142,16 @@ class Hamiltonian:
         curr = self.robot.pos.copy()
         for obstacle in self.simple_hamiltonian:
             target = obstacle.get_robot_target_pos()
+            rerun = False
             # print(f"Planning {curr} to {target}")
-            res = ModifiedAStar(self.grid, self, curr, target).start_astar()
+            res = ModifiedAStar(self.grid, self, curr,
+                                target, rerun).start_astar()
+            while res is None and not rerun:
+                print(f"No path found from {curr} to {obstacle}")
+                print("Fuck it... YOLO", end=" ")
+                rerun = True
+                res = ModifiedAStar(self.grid, self, curr,
+                                    target, rerun).start_astar()
             if res is None:
                 print(f"No path found from {curr} to {obstacle}")
             else:
