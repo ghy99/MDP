@@ -23,7 +23,7 @@ class ModifiedAStar:
         self.start = start  # starting robot position (with direction)
         self.end = end  # target ending position (with direction)
 
-    def get_neighbours(self, pos: RobotPosition) -> List[Tuple[GridCell, RobotPosition, int, Command]]:
+    def get_neighbours(self, pos: RobotPosition) -> List[Tuple[Tuple, RobotPosition, int, Command]]:
         """
         Get movement neighbours from this position.
         Note that all values in the Position object (x, y, direction) are all with respect to the grid!
@@ -104,8 +104,7 @@ class ModifiedAStar:
             command.apply_on_pos(p_c)
 
             # make sure that the final position is a valid one
-            if not (self.grid.check_valid_position(p_c) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                    *p_c.xy())):
+            if not (self.grid.check_valid_position(p_c)):
                 # print("Not valid position: ", p_c.x, p_c.y, p_c.direction)
                 return None, None
 
@@ -129,30 +128,26 @@ class ModifiedAStar:
                                 *temp.xy())):
                             # print(f"{p.x},{p.y} ; {command} - Position after not valid: ",
                             #       p_c.x, p_c.y, p_c.direction)
+                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.x -= (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
-                            # print(f"{p.x},{p.y} ; {command} - Position after not valid: ",
-                            #       temp.x, temp.y, p_c.x, p_c.y)
+                                temp)):
                             return None, None
                 else:  # rest of the directions
                     for y in range(0, abs(diff_in_y // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.y -= (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p.copy()
                         temp.x += (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
             # displace to top left
             elif diff_in_x < 0 and diff_in_y > 0:
@@ -161,30 +156,26 @@ class ModifiedAStar:
                         temp = p.copy()
                         temp.y += (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.x += (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                 else:
                     for y in range(0, abs(diff_in_y // 10) + extraCheck + 1):
                         temp = p_c.copy()
                         temp.y -= (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p.copy()
                         temp.x -= (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
             # displace to bottom left
             elif diff_in_x < 0 and diff_in_y < 0:
@@ -193,30 +184,26 @@ class ModifiedAStar:
                         temp = p_c.copy()
                         temp.y += (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p.copy()
                         temp.x -= (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                 else:
                     for y in range(0, abs(diff_in_y // 10) + extraCheck):
                         temp = p.copy()
                         temp.y -= (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.x += (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
             else:  # diff_in_x > 0 , diff_in_y < 0
                 if p.direction == Direction.RIGHT or p.direction == Direction.LEFT:
@@ -224,84 +211,33 @@ class ModifiedAStar:
                         temp = p_c.copy()
                         temp.y += (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p.copy()
                         temp.x += (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                 else:
                     for y in range(0, abs(diff_in_y // 10) + extraCheck):
                         temp = p.copy()
                         temp.y -= (y + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
                     for x in range(0, abs(diff_in_x // 10) + extraCheck):
                         temp = p_c.copy()
                         temp.x -= (x + 1) * 10
                         if not (self.grid.check_valid_position(
-                                temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-                                *temp.xy())):
+                                temp)):
                             return None, None
-
-            # if diff_in_y > 0:
-            #     for y in range(0, abs(diff_in_y//10)):
-            #         temp = p.copy()
-            #         temp.y += (y+1)*10
-            #         if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-            #                 *temp.xy())):
-            #             return None, None
-            # else:
-            #     for y in range(0, abs(diff_in_y//10)):
-            #         temp = p_c.copy()
-            #         temp.y += (y+1)*10
-            #         if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-            #                 *temp.xy())):
-            #             return None, None
-            #
-            # if diff_in_x < 0 and diff_in_y < 0:
-            #     for x in range(0, abs(diff_in_x//10)):
-            #         temp = p.copy()
-            #         temp.x -= (x+1)*10
-            #         if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-            #                 *temp.xy())):
-            #             return None, None
-            # elif diff_in_x > 0 and diff_in_y < 0:
-            #     for x in range(0, abs(diff_in_x//10)):
-            #         temp = p.copy()
-            #         temp.x += (x+1)*10
-            #         if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-            #                 *temp.xy())):
-            #             return None, None
-            # elif diff_in_x > 0 and diff_in_y > 0:
-            #     for x in range(0, abs(diff_in_x//10)):
-            #         temp = p_c.copy()
-            #         temp.x -= (x+1)*10
-            #         if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-            #                 *temp.xy())):
-            #             return None, None
-            # else:
-            #     for x in range(0, abs(diff_in_x//10)):
-            #         temp = p_c.copy()
-            #         temp.x += (x+1)*10
-            #         if not (self.grid.check_valid_position(temp) and self.grid.get_grid_cell_corresponding_to_coordinate(
-            #                 *temp.xy())):
-            #             return None, None
 
         command.apply_on_pos(p)
 
         if self.grid.check_valid_position(p) and (
-                after := self.grid.get_grid_cell_corresponding_to_coordinate(*p.xy())):
-            after.position.direction = p.direction
-            # print(f"{p.x},{p.y}; - Position valid")
-            return after.copy(), p
-
+                after := p.xy()+(p.get_dir(),)):
+            return after, p
         return None, None
 
     def distance_heuristic(self, curr_pos: RobotPosition):
@@ -330,25 +266,19 @@ class ModifiedAStar:
         cost = dict()
 
         # We can check what the goal grid cell is
-        goal_node = self.grid.get_grid_cell_corresponding_to_coordinate(
-            *self.end.xy()).copy()  # Take note of copy!
-
-        # Set the required direction at this grid cell.
-        goal_node.position.direction = self.end.direction
+        goal_node: Tuple = self.end.xy()
+        goal_node_with_dir: Tuple = goal_node + (self.end.direction,)
 
         # Add starting node set into the frontier.
-        start_node: GridCell = self.grid.get_grid_cell_corresponding_to_coordinate(
-            *self.start.xy()).copy()  # Take note of copy!
-
-        # Know which direction the robot is facing.
-        start_node.direction = self.start.direction
+        start_node: Tuple = self.start.xy()
+        start_node_with_dir: Tuple = start_node + (self.start.direction,)
 
         offset = 0  # Used to tie-break.(?)
         # Extra time parameter to tie-break same priority.
-        frontier.put((0, offset, (start_node, self.start)))
-        cost[start_node] = 0
+        frontier.put((0, offset, (start_node_with_dir, self.start)))
+        cost[start_node_with_dir] = 0
         # Having None as the parent means this key is the starting node.
-        backtrack[start_node] = (None, None)  # Parent, Command
+        backtrack[start_node_with_dir] = (None, None)  # Parent, Command
 
         while not frontier.empty():  # While there are still nodes to process.
             # Get the highest priority node.
@@ -356,9 +286,9 @@ class ModifiedAStar:
             # print(f"curr pos -> {current_position.x},{current_position.y}")
 
             # If the current node is our goal.
-            if current_node == goal_node:
+            if current_node[0] == goal_node_with_dir[0] and current_node[1] == goal_node_with_dir[1] and current_node[2] == goal_node_with_dir[2]:
                 # Get the commands needed to get to destination.
-                self.extract_commands(backtrack, goal_node)
+                self.extract_commands(backtrack, goal_node_with_dir)
                 return current_position
 
             # Otherwise, we check through all possible locations that we can
@@ -368,22 +298,22 @@ class ModifiedAStar:
                 print(f"{current_position.x},{current_position.y}: ", neighbours)
             for new_node, new_pos, weight, c in neighbours:
                 # weight here stands for cost of moving forward or turning
-                # print("Neighbour pos", new_pos)
 
                 # revisit = 10 if new_node in backtrack else 0
                 # revisit = -20 if new_node in backtrack else 0
-                revisit = 0
+                # revisit = 0
 
-                if new_node in backtrack:
-                    revisit = 20
+                # if new_node in backtrack:
+                #     revisit = 20
 
-                new_cost = cost.get(current_node) + weight + revisit
+                # new_cost = cost.get(current_node) + weight + revisit
+                new_cost = cost.get(current_node) + weight
 
                 if new_cost < cost.get(new_node, 100000):
                     offset += 1
                     priority = new_cost + \
-                        self.distance_heuristic(
-                            new_pos) + self.direction_heuristic(new_pos)
+                               self.distance_heuristic(
+                                   new_pos) + self.direction_heuristic(new_pos)
 
                     frontier.put((priority, offset, (new_node, new_pos)))
                     backtrack[new_node] = (current_node, c)

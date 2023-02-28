@@ -1,16 +1,18 @@
-import socket
+import sys
+import time
 from typing import List
+import socket
+import constants
 from misc.positioning import Position
 from misc.direction import Direction
 from grid.grid import Grid
 from robot.robot import Robot
 from simulation import Simulation
 from connection_to_rpi.rpi_client import RPiClient
-from connection_to_rpi.rpi_server import RPiServer
 from grid.obstacle import Obstacle
 from commands.go_straight_command import StraightCommand
 from commands.scan_obstacle_command import ScanCommand
-from app import AlgoMinimal
+from pygame_app import AlgoMinimal
 
 
 class Main:
@@ -23,6 +25,8 @@ class Main:
         # [[x, y, orient, index], [x, y, orient, index]]
         obs = []
         for obstacle_params in data:
+            if len(obstacle_params) < 4:
+                continue
             obs.append(Obstacle(Position(obstacle_params[0],
                                          obstacle_params[1],
                                          Direction(obstacle_params[2])),
@@ -45,7 +49,7 @@ class Main:
             obstacle: Obstacle = Obstacle(position, i)
             i += 1
             obstacles.append(obstacle)
-        grid = grid(obstacles)
+        grid = Grid(obstacles)
         bot = Robot(grid)
         sim = Simulation()
         sim.runSimulation(bot)
@@ -60,10 +64,9 @@ class Main:
         # app.init()
         # app.execute()
 
-    def run_minimal(self, also_run_simulator, dummydata):
+    def run_minimal(self, also_run_simulator, dummy):
         # Create a client to connect to the RPi.
 
-        # print(constants.PC_HOST)
         # if self.client is None:
         #     print(f"Attempting to connect to {constants.RPI_HOST}:{constants.RPI_PORT}")
         #     self.client = RPiClient(constants.RPI_HOST, constants.RPI_PORT)
@@ -78,12 +81,12 @@ class Main:
         #             self.client.close()
         #             sys.exit(1)
         #     print("Connected to RPi!\n")
-        #
+
         # # Wait for message from RPI
         # print("Waiting to receive data from RPi...")
         # d = self.client.receive_message()
         print("Decoding data from RPi:")
-        d = dummydata.decode('utf-8')
+        d = dummy.decode('utf-8')
         to_return = []
         if d[0:4] == 'ALG:':
             d = d[4:]
@@ -131,29 +134,33 @@ class Main:
             app = AlgoMinimal(obstacles)
             app.init()
             # populates the Hamiltonian object with all the commands necessary to reach the objects
-            if also_run_simulator:
-                app.simulate()
-            else:
-                app.execute()
+            # if also_run_simulator:
+            #     app.simulate()
+            # else:
+            app.simulate()
+            app.execute()
             # Send the list of commands over.
             obs_priority = app.robot.hamiltonian.get_simple_hamiltonian()
             # print(obs_priority)
             print("Sending list of commands to RPi...")
             self.commands = app.robot.convert_all_commands()
             print(self.commands)
-
-            # if len(self.commands) != 0:
-            #     client.send_message(self.commands)
-            # else:
-            #     print("ERROR!! NO COMMANDS TO SEND TO RPI")
-
-        elif isinstance(data[0], str):
-            # means its NONE
-            client.send_message([StraightCommand(-10).convert_to_message(),
-                                 ScanCommand(data[2]).convert_to_message(),
-                                 StraightCommand(10).convert_to_message()])
-
+        #     if len(self.commands) != 0:
+        #         client.send_message(self.commands)
+        #     else:
+        #         print("ERROR!! NO COMMANDS TO SEND TO RPI")
         #
+        # elif isinstance(data[0], str):
+        #     # means its None
+        #     print(data)
+        #     try:
+        #         client.send_message([StraightCommand(-10).convert_to_message(),
+        #                              ScanCommand(0, int(data[1])).convert_to_message(),
+        #                              StraightCommand(10).convert_to_message()])
+        #     except IndexError:
+        #         print("Error!")
+        #         print("Index Error!")
+
         # # String commands from Rpi
         # elif isinstance(data[0], str):
         #     # Check valid image taken
@@ -240,19 +247,23 @@ class Main:
         while True:
             # x = 'ALG:10,17,S,0;17,17,W,1;2,16,S,2;16,4,S,3;13,1,W,4;6,6,N,5;9,11,W,6;3,3,E,7;'.encode(
             #     'utf-8')
-            a = 'ALG:2,17,S,0;16,17,W,1;10,11,S,2;4,6,N,3;9,2,E,4;17,5,W,5;'.encode(
-                'utf-8')
-            b = 'ALG:4,18,E,0;18,18,S,1;13,13,E,2;15,1,N,3;9,2,W,4;0,8,E,5;7,7,N,6;'.encode(
-                'utf-8')
-            c = 'ALG:2,8,N,0;0,17,E,1;14,15,S,2;6,2,N,3;19,4,W,4;10,5,W,5;17,19,S,6;9,18,W,7;'.encode(
-                'utf-8')
+            # a = 'ALG:2,17,S,0;16,17,W,1;10,11,S,2;4,6,N,3;9,2,E,4;17,5,W,5;'.encode(
+            #     'utf-8')
+            # b = 'ALG:4,18,E,0;18,18,S,1;13,13,E,2;15,1,N,3;9,2,W,4;0,8,E,5;7,7,N,6;'.encode(
+            #     'utf-8')
+            # c = 'ALG:2,8,N,0;0,17,E,1;14,15,S,2;6,2,N,3;19,4,W,4;10,5,W,5;17,19,S,6;9,18,W,7;'.encode(
+            #     'utf-8')
             d = 'ALG:2,18,S,0;5,18,S,1;8,18,S,2;11,18,S,3;14,18,S,4;'.encode(
                 'utf-8')
             e = 'ALG:0,18,E,0;18,19,S,1;18,0,W,2;5,0,E,3;10,10,E,4;9,10,W,5;'.encode(
                 'utf-8')
             f = 'ALG:6,6,N,0;16,4,W,1;9,10,W,2;2,16,S,3;8,17,E,4;17,17,S,5;'.encode(
                 'utf-8')
-            self.run_minimal(False, c)
+            testing = 'ALG:6,6,N,0;16,4,W,1;9,11,W,2;2,16,S,3;10,17,S,4;17,17,W,5;'.encode(
+                'utf-8')
+
+            # its warping bro
+            self.run_minimal(True, a)
             break
             # time.sleep(5)
 
@@ -260,8 +271,6 @@ class Main:
 def initialize():
     algo = Main()
     algo.run_rpi()
-    # o = Obstacle(Position(160, 170, Direction.LEFT), 0)
-    # print(o.get_robot_target_pos())
 
 
 def sim():
@@ -286,18 +295,3 @@ if __name__ == '__main__':
     """
     # sim()
     initialize()
-    # main = Main()
-    # main.run_simulator()
-
-# if __name__ == "__main__":
-#     bot = Robot()
-#     # algo = Astar(bot)
-#     # algo.runAlgo()
-#     # algo = Astar(self.getCurrentPos(), self.grid)
-# #     bot.callAlgo()
-# # self.algo = Astar()
-#     # grid, obstacles = app.initgrid()
-#     # a = astarclass.Astar(constants.INITPOS, obstacles, grid, constants.grid_LENGTH//constants.grid_CELL_LENGTH)
-#     # a.runAlgo(grid, obstacles)
-#     sim = Simulation()
-#     sim.runSimulation(bot)

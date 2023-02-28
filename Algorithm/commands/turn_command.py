@@ -197,32 +197,32 @@ class TurnCommand(Command):
         if self.left and not self.right and not self.reverse:
             # This is going forward left.
             if self.type_of_turn == TypeOfTurn.SMALL:
-                return "TLSF_"  # turn left small forward!
+                return "KF000"  # turn left small forward!
             elif self.type_of_turn == TypeOfTurn.MEDIUM:
-                return "TLMF_"  # turn left medium forward!
+                return "LF090"  # turn left medium forward!
             elif self.type_of_turn == TypeOfTurn.LARGE:
-                return "TLLF_"  # turn left large forward!
+                return "LF180"  # turn left large forward!
         elif self.left and not self.right and self.reverse:
             # This is going backward and front wheels are turned to left
             if self.type_of_turn == TypeOfTurn.SMALL:
-                return "TLSR_"  # turn left small reverse!
+                return "KB000"  # turn left small reverse!
             elif self.type_of_turn == TypeOfTurn.MEDIUM:
-                return "TLMR_"  # turn left medium reverse!
+                return "LB090"  # turn left medium reverse!
             elif self.type_of_turn == TypeOfTurn.LARGE:
-                return "TLLR_"  # turn left large reverse!
+                return "LB180"  # turn left large reverse!
         elif self.right and not self.left and not self.reverse:
             # This is going forward right.
             if self.type_of_turn == TypeOfTurn.SMALL:
-                return "TRSF_"  # turn right small forward!
+                return "JF000"  # turn right small forward!
             elif self.type_of_turn == TypeOfTurn.MEDIUM:
-                return "TRMF_"  # turn right medium forward!
+                return "RF090"  # turn right medium forward!
             elif self.type_of_turn == TypeOfTurn.LARGE:
-                return "TRLF_"  # turn right large forward!
+                return "RF180"  # turn right large forward!
         else:
             # This is going backward and the front wheels turned to the right.
             if self.type_of_turn == TypeOfTurn.SMALL:
-                return "TRSR_"  # turn right small reverse!
+                return "JB000"  # turn right small reverse!
             elif self.type_of_turn == TypeOfTurn.MEDIUM:
-                return "TRMR_"  # turn right medium reverse!
+                return "RB090"  # turn right medium reverse!
             elif self.type_of_turn == TypeOfTurn.LARGE:
-                return "TRLR_"  # turn right large reverse!
+                return "RB180"  # turn right large reverse!

@@ -20,7 +20,6 @@ class RPiClient:
 
     def receive_message(self):
         data = self.socket.recv(1024)
-        print("length of data: " + data.__len__())
         if not data:
             return False
         return data
