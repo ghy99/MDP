@@ -271,6 +271,7 @@ class Multithreader:
                         self.obstacle_id = obstacle_id
                         print("[Main] Setting take picture now to be true")
                         takePictureNow = True
+                        print("Going to take picture for" + str(obstacle_id))
                         self.serialapi.write(body)
                         ack = None
                         while ack is None:
