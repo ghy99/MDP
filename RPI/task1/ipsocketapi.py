@@ -27,7 +27,7 @@ class IPSocketAPI:
                 #self.server= socket.socket()
                 # print("Connecting")
                 # self.server.connect(('192.168.17.20',6000))
-                print("Connected"+str(self.client_address))
+                print("Connected "+str(self.client_address))
                 # self.server.listen(1)
 
             except Exception as exception:
@@ -61,7 +61,6 @@ class IPSocketAPI:
         else:
             if message is not None and len(message) > 0:
                 print("[Algorithm] Message read:", message)
-
                 return message
 
 

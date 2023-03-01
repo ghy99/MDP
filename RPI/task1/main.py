@@ -221,6 +221,8 @@ class Multithreader:
                         and_message = self.convert_to_dict('B', androidToSend)
                         # print("[Main] Queued", and_message, "to Android")
                         self.write_message_queue.put(and_message)
+                print(
+                    f"[Main] Queue to send to STM: {self.write_message_queue}", and_message)
             else:
                 print("[Main] Invalid command", message, "read from Algo")
 
