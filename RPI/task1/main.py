@@ -72,8 +72,8 @@ class Multithreader:
                     f"[Image] Successfully taken the photo for {obstacle_id}")
                 imageQueue.put([takenPicture, obstacle_id])
                 takePictureNow = False
-    # disconnect all/RPI end
 
+    # disconnect all/RPI end
     def disconnectall(self):
         global reccedImages
         global numObstacle
@@ -141,10 +141,9 @@ class Multithreader:
                         print(
                             f"[Main] Number of obstacles left {obstacleCounter}")
                     else:
-                        print("bullseye")
+                        print("[Image Rec] Bullseye")
                 except Exception as mistake:
-                    print("image recognition error:")
-                    print(mistake)
+                    print("[Image Rec] Image recognition error:", mistake)
 
     # Function to read messages from the Android tablet
 
@@ -217,9 +216,9 @@ class Multithreader:
                         stm_message = self.convert_to_dict('S', r)
                         print("[Main] Queued ", stm_message, "to STM")
                         self.write_message_queue.put(stm_message)
-                        andr = "COMMAND," + (r.decode('utf-8'))
-                        andr = andr.encode('utf-8')
-                        and_message = self.convert_to_dict('B', andr)
+                        androidToSend = "COMMAND," + (r.decode('utf-8'))
+                        androidToSend = androidToSend.encode('utf-8')
+                        and_message = self.convert_to_dict('B', androidToSend)
                         print("[Main] Queued", and_message, "to Android")
                         self.write_message_queue.put(and_message)
             else:
@@ -264,7 +263,7 @@ class Multithreader:
                     continue
                 if takePictureNow == False:
                     message = self.write_message_queue.get()
-                    print(message)
+                    print("[Main] Message to send: ", message)
                     header = message["header"]
                     body = message["body"]
                     if header == "B":  # Android
@@ -278,7 +277,7 @@ class Multithreader:
                         print("[Main] Sending", body, "to IpSocket")
                         self.ipsocketapi.write(body)
 
-                    elif header == "P":  # imageserver
+                    elif header == "P":  # Image server
                         obstacle_id = int(body[-1])-48
                         print("[Main] Obstacle ID:", str(obstacle_id))
                         self.obstacle_id = obstacle_id
@@ -299,8 +298,8 @@ class Multithreader:
                                     ack = None
                         except Exception as wrong:
                             # to show what is being sent
-                            print("Sending STM", body)
-                            print(wrong)
+                            print("[Main] Error sending STM", body)
+                            print("[Main] Error sending STM", wrong)
 
                     else:
                         print("[Main] Invalid header " + str(header))
@@ -322,7 +321,7 @@ class Multithreader:
 if __name__ == "__main__":
     # Defining global variables
     takePictureNow = False
-    imageQueue = queue.Queue(6)
+    imageQueue = queue.Queue(10)
     obstacleCounter = None
     numObstacle = None
     reccedImages = []
