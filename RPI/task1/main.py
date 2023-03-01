@@ -100,12 +100,12 @@ class Multithreader:
         global running
         while running:
             if not imageQueue.empty():
-                print(f"[Main] Current Queue: {imageQueue}")
+                # print(f"[Main] Current Queue: {imageQueue}")
                 currentQ = imageQueue.get()
                 takenPicture = currentQ[0]
                 obstacle_id = currentQ[1]
                 count = 0
-                print("[Main] Sending Image to Server")
+                print("[Main] Sending Image to server")
                 image_id = self.imageClientapi.sendPictureToServer(
                     takenPicture)
                 image_id = str(image_id)
@@ -141,9 +141,9 @@ class Multithreader:
                         print(
                             f"[Main] Number of obstacles left {obstacleCounter}")
                     else:
-                        print("[Image Rec] Bullseye")
+                        print("[Main] Bullseye")
                 except Exception as mistake:
-                    print("[Image Rec] Image recognition error:", mistake)
+                    print("[Main] Image recognition error:", mistake)
 
     # Function to read messages from the Android tablet
 
@@ -169,7 +169,7 @@ class Multithreader:
 
                     elif b'ALG' in message:
                         obstacles = message.decode('utf-8').split(';')
-                        print(obstacles)
+                        # print(obstacles)
                         x = 0
                         while x < len(obstacles):
                             if len(obstacles[x]) < 4:
@@ -181,8 +181,8 @@ class Multithreader:
                         filteredObstacles = filteredObstacles+";"
                         numObstacle = len(obstacles)
                         obstacleCounter = len(obstacles)
-                        print(
-                            f"[Main] The total number of obstacles is {obstacleCounter}")
+                        # print(
+                        #     f"[Main] The total number of obstacles is {obstacleCounter}")
                         # message = self.convert_to_dict('I', filteredObstacles.encode('utf-8')) #Forwarding entire string to algo
                         # self.write_message_queue.put(message)
                         print(
@@ -207,19 +207,19 @@ class Multithreader:
                     # if scan instruction, queue scan instruction with header "P"
                     if b'P' in r:
                         image_message = self.convert_to_dict('P', r)
-                        print("[Main] Queued ", image_message,
-                              "to image server")
+                        # print("[Main] Queued ", image_message,
+                        #       "to image server")
                         self.write_message_queue.put(image_message)
                     # else queue instructions to STM with header "S"
                     else:
                         print("[Main] Queueing message to be sent to STM:", r)
                         stm_message = self.convert_to_dict('S', r)
-                        print("[Main] Queued ", stm_message, "to STM")
+                        # print("[Main] Queued ", stm_message, "to STM")
                         self.write_message_queue.put(stm_message)
                         androidToSend = "COMMAND," + (r.decode('utf-8'))
                         androidToSend = androidToSend.encode('utf-8')
                         and_message = self.convert_to_dict('B', androidToSend)
-                        print("[Main] Queued", and_message, "to Android")
+                        # print("[Main] Queued", and_message, "to Android")
                         self.write_message_queue.put(and_message)
             else:
                 print("[Main] Invalid command", message, "read from Algo")
@@ -281,9 +281,10 @@ class Multithreader:
                         obstacle_id = int(body[-1])-48
                         print("[Main] Obstacle ID:", str(obstacle_id))
                         self.obstacle_id = obstacle_id
-                        print("[Main] Setting take picture now to be true")
+                        # print("[Main] Setting take picture now to be true")
                         takePictureNow = True
-                        print("Going to take picture for" + str(obstacle_id))
+                        print("[Image] Going to take picture for " +
+                              str(obstacle_id))
 
                     elif header == "S":  # STM
                         print(f"[Main] STM processing started with {body}")

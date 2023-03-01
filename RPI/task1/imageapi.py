@@ -7,8 +7,9 @@ import queue
 import numpy as np
 import cv2
 
-#to test send id to bluetooth
+# to test send id to bluetooth
 from bluetoothapi import BluetoothAPI
+
 
 class ImageAPI:
     HOST = '192.168.17.15'
@@ -17,14 +18,14 @@ class ImageAPI:
 
     def __init__(self):
         self.client = None
+        self.count = 0
         self.camera = Picamera2()
-        config = self.camera.create_preview_configuration(main={"size":(720,720)})
+        config = self.camera.create_preview_configuration(
+            main={"size": (720, 720)})
         self.camera.configure(config)
         self.camera.start()
 
-
     def sendEmptyImage(self):
-
         print("[Image] Attempting to connect to Image Server...")
         sender = imagezmq.ImageSender(
             connect_to="tcp://"+self.HOST+":"+self.PORT)
@@ -35,7 +36,6 @@ class ImageAPI:
         print(f"[Image] Acknowledgement received {reply}")
         print("[Image] Process complete!")
 
-
     def sendPictureToServer(self, image):
         print("[Image] Attempting to connect to Image Server...")
         sender = imagezmq.ImageSender(
@@ -45,9 +45,11 @@ class ImageAPI:
         rpi_name = socket.gethostname()
         print('[Image] Sending image to server...')
         reply = sender.send_image(rpi_name, image)
-        print("[Image] We sent the picture.")
-        print("[Image] Reply: ", reply)
-        print('[Image] Connection with image server closed')
+        self.count += 1
+        print(f"[Image] We sent picture {self.count}.")
+        print(f"[Image] Reply for picture {self.count}: ", reply)
+        print(
+            f'[Image] Connection with image server closed after picture {self.count}')
         reply = reply.decode('utf-8')
         return reply
 
@@ -56,23 +58,22 @@ class ImageAPI:
             try:
                 print('[Image] Initializing Camera.')
                 print('[Image] Taking Picture')
-                #self.camera.start_preview(Preview.QTGL)
-               
+                # self.camera.start_preview(Preview.QTGL)
+
                 time.sleep(2)
                 image = self.camera.capture_array()
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 #rawCapture = picamera.array.PiRGBArray(self.camera)
                 #self.camera.capture(rawCapture, format="bgr")
-                #time.sleep(1)
+                # time.sleep(1)
                 #image = rawCapture.array
-                #rawCapture.truncate(0)
+                # rawCapture.truncate(0)
                 print('[Image] Finished taking picture')
                 break
-                
+
             except Exception as exception:
                 print("[Image] Sending image to the server failed: " + str(exception))
                 time.sleep(1)
-            
 
         return image
 
@@ -84,7 +85,8 @@ class ImageAPI:
         try:
             message = self.client.recv(self.READ_BUFFER_SIZE)
         except Exception as exception:
-            print("[Image] Failed to read from image server via Wi-Fi: " + str(exception))
+            print(
+                "[Image] Failed to read from image server via Wi-Fi: " + str(exception))
         else:
             if message is not None and len(message) > 0:
                 print("[Image] Message read from image server via Wi-Fi:")
@@ -106,13 +108,13 @@ if __name__ == '__main__':
                 print("no detection result")
         elif command == "exit":
             ic.camera.close()
-            print("exiting")
+            print("Exiting")
             exit()
         elif command == "end":
             ic.sendEmptyImage()
             print()
 
-#to test send image id to android
+# to test send image id to android
 # if __name__ == '__main__':
 #     ic = ImageAPI()
 #     bt = BluetoothAPI()
