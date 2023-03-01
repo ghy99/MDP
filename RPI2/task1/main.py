@@ -271,6 +271,13 @@ class Multithreader:
                         self.obstacle_id = obstacle_id
                         print("[Main] Setting take picture now to be true")
                         takePictureNow = True
+                        self.serialapi.write(body)
+                        ack = None
+                        while ack is None:
+                            ack = self.serialapi.read()
+                            print("Received from STM", ack)
+                            if  b'A' not in ack:
+                                ack = None
                         print("Going to take picture for" + str(obstacle_id))
 
                     elif header == "S": #STM
