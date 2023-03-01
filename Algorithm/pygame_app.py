@@ -18,7 +18,7 @@ class AlgoApp(ABC):
         self.grid = Grid(obstacles)
         self.robot = Robot(self.grid)
         self.direction = Direction.TOP
-        self.simulation = Simulation()
+        # self.simulation = Simulation()
         self.obstacles = obstacles
         self.index = 0
 
@@ -258,6 +258,6 @@ class AlgoMinimal(AlgoApp):
         self.robot.hamiltonian.plan_path()
         print("Done!")
 
-    def simulate(self):
-        # Calculate path
-        self.simulation.runSimulation(self.robot)
+    # def simulate(self):
+    #     # Calculate path
+    #     self.simulation.runSimulation(self.robot)
