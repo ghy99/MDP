@@ -20,20 +20,20 @@ class Multithreader:
     def __init__(self):
         self.bluetoothapi = BluetoothAPI()
         self.ipsocketapi = IPSocketAPI()
+        #self.serialapi = SerialAPI()
         self.imageClientapi = ImageAPI()
         self.write_message_queue = multiprocessing.Queue()
         self.obstacle_id = None
-        #self.serialapi = SerialAPI()
 
     # Function to start all the threads
     def initialize_processes(self):
         global takePictureNow
         global imageQueue
         print("[Main] Attempting to initialize multithreader...")
+        # self.serialapi.connect()
         # Connect the different components
         self.ipsocketapi.connect()
         self.bluetoothapi.connect()
-        # self.serialapi.connect()
 
         # Run the multithreading
         self.read_bluetooth_process = threading.Thread(
@@ -71,11 +71,11 @@ class Multithreader:
                 print(
                     f"[Image] Successfully taken the photo for {obstacle_id}")
                 imageQueue.put([takenPicture, obstacle_id])
-                # print(imageQueue.get())
-                # imageQueue.put([takenPicture, obstacle_id])
+                print(imageQueue.get())
+                imageQueue.put([takenPicture, obstacle_id])
                 takePictureNow = False
-
     # disconnect all/RPI end
+
     def disconnectall(self):
         global reccedImages
         global numObstacle
@@ -83,13 +83,10 @@ class Multithreader:
             if len(reccedImages) == numObstacle:
                 time.sleep(5)
                 self.imageClientapi.sendEmptyImage()
-
                 print("[Image] Closing camera")
                 self.imageClientapi.imageClose()
-
                 print("[Main] Disconnecting from IP Socket")
                 self.ipsocketapi.server.close()
-
                 print("[Main] Disconnecting from Bluetooth")
                 self.bluetoothapi.server.shutdown(2)
                 self.bluetoothapi.server.close()
@@ -110,29 +107,24 @@ class Multithreader:
                 takenPicture = currentQ[0]
                 obstacle_id = currentQ[1]
                 count = 0
-
                 print("[Main] Sending Image to Server")
                 image_id = self.imageClientapi.sendPictureToServer(
                     takenPicture)
                 image_id = str(image_id)
-
                 print("[Main] Image ID:", image_id)
                 iMsg = image_id.encode('utf-8')
                 obs = str(obstacle_id)
                 iError = (image_id+obs).encode('utf-8')
-
                 # if the message is invalid, send results to ipsocket
                 while (image_id == 'N' and count == 0):
                     print("[Main] Sending the invalid message to ipsocket")
                     self.ipsocketapi.write(iError)
                     # time.sleep(5)
                     msg = self.ipsocketapi.read()
-
                     print("[Main] Retrieve instruction from ipsocket")
                     print("message from algo:" + msg)+"send directly to STM"
                     # self.serialapi.write(msg.encode('utf-8'))
                     count += 1
-
                 # after recognise image
                 reccedImages.append(image_id)
                 obstacleCounter -= 1
@@ -141,16 +133,15 @@ class Multithreader:
                 if (image_id != '00' and image_id == 'N'):
                     print("[Bluetooth] Sending the image results to android")
                     bMsg = "TARGET,"+str(obstacle_id)+","+str(image_id)
-
                     print("[Bluetooth] Message sent to android:", bMsg)
                     # bMsg = self.convert_to_dict('B', bMsg)
                     # self.write_message_queue.put(bMsg)
                     # tell android immediately
                     self.bluetoothapi.write(bMsg)
-
                 print(f"[Main] Number of obstacles left {obstacleCounter}")
 
     # Function to read messages from the Android tablet
+
     def read_bluetooth(self):
         global obstacleCounter
         global numObstacle
@@ -217,13 +208,11 @@ class Multithreader:
                         #message = message.decode()
                         print("[Main] Queueing message to be sent to STM:", r)
                         stm_message = self.convert_to_dict('S', r)
-
                         print("[Main] Queued ", stm_message, "to STM")
                         self.write_message_queue.put(stm_message)
                         andr = "COMMAND," + (r.decode('utf-8'))
                         andr = andr.encode('utf-8')
                         and_message = self.convert_to_dict('B', andr)
-
                         print("[Main] Queued", and_message, "to Android")
                         self.write_message_queue.put(and_message)
             else:
@@ -282,7 +271,7 @@ class Multithreader:
                         print("[Main] Sending", body, "to IpSocket")
                         self.ipsocketapi.write(body)
 
-                    elif header == "P":  # image server
+                    elif header == "P":  # imageserver
                         obstacle_id = int(body[-1])-48
                         print("[Main] Obstacle ID:", obstacle_id)
                         self.obstacle_id = obstacle_id

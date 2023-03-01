@@ -109,7 +109,7 @@ if __name__ == '__main__':
     while True:
         command = input("Enter Command(r/close): ")
         if command == "close":
-            print("Closing Serial Connection")
+            print("Closing Bluetooth Connection")
             server = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
             server.shutdown(2)
             server.close()
