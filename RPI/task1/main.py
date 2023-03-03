@@ -10,9 +10,9 @@ import RPi.GPIO as GPIO
 import atexit
 import queue
 
-'''Format sent from Algo E.g S___6 (direction, pad,pad,pad,index)'''
+'''Format sent from Algo E.g P___6 (direction, pad,pad,pad,index)'''
 '''Initial Android format E.g ALG:8,1,S,0;14,1,W,1;1,2,S,2;'''
-# ALG:START
+# ALG:START9
 
 
 class Multithreader:
@@ -285,8 +285,14 @@ class Multithreader:
                         self.obstacle_id = obstacle_id
                         # print("[Main] Setting take picture now to be true")
                         takePictureNow = True
-                        print("[Image] Going to take picture for " +
-                              str(obstacle_id))
+                        print("[Main] Going to take picture for" + str(obstacle_id))
+                        self.serialapi.write(body)
+                        ack = None
+                        while ack is None:
+                            ack = self.serialapi.read()
+                            print("[Main] Received from STM", ack)
+                            if  b'A' not in ack:
+                                ack = None
 
                     elif header == "S":  # STM
                         print(f"[Main] STM processing started with {body}")
