@@ -41,19 +41,19 @@ class Hamiltonian:
                 # Right Grid to Left Grid, Top of Grid to Bottom of Grid unlikely
                 # if same direction (robot and targeted position has same direction)
                 if source_pos.direction.value - dest_pos.direction.value == 0:
-                    weight = 1 if is_first else 20
+                    weight = 2 if is_first else 5
                 # if opposite direction
                 elif abs(source_pos.direction.value - dest_pos.direction.value) == 180:
-                    weight = 2
+                    weight = 4
                 # if turn right or left
                 else:
-                    weight = 1 if check_pos(source_pos, dest_pos) else 30
+                    weight = 1 if check_pos(source_pos, dest_pos) else 7
 
                 return weight
             
             def check_pos(robot_pos, target_pos):
                 # left turn
-                if robot_pos.direction.value - target_pos.direction.value == 90:
+                if robot_pos.direction.value - target_pos.direction.value == -90:
                     if robot_pos.direction == Direction.TOP:
                         return True if target_pos.x < robot_pos.x else False
                     if robot_pos.direction == Direction.BOTTOM:
@@ -62,7 +62,6 @@ class Hamiltonian:
                         return True if target_pos.y < robot_pos.y else False
                     if robot_pos.direction == Direction.RIGHT:
                         return True if target_pos.y > robot_pos.y else False
-                    pass
                 # right turn
                 else:
                     if robot_pos.direction == Direction.TOP:
@@ -73,8 +72,6 @@ class Hamiltonian:
                         return True if target_pos.y > robot_pos.y else False
                     if robot_pos.direction == Direction.RIGHT:
                         return True if target_pos.y < robot_pos.y else False
-                    pass
-                pass
 
 
             def manhattan_distance(x1, y1, x2, y2):
@@ -122,8 +119,16 @@ class Hamiltonian:
                 #         dist += 50
 
                 # dist += abs(targets[i][0] - targets[i + 1][0]) + abs(targets[i][1] - targets[i + 1][1])
-                dist += (math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
-                                                ((targets[i][1] - targets[i + 1][1])**2)))
+
+                # dist += multiplier * (math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                #                                 ((targets[i][1] - targets[i + 1][1])**2)))
+                # temp = math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                #                                 ((targets[i][1] - targets[i + 1][1])**2))
+                # dist += (temp ** multiplier)
+
+                temp = manhattan_distance(targets[i][0], targets[i][1], targets[i + 1][0], targets[i + 1][1])
+                dist += temp ** multiplier
+                # print(dist)
                 # dist += multiplier * (1 * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
                 #                                     ((targets[i][1] - targets[i + 1][1])**2)) + 2 * manhattan_distance(
                 #     targets[i][0], targets[i][1], targets[i +
