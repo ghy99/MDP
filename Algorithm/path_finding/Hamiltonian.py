@@ -43,12 +43,15 @@ class Hamiltonian:
                     weight = 1
                 # if opposite direction
                 elif source_dir.value - dest_dir.value == -180 or source_dir.value - dest_dir.value == 180:
-                    weight = 1.8
+                    weight = 2.5
                 # if turn right or left
                 else:
-                    weight = 1.2
+                    weight = 1.4
 
                 return weight
+
+            def manhattan_distance(x1, y1, x2, y2):
+                return abs(x1 - x2) + abs(y1 - y2)
 
             # Create all target points, including the start.
             targets = [self.robot.pos.xy()]
@@ -72,6 +75,8 @@ class Hamiltonian:
                 # Weight factor
                 if i == 0:
                     # From start to first obstacle
+                    # print(
+                    #     f"Checking multiplier: {self.robot.pos.get_dir()}, {path[i].target_position.x}, {path[i].target_position.y}, {path[i].target_position.get_dir()}")
                     multiplier = weight_factor(
                         self.robot.pos.get_dir(), path[i].target_position.get_dir())
                 else:
@@ -80,8 +85,17 @@ class Hamiltonian:
                         path[i-1].target_position.get_dir(), path[i].target_position.get_dir())
 
                 # dist += abs(targets[i][0] - targets[i + 1][0]) + abs(targets[i][1] - targets[i + 1][1])
-                dist += multiplier * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
-                                               ((targets[i][1] - targets[i + 1][1])**2))
+                dist += multiplier * (math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                                                ((targets[i][1] - targets[i + 1][1])**2)))
+                # dist += multiplier * (1 * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                #                                     ((targets[i][1] - targets[i + 1][1])**2)) + 2 * manhattan_distance(
+                #     targets[i][0], targets[i][1], targets[i +
+                #                                           1][0], targets[i + 1][1]
+                # ))
+                # dist += multiplier * (manhattan_distance(
+                #     targets[i][0], targets[i][1], targets[i +
+                #                                           1][0], targets[i + 1][1]
+                # ))
 
             # print("Path = ", targets, "\nTotal weighted Euclidean distance = ", dist)
             return dist
@@ -140,8 +154,16 @@ class Hamiltonian:
         curr = self.robot.pos.copy()
         for obstacle in self.simple_hamiltonian:
             target = obstacle.get_robot_target_pos()
+            rerun = False
             # print(f"Planning {curr} to {target}")
-            res = ModifiedAStar(self.grid, self, curr, target).start_astar()
+            res = ModifiedAStar(self.grid, self, curr,
+                                target, rerun).start_astar()
+            while res is None and not rerun:
+                print(f"No path found from {curr} to {obstacle}")
+                print("Fuck it... YOLO", end=" ")
+                rerun = True
+                res = ModifiedAStar(self.grid, self, curr,
+                                    target, rerun).start_astar()
             if res is None:
                 print(f"No path found from {curr} to {obstacle}")
             else:
@@ -153,8 +175,8 @@ class Hamiltonian:
         self.compress_paths()
 
         print()
-        print("-" * 40)
+        print("-" * 60)
         for command in self.commands:
             print(f'{command}')
-        print("-" * 40)
+        print("-" * 60)
         print()

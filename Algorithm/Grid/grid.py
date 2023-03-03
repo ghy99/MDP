@@ -82,12 +82,22 @@ class Grid:
         new_grid.gridcells = cells
         return new_grid
 
-    def check_valid_position(self, pos: Position):
+    def is_adjacent_to_any_obstacle(self, x: int, y: int, min_separation: int) -> bool:
+        return any(
+            [
+                (obstacle.position.x == x and abs(
+                    obstacle.position.y - y) < min_separation + 1)
+                or (obstacle.position.y == y and abs(obstacle.position.x - x) < min_separation + 1)
+                for obstacle in self.obstacles
+            ]
+        )
+
+    def check_valid_position(self, pos: Position, yolo=False):
         """
         Check if a current position can be here.
         """
         # Check if position is inside any obstacle.
-        if any(obstacle.check_within_boundary(pos) for obstacle in self.obstacles):
+        if any(obstacle.check_within_boundary(pos, yolo) for obstacle in self.obstacles):
             return False
 
         # Check if position too close to the border.
@@ -99,6 +109,7 @@ class Grid:
         #          pos.x > constants.GRID_LENGTH):
         #     return False
 
+        # out of arena!
         if (pos.y < constants.GRID_CELL_LENGTH or
             pos.y >= constants.GRID_LENGTH - constants.GRID_CELL_LENGTH) or \
                 (pos.x < constants.GRID_CELL_LENGTH or

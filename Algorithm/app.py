@@ -41,7 +41,7 @@ class AlgoMinimal(AlgoApp):
         # Calculate path
         print("Calculating path...")
         self.robot.hamiltonian.plan_path()
-        print("Done!")
+        # print("Done!")
 
     def simulate(self):
         # Calculate path
