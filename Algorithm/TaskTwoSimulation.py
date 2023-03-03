@@ -6,6 +6,7 @@ from misc.direction import Direction
 
 
 class Simulation():
+#     hello
     def __init__(self, direction):
         pygame.init()
         self.running = True
