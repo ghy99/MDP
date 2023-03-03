@@ -5,6 +5,7 @@ import socket
 from psutil import process_iter
 from signal import SIGKILL
 
+
 class BluetoothAPI:
     MAC_ADDRESS = 'E4:5F:01:55:A6:C7'
     TABLET_BlUETOOTH = '90:EE:C7:E7:D0:90'
@@ -22,15 +23,15 @@ class BluetoothAPI:
         for proc in process_iter():
             for conns in proc.get_connections(kind='all'):
                 if conns.laddr[1] == 1:
-                    proc.send_signal(SIGKILL) 
+                    proc.send_signal(SIGKILL)
                     continue
 
     def connect(self):
         try:
-           self.server.shutdown(2)
-           self.server.close()
+            self.server.shutdown(2)
+            self.server.close()
         except:
-           print("[Bluetooth] Trying to connect to the RPI")
+            print("[Bluetooth] Trying to connect to the RPI")
         while True:
             try:
                 print("[Bluetooth] Attempting to connect...")
@@ -43,12 +44,12 @@ class BluetoothAPI:
                 self.server.listen(self.PORT_NUMBER)
                 print("[Bluetooth] Listening")
                 self.client, client_address = self.server.accept()
-                print("[Bluetooth] Server Accepted")
+                print("[Bluetooth] Server accepted")
 
             except Exception as exception:
                 print("[Bluetooth] Connection failed: " + str(exception))
                 print("[Bluetooth] Disconnecting from server")
-                self.server.shutdown(1) 
+                self.server.shutdown(1)
                 self.server.close()
                 time.sleep(1)
             else:
@@ -57,8 +58,7 @@ class BluetoothAPI:
                 break
 
     def write(self, message):
-        print("[Bluetooth] Attempting to send message:")
-        print(message)
+        print("[Bluetooth] Attempting to send message:", message)
 
         try:
             self.client.send(message)
@@ -83,7 +83,7 @@ class BluetoothAPI:
                 print('Android - Disconnecting Server Socket')
 
         except Exception as e:
-            print('[Android Disconnect all error] %s' % str(e))
+            print('[Android] Disconnect all error %s' % str(e))
 
     def read(self):
         while self.server is not None and self.client is not None:
@@ -103,14 +103,13 @@ class BluetoothAPI:
                 print("[Bluetooth] Failed to read: " + str(exception))
 
 
-
-if __name__ =='__main__':
+if __name__ == '__main__':
     bluetoothapi = BluetoothAPI()
     bluetoothapi.connect()
     while True:
         command = input("Enter Command(r/close): ")
         if command == "close":
-            print("Closing Serial Connection")
+            print("Closing Bluetooth Connection")
             server = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
             server.shutdown(2)
             server.close()
