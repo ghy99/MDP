@@ -340,3 +340,5 @@ class ModifiedAStar:
 
         commands.reverse()
         self.brain.commands.extend(commands)
+    
+    

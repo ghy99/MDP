@@ -46,7 +46,7 @@ class Hamiltonian:
                     weight = 2.5
                 # if turn right or left
                 else:
-                    weight = 1.4
+                    weight = 1.6
 
                 return weight
 
@@ -154,16 +154,18 @@ class Hamiltonian:
         curr = self.robot.pos.copy()
         for obstacle in self.simple_hamiltonian:
             target = obstacle.get_robot_target_pos()
-            rerun = False
+            rerun = 0
             # print(f"Planning {curr} to {target}")
             res = ModifiedAStar(self.grid, self, curr,
                                 target, rerun).start_astar()
-            while res is None and not rerun:
+            while res is None and rerun != 2:
                 print(f"No path found from {curr} to {obstacle}")
                 print("Fuck it... YOLO", end=" ")
-                rerun = True
+                rerun += 1
                 res = ModifiedAStar(self.grid, self, curr,
                                     target, rerun).start_astar()
+                if res:
+                    break
             if res is None:
                 print(f"No path found from {curr} to {obstacle}")
             else:

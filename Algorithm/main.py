@@ -83,9 +83,10 @@ class Main:
                     sys.exit(1)
             print("Connected to RPi!\n")
 
-        # # # Wait for message from RPI
+        # # # # Wait for message from RPI
         print("Waiting to receive data from RPi...")
         d = self.client.receive_message()
+        # d = dummy
         print("Decoding data from RPi:")
         d = d.decode('utf-8')
         to_return = []
@@ -135,11 +136,11 @@ class Main:
             app = AlgoMinimal(obstacles)
             app.init()
             # populates the Hamiltonian object with all the commands necessary to reach the objects
-            # if also_run_simulator:
-            #     app.simulate()
-            # else:
-            #     app.execute()
-            app.execute()
+            if also_run_simulator:
+                app.simulate()
+            else:
+                app.execute()
+            # app.execute()
             # Send the list of commands over.
             obs_priority = app.robot.hamiltonian.get_simple_hamiltonian()
             # print(obs_priority)
@@ -265,8 +266,11 @@ class Main:
                 'utf-8')
             testing = 'ALG:6,6,N,0;16,4,W,1;9,11,W,2;2,16,S,3;10,17,S,4;17,17,W,5;'.encode(
                 'utf-8')
+            g = 'ALG:3,11,E,0;7,14,S,1;9,5,N,2;'.encode(
+                'utf-8')
 
             self.run_minimal(False)
+            # break
             time.sleep(5)
 
 
