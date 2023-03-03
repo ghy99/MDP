@@ -1,3 +1,25 @@
 Algorithm/.venv/*
 Image-Rec/.venv/*
 __pycache__/
+
+STM/_RunHerez/_RunHerez/.metadata/*
+STM/_RunHerez/_RunHerez/rtostest/.settings/*
+STM/_RunHerez/_RunHerez/rtostest/Debug/*
+STM/_RunHerez/_RunHerez/rtostest/Drivers/*
+STM/_RunHerez/_RunHerez/rtostest/Middlewares/*
+STM/_RunHerez/_RunHerez/rtostest/PeripheralDriver/*
+STM/_RunHerez/_RunHerez/rtostest/.cproject
+STM/_RunHerez/_RunHerez/rtostest/.mxproject
+STM/_RunHerez/_RunHerez/rtostest/.project
+STM/_RunHerez/_RunHerez/rtostest/rtostest Debug.launch
+STM/_RunHerez/_RunHerez/rtostest/STM32F407VETX_FLASH.ld
+STM/_RunHerez/_RunHerez/rtostest/STM32F407VETX_RAM.ld
+
+STM/_RunHerez/_RunHerez/rtostest/Core/Inc/*
+STM/_RunHerez/_RunHerez/rtostest/Core/Startup/*
+STM/_RunHerez/_RunHerez/rtostest/Core/Src/freertos.c
+STM/_RunHerez/_RunHerez/rtostest/Core/Src/stm32f4xx_hal_msp.c
+STM/_RunHerez/_RunHerez/rtostest/Core/Src/stm32f4xx_it.c
+STM/_RunHerez/_RunHerez/rtostest/Core/Src/syscalls.c
+STM/_RunHerez/_RunHerez/rtostest/Core/Src/sysmem.c
+STM/_RunHerez/_RunHerez/rtostest/Core/Src/system_stm32f4xx.c
