@@ -71,7 +71,12 @@ class Obstacle:
         # print(f"Checking {position.x},{position.y}:", x_range, y_range)
         for x in x_range:
             for y in y_range:
-                if yolo and not (position.x == x or position.y == y):
+                # cross
+                if yolo == 1 and not (position.x == x or position.y == y):
+                    continue
+                
+                # 1x1
+                if yolo == 2 and not (position.x == x and position.y == y):
                     continue
 
                 diffX = abs(self.position.x - x)
