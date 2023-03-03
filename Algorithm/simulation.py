@@ -1017,7 +1017,7 @@ class Simulation():
         x = self.currentPos[0] // constants.GRID_CELL_LENGTH
         obstacleList.append(((x * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell,
                             (y * constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR) + halfAGridCell))
-        obstacleInOrder = self.bot.hamiltonian.compute_simple_hamiltonian_path()
+        obstacleInOrder = self.bot.hamiltonian.simple_hamiltonian
         for obstacle in obstacleInOrder:
             print(obstacle)
             y = (constants.GRID_LENGTH - constants.GRID_CELL_LENGTH -
@@ -1054,7 +1054,7 @@ class Simulation():
         self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                        constants.SCALING_FACTOR, constants.RED, constants.BLUE, constants.LIGHT_BLUE)
         self.drawObstaclesButton(self.obstacles, constants.RED)
-        pygame.time.delay(50)
+        pygame.time.delay(250)
         self.updateTime(start, time.time())
 
     def parseCmd(self, cmd, start):
@@ -1099,13 +1099,19 @@ class Simulation():
                 elif cmd.left and not cmd.right and cmd.reverse:
                     self.moveSouthWest(constants.GRID_LENGTH * constants.SCALING_FACTOR,
                                        constants.GRID_CELL_LENGTH * constants.SCALING_FACTOR)
+            pygame.display.update()
+            self.updatingDisplay(start)
+            
         elif isinstance(cmd, ScanCommand):
+            self.updatingDisplay(start)
             self.drawRobot(self.currentPos, constants.GRID_CELL_LENGTH *
                            constants.SCALING_FACTOR, constants.RED, constants.ORANGE, constants.PINK)
+            pygame.display.update()
+            self.updatingDisplay(start)
         else:
-            print("error!")
-        self.updatingDisplay(start)
-        pygame.display.update()
+            print("Error!")
+        # self.updatingDisplay(start)
+        
 
     def runSimulation(self, bot):
         self.bot = deepcopy(bot)

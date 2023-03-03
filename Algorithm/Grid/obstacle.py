@@ -464,7 +464,7 @@ class Obstacle:
                                      self.position.y + constants.OBSTACLE_SAFETY_WIDTH*2 + constants.OBSTACLE_LENGTH,
                                      Direction.BOTTOM)
             elif self.position.direction == Direction.BOTTOM:
-                return RobotPosition(self.position.x + 10,
+                return RobotPosition(self.position.x,
                                      self.position.y - constants.OBSTACLE_SAFETY_WIDTH*2 - constants.OBSTACLE_LENGTH,
                                      Direction.TOP)
             elif self.position.direction == Direction.LEFT:

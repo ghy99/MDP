@@ -84,7 +84,7 @@ class ModifiedAStar:
                 if c.get_type_of_turn == TypeOfTurn.SMALL:
                     turn_penalty = 100 if not self.yolo else 20
                 elif c.get_type_of_turn == TypeOfTurn.MEDIUM:
-                    turn_penalty = 20 if not self.yolo else 0
+                    turn_penalty = 50 if not self.yolo else 0
                 neighbours.append((after, p, turn_penalty, c))
 
         # print("neighbours are:")
@@ -258,7 +258,7 @@ class ModifiedAStar:
         else:
             return 10
 
-    def start_astar(self):
+    def start_astar(self, flag):
         frontier = PriorityQueue()  # Store frontier nodes to travel to.
         backtrack = dict()  # Store the sequence of grid cells being travelled.
 
@@ -288,8 +288,8 @@ class ModifiedAStar:
             # If the current node is our goal.
             if current_node[0] == goal_node_with_dir[0] and current_node[1] == goal_node_with_dir[1] and current_node[2] == goal_node_with_dir[2]:
                 # Get the commands needed to get to destination.
-                self.extract_commands(backtrack, goal_node_with_dir)
-                return current_position
+                commands = self.extract_commands(backtrack, goal_node_with_dir, flag)
+                return (current_position, commands)
 
             # Otherwise, we check through all possible locations that we can
             # travel to from this node.
@@ -322,9 +322,9 @@ class ModifiedAStar:
 
         # If we are here, means that there was no path that we could find.
         # We return None to show that we cannot find a path.
-        return None
+        return (None, [])
 
-    def extract_commands(self, backtrack, goal_node):
+    def extract_commands(self, backtrack, goal_node, flag):
         """
         Extract required commands to get to destination.
         """
@@ -337,8 +337,12 @@ class ModifiedAStar:
             # print("extract_commands:", curr, c)
             if c:
                 commands.append(c)
-
+        
         commands.reverse()
-        self.brain.commands.extend(commands)
-    
+        
+        if flag:
+            self.brain.commands.extend(commands)
+            return None
+        else:
+            return commands
     
