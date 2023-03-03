@@ -202,7 +202,7 @@ class Multithreader:
             message = self.ipsocketapi.read()
             if message is not None and len(message) > 0:
                 n = 5
-                instr = [message[i:i+n]for i in range(0, len(message), n)]
+                instr = [message[i:i+n] for i in range(0, len(message), n)]
                 for r in instr:
                     # if scan instruction, queue scan instruction with header "P"
                     if b'P' in r:
@@ -302,7 +302,7 @@ class Multithreader:
                             ack = None
                             while ack is None:
                                 ack = self.serialapi.read()
-                                print("Received from STM", ack)
+                                print("[Main] Received from STM", ack)
                                 if b'A' not in ack:
                                     ack = None
                         except Exception as wrong:
