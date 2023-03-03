@@ -23,6 +23,6 @@ STM/_RunHerez/_RunHerez/rtostest/Core/Src/stm32f4xx_it.c
 STM/_RunHerez/_RunHerez/rtostest/Core/Src/syscalls.c
 STM/_RunHerez/_RunHerez/rtostest/Core/Src/sysmem.c
 STM/_RunHerez/_RunHerez/rtostest/Core/Src/system_stm32f4xx.c
+
 venv/
-.gitignore
 .vscode
