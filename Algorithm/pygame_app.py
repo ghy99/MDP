@@ -18,7 +18,7 @@ class AlgoApp(ABC):
         self.grid = Grid(obstacles)
         self.robot = Robot(self.grid)
         self.direction = Direction.TOP
-        self.simulation = Simulation()
+        # self.simulation = Simulation()
         self.obstacles = obstacles
         self.index = 0
 

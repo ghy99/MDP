@@ -41,16 +41,16 @@ class Hamiltonian:
                 # Right Grid to Left Grid, Top of Grid to Bottom of Grid unlikely
                 # if same direction (robot and targeted position has same direction)
                 if source_pos.direction.value - dest_pos.direction.value == 0:
-                    weight = 2 if is_first else 5
+                    weight = 1 if is_first else 5
                 # if opposite direction
                 elif abs(source_pos.direction.value - dest_pos.direction.value) == 180:
-                    weight = 4
+                    weight = 3
                 # if turn right or left
                 else:
-                    weight = 1 if check_pos(source_pos, dest_pos) else 7
+                    weight = 1.5 if check_pos(source_pos, dest_pos) else 7
 
                 return weight
-            
+
             def check_pos(robot_pos, target_pos):
                 # left turn
                 if robot_pos.direction.value - target_pos.direction.value == -90:
@@ -72,7 +72,6 @@ class Hamiltonian:
                         return True if target_pos.y > robot_pos.y else False
                     if robot_pos.direction == Direction.RIGHT:
                         return True if target_pos.y < robot_pos.y else False
-
 
             def manhattan_distance(x1, y1, x2, y2):
                 return abs(x1 - x2) + abs(y1 - y2)
@@ -111,7 +110,7 @@ class Hamiltonian:
                         path[i-1].target_position, path[i].target_position, False)
                     # start, end = path[i-1].target_position, path[i].target_position
                     # tmp, cmds = ModifiedAStar(self.grid, self, start, end, 2).start_astar(False)
-                
+
                 # for cmd in cmds:
                 #     if isinstance(cmd, StraightCommand):
                 #         dist += cmd.dist
@@ -120,14 +119,15 @@ class Hamiltonian:
 
                 # dist += abs(targets[i][0] - targets[i + 1][0]) + abs(targets[i][1] - targets[i + 1][1])
 
-                # dist += multiplier * (math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
-                #                                 ((targets[i][1] - targets[i + 1][1])**2)))
+                dist += multiplier * (math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                                                ((targets[i][1] - targets[i + 1][1])**2)))
                 # temp = math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
                 #                                 ((targets[i][1] - targets[i + 1][1])**2))
                 # dist += (temp ** multiplier)
 
-                temp = manhattan_distance(targets[i][0], targets[i][1], targets[i + 1][0], targets[i + 1][1])
-                dist += temp ** multiplier
+                # temp = manhattan_distance(
+                #     targets[i][0], targets[i][1], targets[i + 1][0], targets[i + 1][1])
+                # dist += temp ** multiplier
                 # print(dist)
                 # dist += multiplier * (1 * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
                 #                                     ((targets[i][1] - targets[i + 1][1])**2)) + 2 * manhattan_distance(
@@ -200,13 +200,13 @@ class Hamiltonian:
             rerun = 0
             # print(f"Planning {curr} to {target}")
             res, cmd = ModifiedAStar(self.grid, self, curr,
-                                target, rerun).start_astar(True)
+                                     target, rerun).start_astar(True)
             while res is None and rerun != 2:
                 print(f"No path found from {curr} to {obstacle}")
                 print("Fuck it... YOLO", end=" ")
                 rerun += 1
                 res, cmd = ModifiedAStar(self.grid, self, curr,
-                                    target, rerun).start_astar(True)
+                                         target, rerun).start_astar(True)
                 if res:
                     break
             if res is None:

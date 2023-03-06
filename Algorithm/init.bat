@@ -1,3 +1,2 @@
-cd..
-cd venv/Scripts 
+cd .venv/Scripts 
 activate

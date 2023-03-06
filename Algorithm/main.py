@@ -64,29 +64,29 @@ class Main:
         # app.init()
         # app.execute()
 
-    def run_minimal(self, also_run_simulator, dummy):
+    def run_minimal(self, also_run_simulator):
         # Create a client to connect to the RPi.
 
-        # if self.client is None:
-        #     print(
-        #         f"Attempting to connect to {constants.RPI_HOST}:{constants.RPI_PORT}")
-        #     self.client = RPiClient(constants.RPI_HOST, constants.RPI_PORT)
-        #     #  Wait to connect to RPi.
-        #     while True:
-        #         try:
-        #             self.client.connect()
-        #             break
-        #         except OSError:
-        #             pass
-        #         except KeyboardInterrupt:
-        #             self.client.close()
-        #             sys.exit(1)
-        #     print("Connected to RPi!\n")
+        if self.client is None:
+            print(
+                f"Attempting to connect to {constants.RPI_HOST}:{constants.RPI_PORT}")
+            self.client = RPiClient(constants.RPI_HOST, constants.RPI_PORT)
+            #  Wait to connect to RPi.
+            while True:
+                try:
+                    self.client.connect()
+                    break
+                except OSError:
+                    pass
+                except KeyboardInterrupt:
+                    self.client.close()
+                    sys.exit(1)
+            print("Connected to RPi!\n")
 
-        # # # # # Wait for message from RPI
-        # print("Waiting to receive data from RPi...")
-        # d = self.client.receive_message()
-        d = dummy
+        # # # # Wait for message from RPI
+        print("Waiting to receive data from RPi...")
+        d = self.client.receive_message()
+        # d = dummy
         print("Decoding data from RPi:")
         d = d.decode('utf-8')
         to_return = []
@@ -147,22 +147,22 @@ class Main:
             print("Sending list of commands to RPi...")
             self.commands = app.robot.convert_all_commands()
             print(self.commands)
-        #     if len(self.commands) != 0:
-        #         client.send_message(self.commands)
-        #     else:
-        #         print("ERROR!! NO COMMANDS TO SEND TO RPI")
+            if len(self.commands) != 0:
+                client.send_message(self.commands)
+            else:
+                print("ERROR!! NO COMMANDS TO SEND TO RPI")
 
-        # elif isinstance(data[0], str):
-        #     # means its None
-        #     print(data)
-        #     try:
-        #         client.send_message([StraightCommand(-10).convert_to_message(),
-        #                              ScanCommand(
-        #                                  0, int(data[1])).convert_to_message(),
-        #                              StraightCommand(10).convert_to_message()])
-        #     except IndexError:
-        #         print("Error!")
-        #         print("Index Error!")
+        elif isinstance(data[0], str):
+            # means its None
+            print(data)
+            try:
+                client.send_message([StraightCommand(-10).convert_to_message(),
+                                     ScanCommand(
+                                         0, int(data[1])).convert_to_message(),
+                                     StraightCommand(10).convert_to_message()])
+            except IndexError:
+                print("Error!")
+                print("Index Error!")
 
         # # String commands from Rpi
         # elif isinstance(data[0], str):
@@ -273,8 +273,8 @@ class Main:
             z = 'ALG:8,2,E,1;8,6,N,2;19,0,N,3;2,16,E,4;11,11,E,5;'.encode(
                 'utf-8')
 
-            self.run_minimal(True, h)
-            break
+            self.run_minimal(False)
+            # break
             time.sleep(5)
 
 
