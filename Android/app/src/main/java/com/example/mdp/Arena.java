@@ -131,7 +131,7 @@ public class Arena extends AppCompatActivity {
     }
 
     private static final int SNAP_GRID_INTERVAL = 35;
-    private static final int ANIMATOR_DURATION = 1000;
+    private static final int ANIMATOR_DURATION = 250;
 
     /*
      * start from (1,1)
@@ -2568,7 +2568,6 @@ public class Arena extends AppCompatActivity {
                             // forward
                             case "SF":
                                 convertedDistance = Integer.parseInt(distance) / 10;
-                                Log.d(TAG, prefix + ";" + convertedDistance);
                                 forwardButtonCommand(convertedDistance);
                                 break;
                             // reverseA
