@@ -88,9 +88,9 @@ class Multithreader:
             if message is not None and len(message) > 0:               
                 print("[Main] Message recieved from bluetooth", message)
                 try:
-                  if b'GO' in message:
+                  if b'SP' in message:
                       #Tell STM to move
-                      self.serialapi.write(("GO").encode("utf-8"))
+                      self.serialapi.write(("SP").encode("utf-8"))
                       #wait for stm acknowledgement
                       ack = None
                       while ack is None:
@@ -106,6 +106,7 @@ class Multithreader:
             smessage = self.serialapi.read()
             if(smessage is not None and b'P'in smessage):
                 print("[Main] Message recieved from STM", message,"|Taking Pic Now")
+                takePic=True
                 self.read_image()
         exit()
                      

@@ -33,6 +33,8 @@ class SerialAPI:
         print("[STM] Attempting to send message:", message)
 
         try:
+            print("[SERIAL]")
+            print(message)
             self.serial_connection.write(message)
             print("[STM] Successfully sent to STM")
         except Exception as exception:
@@ -52,6 +54,7 @@ class SerialAPI:
 
                 return message
 
+    #not used?
     def removeSpaces(self, message):
         stringMessage = str(message, "UTF-8")
 

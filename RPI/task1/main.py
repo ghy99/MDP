@@ -114,25 +114,17 @@ class Multithreader:
                 obs = str(obstacle_id)
                 try:
                     # error correction
-                    # if the message is invalid, send results to ipsocket
-                    if (image_id == 'N' and count == 0):
-                        print("[Main] Sending the invalid message to ipsocket")
+                    # if the message is invalid print result
+                    if (image_id == 'N'):
+                        print("[Main] Print image recognition result")
                         iError = (image_id+obs).encode('utf-8')
-                        self.ipsocketapi.write(iError)
-                        # time.sleep(5)
-                        # msg is in bytes
-                        # msg=self.ipsocketapi.read()
-                        # print("[Main] Retrieve instruction from ipsocket")
-                        # print("message from algo:"+ msg.decode('utf-8'))+"send directly to STM"
-                        # self.serialapi.write(msg)
-                        # count+=1
-                    # if the message is valid, send results to android
+                        print(iError)
+                        
+                    #if message is valid
                     elif (image_id != '00' and image_id != 'N'):
                         print("[Bluetooth] Sending the image results to android")
                         bMsg = "TARGET,"+obs+","+str(image_id)
                         print("[Bluetooth] Message sent to android:", bMsg)
-                        # bMsg = self.convert_to_dict('B', bMsg)
-                        # self.write_message_queue.put(bMsg)
                         # tell android immediately
                         self.bluetoothapi.write(bMsg)
                         # after recognise image
@@ -140,6 +132,7 @@ class Multithreader:
                         obstacleCounter -= 1
                         print(
                             f"[Main] Number of obstacles left {obstacleCounter}")
+                    #if bullseye just print
                     else:
                         print("[Main] Bullseye")
                 except Exception as mistake:
@@ -181,10 +174,6 @@ class Multithreader:
                         filteredObstacles = filteredObstacles+";"
                         numObstacle = len(obstacles)
                         obstacleCounter = len(obstacles)
-                        # print(
-                        #     f"[Main] The total number of obstacles is {obstacleCounter}")
-                        # message = self.convert_to_dict('I', filteredObstacles.encode('utf-8')) #Forwarding entire string to algo
-                        # self.write_message_queue.put(message)
                         print(
                             "Sending filtered obstacles directly to algo:" + filteredObstacles)
                         self.ipsocketapi.write(
@@ -204,7 +193,7 @@ class Multithreader:
                 n = 5
                 instr = [message[i:i+n]for i in range(0, len(message), n)]
                 for r in instr:
-                    # if scan instruction, queue scan instruction with header "P"
+                    #if scan instruction, queue scan instruction with header "P"
                     if b'P' in r:
                         image_message = self.convert_to_dict('P', r)
                         # print("[Main] Queued ", image_message,
@@ -214,15 +203,13 @@ class Multithreader:
                     else:
                         print("[Main] Queueing message to be sent to STM:", r)
                         stm_message = self.convert_to_dict('S', r)
-                        # print("[Main] Queued ", stm_message, "to STM")
                         self.write_message_queue.put(stm_message)
                         androidToSend = "COMMAND," + (r.decode('utf-8'))
                         androidToSend = androidToSend.encode('utf-8')
                         and_message = self.convert_to_dict('B', androidToSend)
-                        # print("[Main] Queued", and_message, "to Android")
                         self.write_message_queue.put(and_message)
                 print(
-                    f"[Main] Queue to send to STM: {self.write_message_queue}", and_message)
+                    f"[Main] Queue to send: {self.write_message_queue}")
             else:
                 print("[Main] Invalid command", message, "read from Algo")
 
@@ -263,6 +250,7 @@ class Multithreader:
             try:
                 if self.write_message_queue.empty():
                     continue
+                print(self.write_message_queue)
                 if takePictureNow == False:
                     message = self.write_message_queue.get()
                     print("[Main] Message to send: ", message)
@@ -283,10 +271,12 @@ class Multithreader:
                         obstacle_id = int(body[-1])-48
                         print("[Main] Obstacle ID:", str(obstacle_id))
                         self.obstacle_id = obstacle_id
-                        # print("[Main] Setting take picture now to be true")
+                        #print("[Main] Setting take picture now to be true")
                         takePictureNow = True
                         print("[Main] Going to take picture for" + str(obstacle_id))
-                        self.serialapi.write(body)
+                        #send take pic instruction to STM
+                        serialmsg= ("PXXX"+str(obstacle_id)).encode('utf-8')
+                        self.serialapi.write(serialmsg)
                         ack = None
                         while ack is None:
                             ack = self.serialapi.read()
@@ -299,6 +289,7 @@ class Multithreader:
                         try:
                             print("[Main] Sending ", body, " to STM")
                             self.serialapi.write(body)
+                            #wait for STM acknowledgement
                             ack = None
                             while ack is None:
                                 ack = self.serialapi.read()

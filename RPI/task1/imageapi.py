@@ -22,7 +22,7 @@ class ImageAPI:
         self.count = 0
         self.camera = Picamera2()
         config = self.camera.create_preview_configuration(
-            main={"size": (720, 720)})
+            main={"size": (820, 820)})
         self.camera.configure(config)
         self.camera.start()
 
@@ -64,11 +64,6 @@ class ImageAPI:
                 time.sleep(2)
                 image = self.camera.capture_array()
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-                #rawCapture = picamera.array.PiRGBArray(self.camera)
-                #self.camera.capture(rawCapture, format="bgr")
-                # time.sleep(1)
-                #image = rawCapture.array
-                # rawCapture.truncate(0)
                 print('[Image] Finished taking picture')
                 break
 
