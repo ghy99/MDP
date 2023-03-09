@@ -44,17 +44,16 @@ class Multithreader:
             sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")#jie kai laptop
             #sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.30:50000")#sishi laptop
             rpi_name = socket.gethostname()
-            cam = Picamera2()
-            config = cam.create_preview_configuration(main={"size":(820,820)})
-            cam.configure(config)
-            cam.start()
+            self.cam = Picamera2()
+            config = self.cam.create_preview_configuration(main={"size":(820,820)})
+            self.cam.configure(config)
+            self.cam.start()
             print("[Image] Start Camera")
-            time.sleep(1.0)
             result = ("38".encode('utf-8'))
             while start==False and takePic==True:
                     print("[Image]Start taking photo...")
                     time.sleep(2)
-                    image = cam.capture_array()
+                    image = self.cam.capture_array()
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                     print("[Image]Finished taking picture and sending photo...")
                     result = sender.send_image(rpi_name, image)
@@ -117,6 +116,7 @@ class Multithreader:
     #Clean up operation after we exit the programme
     def clean_up(self):
         GPIO.cleanup()
+        self.cam.close()
 
 
 if __name__ == "__main__":
