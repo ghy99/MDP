@@ -6,6 +6,7 @@ from typing import Tuple
 from collections import deque
 from commands.scan_obstacle_command import ScanCommand
 from commands.go_straight_command import StraightCommand
+from commands.turn_command import TurnCommand
 from misc.direction import Direction
 from grid.grid import Grid
 from grid.obstacle import Obstacle
@@ -36,19 +37,41 @@ class Hamiltonian:
 
         # Get the path that has the least distance travelled.
         def calc_distance(path):
-            def weight_factor(source_dir: Direction, dest_dir: Direction) -> int:
+            def weight_factor(source_pos, dest_pos, is_first) -> int:
                 # Right Grid to Left Grid, Top of Grid to Bottom of Grid unlikely
                 # if same direction (robot and targeted position has same direction)
-                if source_dir.value - dest_dir.value == 0:
-                    weight = 1
+                if source_pos.direction.value - dest_pos.direction.value == 0:
+                    weight = 1 if is_first else 5
                 # if opposite direction
-                elif source_dir.value - dest_dir.value == -180 or source_dir.value - dest_dir.value == 180:
-                    weight = 2.5
+                elif abs(source_pos.direction.value - dest_pos.direction.value) == 180:
+                    weight = 3
                 # if turn right or left
                 else:
-                    weight = 1.4
+                    weight = 1.5 if check_pos(source_pos, dest_pos) else 7
 
                 return weight
+
+            def check_pos(robot_pos, target_pos):
+                # left turn
+                if robot_pos.direction.value - target_pos.direction.value == -90:
+                    if robot_pos.direction == Direction.TOP:
+                        return True if target_pos.x < robot_pos.x else False
+                    if robot_pos.direction == Direction.BOTTOM:
+                        return True if target_pos.x > robot_pos.x else False
+                    if robot_pos.direction == Direction.LEFT:
+                        return True if target_pos.y < robot_pos.y else False
+                    if robot_pos.direction == Direction.RIGHT:
+                        return True if target_pos.y > robot_pos.y else False
+                # right turn
+                else:
+                    if robot_pos.direction == Direction.TOP:
+                        return True if target_pos.x > robot_pos.x else False
+                    if robot_pos.direction == Direction.BOTTOM:
+                        return True if target_pos.x < robot_pos.x else False
+                    if robot_pos.direction == Direction.LEFT:
+                        return True if target_pos.y > robot_pos.y else False
+                    if robot_pos.direction == Direction.RIGHT:
+                        return True if target_pos.y < robot_pos.y else False
 
             def manhattan_distance(x1, y1, x2, y2):
                 return abs(x1 - x2) + abs(y1 - y2)
@@ -78,15 +101,34 @@ class Hamiltonian:
                     # print(
                     #     f"Checking multiplier: {self.robot.pos.get_dir()}, {path[i].target_position.x}, {path[i].target_position.y}, {path[i].target_position.get_dir()}")
                     multiplier = weight_factor(
-                        self.robot.pos.get_dir(), path[i].target_position.get_dir())
+                        self.robot.pos, path[i].target_position, True)
+                    # start, end = self.robot.pos.copy(), path[i].target_position
+                    # tmp, cmds = ModifiedAStar(self.grid, self, start, end, 2).start_astar(False)
                 else:
                     # From obstacle to another obstacle
                     multiplier = weight_factor(
-                        path[i-1].target_position.get_dir(), path[i].target_position.get_dir())
+                        path[i-1].target_position, path[i].target_position, False)
+                    # start, end = path[i-1].target_position, path[i].target_position
+                    # tmp, cmds = ModifiedAStar(self.grid, self, start, end, 2).start_astar(False)
+
+                # for cmd in cmds:
+                #     if isinstance(cmd, StraightCommand):
+                #         dist += cmd.dist
+                #     elif isinstance(cmd, TurnCommand):
+                #         dist += 50
 
                 # dist += abs(targets[i][0] - targets[i + 1][0]) + abs(targets[i][1] - targets[i + 1][1])
+
                 dist += multiplier * (math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
                                                 ((targets[i][1] - targets[i + 1][1])**2)))
+                # temp = math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
+                #                                 ((targets[i][1] - targets[i + 1][1])**2))
+                # dist += (temp ** multiplier)
+
+                # temp = manhattan_distance(
+                #     targets[i][0], targets[i][1], targets[i + 1][0], targets[i + 1][1])
+                # dist += temp ** multiplier
+                # print(dist)
                 # dist += multiplier * (1 * math.sqrt(((targets[i][0] - targets[i + 1][0])**2) +
                 #                                     ((targets[i][1] - targets[i + 1][1])**2)) + 2 * manhattan_distance(
                 #     targets[i][0], targets[i][1], targets[i +
@@ -98,6 +140,7 @@ class Hamiltonian:
                 # ))
 
             # print("Path = ", targets, "\nTotal weighted Euclidean distance = ", dist)
+            # print(f"Dist for this permutation is {dist}")
             return dist
 
         print("Calculating Distance for all possible permutation\n")
@@ -154,16 +197,18 @@ class Hamiltonian:
         curr = self.robot.pos.copy()
         for obstacle in self.simple_hamiltonian:
             target = obstacle.get_robot_target_pos()
-            rerun = False
+            rerun = 0
             # print(f"Planning {curr} to {target}")
-            res = ModifiedAStar(self.grid, self, curr,
-                                target, rerun).start_astar()
-            while res is None and not rerun:
+            res, cmd = ModifiedAStar(self.grid, self, curr,
+                                     target, rerun).start_astar(True)
+            while res is None and rerun != 2:
                 print(f"No path found from {curr} to {obstacle}")
                 print("Fuck it... YOLO", end=" ")
-                rerun = True
-                res = ModifiedAStar(self.grid, self, curr,
-                                    target, rerun).start_astar()
+                rerun += 1
+                res, cmd = ModifiedAStar(self.grid, self, curr,
+                                         target, rerun).start_astar(True)
+                if res:
+                    break
             if res is None:
                 print(f"No path found from {curr} to {obstacle}")
             else:
