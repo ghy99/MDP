@@ -41,25 +41,24 @@ class Multithreader:
         global running
         global start
         try:
-            #sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")#jie kai laptop
-            sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.30:50000")#sishi laptop
+            sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")#jie kai laptop
+            #sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.30:50000")#sishi laptop
             rpi_name = socket.gethostname()
             cam = Picamera2()
-            config = cam.create_preview_configuration(main={"size":(720,720)})
+            config = cam.create_preview_configuration(main={"size":(820,820)})
             cam.configure(config)
             cam.start()
             print("[Image] Start Camera")
             time.sleep(1.0)
             result = ("38".encode('utf-8'))
-            while result!=b'N':
-                if takePic:
+            while start==False and takePic==True:
                     print("[Image]Start taking photo...")
                     time.sleep(2)
                     image = cam.capture_array()
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                     print("[Image]Finished taking picture and sending photo...")
                     result = sender.send_image(rpi_name, image)
-                    print("[Main] Received result:", result)
+                    print("[Image] Received result:", result)
                     if b'38' in result:
                         print("Sending R to STM")
                         self.serialapi.write("R".encode("utf-8"))
@@ -70,10 +69,10 @@ class Multithreader:
                         takePic = False
                     elif b'00' in result:
                         print("It is a bullseye!")
-                        continue
+                        break
                     else: 
                         print("Unable to recognise!")
-                        continue
+                        break
         except Exception as error:
             print("Image Recognition Error!")
             print(error)
@@ -92,22 +91,26 @@ class Multithreader:
                   if b'SP' in message:
                       #Tell STM to move
                       self.serialapi.write(("S").encode("utf-8"))
-                      #wait for stm acknowledgement
+                      #wait for STM acknowledgement
                       ack = None
                       while ack is None:
                         ack = self.serialapi.read()
-                        print("Received from STM", ack)
+                        print("[Main] Received from STM", ack)
                         if  b'A' in ack:
                             ack = "A"
                             start=False
                             break
+                      #start taking image
+                      takePic=True
+                      print("[Main] Going to Image...")
+                      self.read_image()
                 except:
                       print("[ERROR] Invalid message from bluetooth")
         while running and takePic==False:
             smessage = self.serialapi.read()
             if(smessage is not None and b'P'in smessage):
-                print("[Main] Message recieved from STM", message,"|Taking Pic Now")
                 takePic=True
+                print("[Main] Message recieved from STM", message,"Going to image...")
                 self.read_image()
         exit()
                      
