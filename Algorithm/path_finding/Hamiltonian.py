@@ -42,6 +42,7 @@ class Hamiltonian:
                 # if same direction (robot and targeted position has same direction)
                 if source_pos.direction.value - dest_pos.direction.value == 0:
                     weight = 1 if is_first and (abs(source_pos.x - dest_pos.x) <= 5) else 5
+                    # weight = 1 if is_first else 5
                 # if opposite direction
                 elif abs(source_pos.direction.value - dest_pos.direction.value) == 180:
                     weight = 3
