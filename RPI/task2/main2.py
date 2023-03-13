@@ -40,38 +40,43 @@ class Multithreader:
         global takePic
         global running
         global start
+        global setup
         try:
-            sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")#jie kai laptop
-            #sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.30:50000")#sishi laptop
-            rpi_name = socket.gethostname()
-            self.cam = Picamera2()
-            config = self.cam.create_preview_configuration(main={"size":(820,820)})
-            self.cam.configure(config)
-            self.cam.start()
-            print("[Image] Start Camera")
-            result = ("38".encode('utf-8'))
+            if(setup):
+                self.cam = Picamera2()
+                config = self.cam.create_preview_configuration(main={"size":(1000,1000)})
+                self.cam.configure(config)
+                self.cam.start()
+                print("[Image] Start Camera")
+                setup=False
             while start==False and takePic==True:
-                    print("[Image]Start taking photo...")
+                    print("[Image] Start taking photo...")
                     time.sleep(2)
                     image = self.cam.capture_array()
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-                    print("[Image]Finished taking picture and sending photo...")
+                    print("[Image] Finished taking picture and sending photo...")
+                    sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")#jie kai laptop
+                    #sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.30:50000")#sishi laptop
+                    rpi_name = socket.gethostname()
+                    print("[Image] Connected to Image server...")
+                    result=b'38'
                     result = sender.send_image(rpi_name, image)
                     print("[Image] Received result:", result)
-                    if b'38' in result:
-                        print("Sending R to STM")
-                        self.serialapi.write("R".encode("utf-8"))
+                    if b'38' or b'39' in result:
+                        #print("Sending R to STM")
+                        #self.serialapi.write("R".encode("utf-8"))
                         takePic = False
-                    elif b'39' in result:
-                        print("Sending L in STM")
-                        self.serialapi.write("L".encode("utf-8"))
-                        takePic = False
+                        return result
+                    # elif b'39' in result:
+                    #     print("Sending L in STM")
+                    #     self.serialapi.write("L".encode("utf-8"))
+                    #     takePic = False
                     elif b'00' in result:
                         print("It is a bullseye!")
-                        break
+                        continue
                     else: 
                         print("Unable to recognise!")
-                        break
+                        continue
         except Exception as error:
             print("Image Recognition Error!")
             print(error)
@@ -84,12 +89,24 @@ class Multithreader:
         global start
         while start:
             message = self.bluetoothapi.read()
+            start=False
             if message is not None and len(message) > 0:               
                 print("[Main] Message recieved from bluetooth", message)
                 try:
-                  if b'SP' in message:
+                  if b'sp' in message:
+                      #start taking image
+                      takePic=True
+                      print("[Main] Going to Image...")
+                      result = self.read_image()
                       #Tell STM to move
                       self.serialapi.write(("S").encode("utf-8"))
+                      time.sleep(2)
+                      if b'38' in result:
+                        print("Sending R to STM")
+                        self.serialapi.write("R".encode("utf-8"))
+                      elif b'39' in result:
+                        print("Sending L in STM")
+                        self.serialapi.write("L".encode("utf-8"))
                       #wait for STM acknowledgement
                       ack = None
                       while ack is None:
@@ -97,20 +114,29 @@ class Multithreader:
                         print("[Main] Received from STM", ack)
                         if  b'A' in ack:
                             ack = "A"
-                            start=False
-                            break
-                      #start taking image
-                      takePic=True
-                      print("[Main] Going to Image...")
-                      self.read_image()
+                            #start taking image
+                            takePic=True
+                            print("[Main] Going to Image...")
+                            result = self.read_image()
+                            self.serialapi.write(("D").encode("utf-8"))
+                            time.sleep(1)
+                            if b'38' in result:
+                                print("Sending R to STM")
+                                self.serialapi.write("R".encode("utf-8"))
+                                break
+                            elif b'39' in result:
+                                print("Sending L in STM")
+                                self.serialapi.write("L".encode("utf-8"))
+                                break
+
                 except:
                       print("[ERROR] Invalid message from bluetooth")
-        while running and takePic==False:
-            smessage = self.serialapi.read()
-            if(smessage is not None and b'P'in smessage):
-                takePic=True
-                print("[Main] Message recieved from STM", message,"Going to image...")
-                self.read_image()
+        # while running and takePic==False:
+        #     smessage = self.serialapi.read()
+        #     if(smessage is not None and b'P'in smessage):
+        #         takePic=True
+        #         print("[Main] Message recieved from STM", message,"Going to image...")
+        #         self.read_image()
         exit()
                      
     #Clean up operation after we exit the programme
@@ -124,6 +150,7 @@ if __name__ == "__main__":
     readSTM = False
     running = True
     start = True
+    setup = True
     currentObs = 1
 
     #Running the programme

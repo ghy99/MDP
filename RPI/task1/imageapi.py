@@ -22,7 +22,7 @@ class ImageAPI:
         self.count = 0
         self.camera = Picamera2()
         config = self.camera.create_preview_configuration(
-            main={"size": (820, 820)})
+            main={"size": (1000, 1000)})
         self.camera.configure(config)
         self.camera.start()
 
