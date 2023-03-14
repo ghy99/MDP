@@ -41,8 +41,9 @@ class Multithreader:
         global running
         global start
         global setup
+        global count
         try:
-            if(setup):
+            if (setup):
                 self.cam = Picamera2()
                 config = self.cam.create_preview_configuration(main={"size":(1000,1000)})
                 self.cam.configure(config)
@@ -55,11 +56,17 @@ class Multithreader:
                     image = self.cam.capture_array()
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                     print("[Image] Finished taking picture and sending photo...")
-                    sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:50000")#jie kai laptop
+                    if count == 0:
+                        print("STM starting...")
+                        self.serialapi.write("S".encode('utf-8'))
+                        count += 1
+                    else:
+                        print("STM continuing...")
+                        self.serialapi.write("D".encode('utf-8'))
+                    sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.15:5555")#jie kai laptop
                     #sender = imagezmq.ImageSender(connect_to="tcp://192.168.17.30:50000")#sishi laptop
                     rpi_name = socket.gethostname()
                     print("[Image] Connected to Image server...")
-                    result=b'38'
                     result = sender.send_image(rpi_name, image)
                     print("[Image] Received result:", result)
                     if b'38' or b'39' in result:
@@ -99,7 +106,7 @@ class Multithreader:
                       print("[Main] Going to Image...")
                       result = self.read_image()
                       #Tell STM to move
-                      self.serialapi.write(("S").encode("utf-8"))
+                      #self.serialapi.write(("S").encode("utf-8"))
                       time.sleep(2)
                       if b'38' in result:
                         print("Sending R to STM")
@@ -111,14 +118,14 @@ class Multithreader:
                       ack = None
                       while ack is None:
                         ack = self.serialapi.read()
-                        print("[Main] Received from STM", ack)
-                        if  b'A' in ack:
-                            ack = "A"
+                        print("[Main] Received from STM:")
+                        print(ack)
+                        if b'A' in ack:
                             #start taking image
                             takePic=True
                             print("[Main] Going to Image...")
                             result = self.read_image()
-                            self.serialapi.write(("D").encode("utf-8"))
+                            #self.serialapi.write(("D").encode("utf-8"))
                             time.sleep(1)
                             if b'38' in result:
                                 print("Sending R to STM")
@@ -147,10 +154,10 @@ class Multithreader:
 
 if __name__ == "__main__":
     takePic = False
-    readSTM = False
     running = True
     start = True
     setup = True
+    count = 0
     currentObs = 1
 
     #Running the programme
