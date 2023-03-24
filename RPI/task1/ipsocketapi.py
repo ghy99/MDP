@@ -15,7 +15,7 @@ class IPSocketAPI:
 
     def connect(self):
         while True:
-            print("[Algorithm] Attempting to connect...", end=" ")
+            print("[Algo] Connecting to Algo...", end=" ")
             try:
                 self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.server.setsockopt(
@@ -31,36 +31,36 @@ class IPSocketAPI:
                 # self.server.listen(1)
 
             except Exception as exception:
-                print("[Algorithm] Connection failed: " + str(exception))
+                print("[Algo] Connection failed: " + str(exception))
 
                 time.sleep(3)
             else:
-                print("[Algorithm] Connected successfully")
-                print("[Algorithm] Client address is " +
+                print("[Algo] Connected successfully")
+                print("[Algo] Client address is " +
                       str(self.client_address))
 
                 break
 
     def write(self, message):
-        print("[Algorithm] Attempting to send message:")
+        print("[Algo] Sending message:")
         print(message)
 
         try:
             self.client.send(message)
         except Exception as exception:
-            print("[Algorithm] Failed to send: " + str(exception))
+            print("[Algo] Failed to send: " + str(exception))
 
     def read(self):
         print("")
-        print("[Algorithm] Attempting to read...")
+        print("[Algo] Reading message from Algo...")
 
         try:
             message = self.client.recv(self.READ_BUFFER_SIZE)
         except Exception as exception:
-            print("[Algorithm] Failed to read: " + str(exception))
+            print("[Algo] Failed to read: " + str(exception))
         else:
             if message is not None and len(message) > 0:
-                print("[Algorithm] Message read:", message)
+                print("[Algo] Message read:", message)
                 return message
 
 
@@ -72,11 +72,11 @@ if __name__ == '__main__':
         print("not connected")
     ipsocketapi.connect()
 
-    # while True:
+    #sample obstacle location
     message = "ALG:0,18,E,0;18,19,S,1;18,0,W,2;5,0,E,3;10,10,E,4;9,10,W,5;"
     ipsocketapi.write(message.encode('utf-8'))
     while True:
-        msg = input("write sth")
+        msg = input("Enter command:")
         if msg == 'r':
             algo = ipsocketapi.read()
             n = 5

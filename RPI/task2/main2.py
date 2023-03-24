@@ -70,14 +70,8 @@ class Multithreader:
                     result = sender.send_image(rpi_name, image)
                     print("[Image] Received result:", result)
                     if b'38' or b'39' in result:
-                        #print("Sending R to STM")
-                        #self.serialapi.write("R".encode("utf-8"))
                         takePic = False
                         return result
-                    # elif b'39' in result:
-                    #     print("Sending L in STM")
-                    #     self.serialapi.write("L".encode("utf-8"))
-                    #     takePic = False
                     elif b'00' in result:
                         print("It is a bullseye!")
                         continue
@@ -138,12 +132,6 @@ class Multithreader:
 
                 except:
                       print("[ERROR] Invalid message from bluetooth")
-        # while running and takePic==False:
-        #     smessage = self.serialapi.read()
-        #     if(smessage is not None and b'P'in smessage):
-        #         takePic=True
-        #         print("[Main] Message recieved from STM", message,"Going to image...")
-        #         self.read_image()
         exit()
                      
     #Clean up operation after we exit the programme

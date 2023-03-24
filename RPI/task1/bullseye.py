@@ -10,7 +10,7 @@ import cv2
 from serialapi import SerialAPI
 from imageapi import ImageAPI
 
-
+#code for moving around the bullseye
 if __name__ == '__main__':
     ic = ImageAPI()
     time.sleep(2)

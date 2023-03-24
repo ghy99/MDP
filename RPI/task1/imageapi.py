@@ -26,18 +26,7 @@ class ImageAPI:
         self.camera.configure(config)
         self.camera.start()
 
-    def sendEmptyImage(self):
-        print("[Image] Attempting to connect to Image Server...")
-        sender = imagezmq.ImageSender(
-            connect_to="tcp://"+self.HOST+":"+self.PORT)
-        print("[Image] Successfully connected to Image Server: " + str(self.HOST))
-        print('[Image] Telling Image to stitch..')
-        image = np.eye(640)
-        reply = sender.send_image("done", image)
-        print(f"[Image] Acknowledgement received {reply}")
-        print("[Image] Process complete!")
-
-    def sendPictureToServer(self, image):
+    def sendImage(self, image):
         print("[Image] Attempting to connect to Image Server...")
         sender = imagezmq.ImageSender(
             connect_to="tcp://"+self.HOST+":"+self.PORT)
@@ -98,7 +87,7 @@ if __name__ == '__main__':
         command = input("Execute Image Capturing: ")
         if command == "yes":
             image = ic.rpiTakePicture()
-            imageID = ic.sendPictureToServer(image)
+            imageID = ic.sendImage(image)
             print("Image ID:", imageID)
             if imageID == "N":
                 print("no detection result")
