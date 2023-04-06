@@ -70,6 +70,7 @@ class Multithreader:
                 takenPicture = self.imageClientapi.rpiTakePicture()
                 print(
                     f"[Image] Successfully taken the photo for {obstacle_id}")
+                #Queue taken picture and its obstacle id into image queue
                 imageQueue.put([takenPicture, obstacle_id])
                 takePictureNow = False
 
@@ -113,7 +114,7 @@ class Multithreader:
                 iMsg = image_id.encode('utf-8')
                 obs = str(obstacle_id)
                 try:
-                    # error correction
+                    # error correction not implemented
                     # if the message is invalid print result
                     if (image_id == 'N'):
                         print("[Main] Print image recognition result")
@@ -146,7 +147,6 @@ class Multithreader:
         global running
         global bluetoothOn
         global firstTime
-        global firstMessage
         if self.bluetoothapi.check_connection is None:
             self.reconnect_android()
         while running and bluetoothOn:
@@ -156,7 +156,6 @@ class Multithreader:
                 try:
                     if b'START' in message:
                         firstTime = False
-                        #message = firstMessage.decode('utf-8')
                         print("[Main] Starting to dequeue")
                         self.write()
 
@@ -185,8 +184,7 @@ class Multithreader:
     # Function to read messages from Algorithm
     def read_ipsocket(self):
         global running
-        global firstMessage
-
+        #read from algo first time
         while running and firstTime:
             message = self.ipsocketapi.read()
             if message is not None and len(message) > 0:
@@ -224,7 +222,7 @@ class Multithreader:
         bluetoothOn = False
 
         self.bluetoothapi.connect()
-        print("[Bluetooth] BT successfully reconnected")
+        print("[BT] BT successfully reconnected")
 
         writeOn = True
         bluetoothOn = True
@@ -271,7 +269,6 @@ class Multithreader:
                         obstacle_id = int(body[-1])-48
                         print("[Main] Obstacle ID:", str(obstacle_id))
                         self.obstacle_id = obstacle_id
-                        #print("[Main] Setting take picture now to be true")
                         takePictureNow = True
                         print("[Main] Going to take picture for" + str(obstacle_id))
                         #send take pic instruction to STM
@@ -329,7 +326,6 @@ if __name__ == "__main__":
     writeOn = True
     running = True
     firstTime = True
-    firstMessage = ""
 
     # Running the programme
     mt = Multithreader()

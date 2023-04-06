@@ -29,7 +29,7 @@ class SerialAPI:
                 break
 
     def write(self, message):
-        print("[STM] Attempting to send message:")
+        print("[STM] Sending message to STM:")
         print(message)
 
         try:
@@ -39,7 +39,7 @@ class SerialAPI:
 
     def read(self):
         print("")
-        print("[STM] Attempting to read...")
+        print("[STM] Reading from STM...")
         message = None
         try:
             message = self.serial_connection.read_until(b'A')
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     while True:
         command = input("Enter Command: ")
         if command == "close":
-            print("Closing Serial Connection")
+            print("[STM] Closing Serial Connection")
             serialapi.serial_connection.close()
             exit()
         elif command == "read":

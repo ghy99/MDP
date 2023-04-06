@@ -16,7 +16,7 @@ class SerialAPI:
     def connect(self):
         while True:
             try:
-                print("[STM] Attempting to connect...")
+                print("[STM] Connecting to STM...")
 
                 self.serial_connection = serial.Serial(
                     self.SERIAL_PORT, self.BAUD_RATE)
@@ -30,10 +30,10 @@ class SerialAPI:
                 break
 
     def write(self, message):
-        print("[STM] Attempting to send message:", message)
+        print("[STM] Sending message to STM:", message)
 
         try:
-            print("[SERIAL]")
+            print("[STM]")
             print(message)
             self.serial_connection.write(message)
             print("[STM] Successfully sent to STM")
@@ -42,7 +42,7 @@ class SerialAPI:
 
     def read(self):
         print("")
-        print("[STM] Attempting to read...")
+        print("[STM] Reading from STM...")
         message = None
         try:
             message = self.serial_connection.read_until(b'A')
@@ -53,15 +53,6 @@ class SerialAPI:
                 print("[STM] Message read: ", message)
 
                 return message
-
-    #not used?
-    def removeSpaces(self, message):
-        stringMessage = str(message, "UTF-8")
-
-        stringMessage = stringMessage.replace(" ", "")
-        message = stringMessage.encode()
-
-        return message
 
 
 if __name__ == '__main__':
